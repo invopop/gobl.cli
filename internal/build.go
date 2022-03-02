@@ -17,15 +17,17 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl.cli/internal/iotools"
+	"github.com/invopop/gobl/dsig"
 )
 
 // BuildOptions are the options to pass to the Build function.
 type BuildOptions struct {
-	Template  io.Reader
-	Data      io.Reader
-	SetYAML   map[string]string
-	SetString map[string]string
-	SetFile   map[string]string
+	Template   io.Reader
+	Data       io.Reader
+	SetYAML    map[string]string
+	SetString  map[string]string
+	SetFile    map[string]string
+	PrivateKey *dsig.PrivateKey
 }
 
 // decodeInto unmarshals in as YAML, then merges it into dest.
@@ -43,6 +45,9 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 
 // Build builds and validates a GOBL document from opts.
 func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
+	if opts.PrivateKey == nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, "signing key required")
+	}
 	values, err := parseSets(opts)
 	if err != nil {
 		return nil, err
@@ -50,15 +55,15 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	var intermediate map[string]interface{}
 
 	if opts.Template != nil {
-		if err := decodeInto(ctx, &intermediate, opts.Template); err != nil {
+		if err = decodeInto(ctx, &intermediate, opts.Template); err != nil {
 			return nil, err
 		}
 	}
-	if err := decodeInto(ctx, &intermediate, opts.Data); err != nil {
+	if err = decodeInto(ctx, &intermediate, opts.Data); err != nil {
 		return nil, err
 	}
 
-	if err := mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
+	if err = mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
 
@@ -67,12 +72,15 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 		return nil, err
 	}
 	env := new(gobl.Envelope)
-	if err := json.Unmarshal(encoded, env); err != nil {
+	if err = json.Unmarshal(encoded, env); err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	err = reInsertDoc(env)
-	if err != nil {
+
+	if err = reInsertDoc(env); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+	if err = env.Sign(opts.PrivateKey); err != nil {
+		return nil, err
 	}
 	return env, nil
 }

@@ -2,13 +2,26 @@ package internal
 
 import (
 	"context"
+	"encoding/json"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
+	"github.com/invopop/gobl/dsig"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
+
+var signingKey = new(dsig.PrivateKey)
+
+const signingKeyText = `{"use":"sig","kty":"EC","kid":"b7cee60f-204e-438b-a88f-021d28af6991","crv":"P-256","alg":"ES256","x":"wLez6TfqNReD3FUUyVP4Q7HAGdokmAfE6LwfcM28DlQ","y":"CIxURqWtiFIu9TaatRa85NkNsw1LZHw_ZQ9A45GW_MU","d":"xNx9MxONcuLk8Ai6s2isqXMZaDi3HNGLkFX-qiNyyeo"}`
+
+func init() {
+	if err := json.Unmarshal([]byte(signingKeyText), signingKey); err != nil {
+		panic(err)
+	}
+}
 
 func Test_parseSets(t *testing.T) {
 	tests := []struct {
@@ -136,7 +149,12 @@ func Test_parseSets(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := parseSets(tt.opts)
+
+			opts := tt.opts
+			if opts.PrivateKey == nil {
+				opts.PrivateKey = signingKey
+			}
+			got, err := parseSets(opts)
 			if tt.err == "" {
 				assert.Nil(t, err)
 			} else {
@@ -240,7 +258,11 @@ func TestBuild(t *testing.T) {
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
-		got, err := Build(context.Background(), tt.opts)
+		opts := tt.opts
+		if opts.PrivateKey == nil {
+			opts.PrivateKey = signingKey
+		}
+		got, err := Build(context.Background(), opts)
 		if tt.err == "" {
 			assert.Nil(t, err)
 		} else {
@@ -249,7 +271,11 @@ func TestBuild(t *testing.T) {
 		if err != nil {
 			return
 		}
-		if d := testy.DiffAsJSON(testy.Snapshot(t), got); d != nil {
+		re := testy.Replacement{
+			Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
+			Replacement: `"sigs": ["signature data"]`,
+		}
+		if d := testy.DiffAsJSON(testy.Snapshot(t), got, re); d != nil {
 			t.Error(d)
 		}
 	})
