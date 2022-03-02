@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/iotools"
+	"github.com/invopop/gobl.cli/internal/iotools"
 )
 
 // Verify reads a GOBL document from in, and returns an error if there are any

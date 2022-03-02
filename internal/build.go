@@ -16,7 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/iotools"
+	"github.com/invopop/gobl.cli/internal/iotools"
 )
 
 // BuildOptions are the options to pass to the Build function.

@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/invopop/gobl/cmd/gobl/internal"
+	"github.com/invopop/gobl.cli/internal"
 )
 
 type buildOpts struct {
