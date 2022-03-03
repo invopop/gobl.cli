@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -13,6 +14,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
+
+const signingKeyText = `{"use":"sig","kty":"EC","kid":"b7cee60f-204e-438b-a88f-021d28af6991","crv":"P-256","alg":"ES256","x":"wLez6TfqNReD3FUUyVP4Q7HAGdokmAfE6LwfcM28DlQ","y":"CIxURqWtiFIu9TaatRa85NkNsw1LZHw_ZQ9A45GW_MU","d":"xNx9MxONcuLk8Ai6s2isqXMZaDi3HNGLkFX-qiNyyeo"}`
 
 func Test_serve_build(t *testing.T) {
 	tests := []struct {
@@ -64,7 +67,8 @@ func Test_serve_build(t *testing.T) {
 					t.Fatal(err)
 				}
 				body, err := json.Marshal(map[string]interface{}{
-					"data": json.RawMessage(data),
+					"data":       json.RawMessage(data),
+					"privatekey": json.RawMessage(signingKeyText),
 				})
 				if err != nil {
 					t.Fatal(err)
@@ -77,7 +81,14 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "invalid data",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"not an object"}`))
+				body, err := json.Marshal(map[string]interface{}{
+					"data":       "not an object",
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+				if err != nil {
+					t.Fatal(err)
+				}
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -112,7 +123,11 @@ func Test_serve_build(t *testing.T) {
 			if err != nil {
 				return
 			}
-			if d := testy.DiffHTTPResponse(testy.Snapshot(t), rec.Result()); d != nil {
+			re := testy.Replacement{
+				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
+				Replacement: `"sigs": ["sig data"]`,
+			}
+			if d := testy.DiffHTTPResponse(testy.Snapshot(t), rec.Result(), re); d != nil {
 				t.Error(d)
 			}
 		})
