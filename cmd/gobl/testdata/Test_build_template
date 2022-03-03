@@ -247,5 +247,5 @@
 			}
 		}
 	},
-	"sigs": null
+	"sigs": ["sig data"]
 }

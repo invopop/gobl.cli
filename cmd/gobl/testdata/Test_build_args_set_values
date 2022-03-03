@@ -7,5 +7,6 @@
   },
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
-  template: (string) ""
+  template: (string) "",
+  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk"
 })

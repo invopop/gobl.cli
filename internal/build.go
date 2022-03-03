@@ -45,9 +45,6 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 
 // Build builds and validates a GOBL document from opts.
 func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
-	if opts.PrivateKey == nil {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, "signing key required")
-	}
 	values, err := parseSets(opts)
 	if err != nil {
 		return nil, err
@@ -78,6 +75,9 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 
 	if err = reInsertDoc(env); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+	if opts.PrivateKey == nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, "signing key required")
 	}
 	if err = env.Sign(opts.PrivateKey); err != nil {
 		return nil, err
