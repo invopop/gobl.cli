@@ -73,6 +73,10 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
+	if len(env.Signatures) > 0 {
+		return nil, echo.NewHTTPError(http.StatusConflict, "document has already been signed")
+	}
+
 	if err = reInsertDoc(env); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
