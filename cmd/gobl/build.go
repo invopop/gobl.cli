@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl.cli/internal"
+	"github.com/invopop/gobl/dsig"
 )
 
 type buildOpts struct {
@@ -19,6 +20,7 @@ type buildOpts struct {
 	setFiles            map[string]string
 	setStrings          map[string]string
 	template            string
+	privateKeyFile      string
 }
 
 func build() *buildOpts {
@@ -40,6 +42,7 @@ func (b *buildOpts) cmd() *cobra.Command {
 	f.StringToStringVar(&b.setFiles, "set-file", nil, "set value from the specified YAML or JSON file")
 	f.StringToStringVar(&b.setStrings, "set-string", nil, "set STRING value from the command line")
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
+	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Prvate key file for signing")
 
 	return cmd
 }
@@ -95,12 +98,24 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer input.Close() // nolint:errcheck
 
+	keyFile, err := os.Open(b.privateKeyFile)
+	if err != nil {
+		return err
+	}
+	defer keyFile.Close() // nolint:errcheck
+
+	key := new(dsig.PrivateKey)
+	if err = json.NewDecoder(keyFile).Decode(key); err != nil {
+		return err
+	}
+
 	env, err := internal.Build(ctx, internal.BuildOptions{
-		Template:  template,
-		Data:      input,
-		SetFile:   b.setFiles,
-		SetYAML:   b.set,
-		SetString: b.setStrings,
+		Template:   template,
+		Data:       input,
+		SetFile:    b.setFiles,
+		SetYAML:    b.set,
+		SetString:  b.setStrings,
+		PrivateKey: key,
 	})
 	if err != nil {
 		return err

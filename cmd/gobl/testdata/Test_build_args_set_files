@@ -6,5 +6,6 @@
     (string) (len=3) "foo": (string) (len=8) "foo.json"
   },
   setStrings: (map[string]string) <nil>,
-  template: (string) ""
+  template: (string) "",
+  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk"
 })
