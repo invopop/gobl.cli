@@ -92,9 +92,9 @@ func Test_build_args(t *testing.T) {
 }
 
 func Test_build(t *testing.T) {
-	noTotals := func(t *testing.T) io.Reader {
+	readFile := func(t *testing.T, filename string) io.Reader {
 		t.Helper()
-		f, err := os.Open("testdata/nototals.json")
+		f, err := os.Open(filename)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -102,6 +102,9 @@ func Test_build(t *testing.T) {
 			_ = f.Close()
 		})
 		return f
+	}
+	noTotals := func(t *testing.T) io.Reader {
+		return readFile(t, "testdata/nototals.json")
 	}
 
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
@@ -312,6 +315,14 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				template:       "testdata/success.yaml",
 				privateKeyFile: "testdata/id_es256",
+			},
+		},
+		{
+			name: "type on command line",
+			in:   readFile(t, "testdata/notype.json"),
+			opts: &buildOpts{
+				privateKeyFile: "testdata/id_es256",
+				docType:        "bill.Invoice",
 			},
 		},
 	}
