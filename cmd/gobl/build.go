@@ -23,6 +23,7 @@ type buildOpts struct {
 	setStrings          map[string]string
 	template            string
 	privateKeyFile      string
+	docType             string
 }
 
 func build() *buildOpts {
@@ -45,6 +46,7 @@ func (b *buildOpts) cmd() *cobra.Command {
 	f.StringToStringVar(&b.setStrings, "set-string", nil, "set STRING value from the command line")
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Prvate key file for signing")
+	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
 
 	return cmd
 }

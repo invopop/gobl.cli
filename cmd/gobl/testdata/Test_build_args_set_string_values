@@ -8,5 +8,6 @@
     (string) (len=3) "foo": (string) (len=3) "foo"
   },
   template: (string) "",
-  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk"
+  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
+  docType: (string) ""
 })
