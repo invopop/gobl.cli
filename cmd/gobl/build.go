@@ -128,6 +128,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		SetYAML:    b.set,
 		SetString:  b.setStrings,
 		PrivateKey: key,
+		DocType:    b.docType,
 	})
 	if err != nil {
 		return err
