@@ -5,5 +5,6 @@
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   template: (string) (len=8) "foo.yaml",
-  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk"
+  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
+  docType: (string) ""
 })

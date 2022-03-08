@@ -61,6 +61,10 @@ func Test_build_args(t *testing.T) {
 			name: "template",
 			args: []string{"--template", "foo.yaml"},
 		},
+		{
+			name: "type",
+			args: []string{"--type", "bill.Invoice"},
+		},
 	}
 
 	for _, tt := range tests {
