@@ -24,6 +24,7 @@ import (
 type BuildOptions struct {
 	Template   io.Reader
 	Data       io.Reader
+	DocType    string
 	SetYAML    map[string]string
 	SetString  map[string]string
 	SetFile    map[string]string
@@ -62,6 +63,19 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 
 	if err = mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+	switch opts.DocType {
+	case "": // Nothing to do
+	case "bill.Invoice":
+		if err = mergo.Merge(&intermediate, map[string]interface{}{
+			"doc": map[string]interface{}{
+				"$schema": "https://gobl.org/draft-0/bill/invoice",
+			},
+		}); err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("unrecognized doc type: %q", opts.DocType)
 	}
 
 	encoded, err := json.Marshal(intermediate)
