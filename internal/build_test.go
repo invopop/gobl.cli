@@ -8,9 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/invopop/gobl/dsig"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
+
+	"github.com/invopop/gobl/dsig"
 )
 
 var signingKey = new(dsig.PrivateKey)
@@ -268,6 +269,20 @@ func TestBuild(t *testing.T) {
 				Data:     strings.NewReader("{}"),
 			},
 			err: `code=409, message=document has already been signed`,
+		}
+	})
+	tests.Add("explicit type", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/notype.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Data:    f,
+				DocType: "bill.Invoice",
+			},
 		}
 	})
 
