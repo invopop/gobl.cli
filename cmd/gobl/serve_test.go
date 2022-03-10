@@ -3,8 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -17,16 +15,6 @@ import (
 )
 
 const signingKeyText = `{"use":"sig","kty":"EC","kid":"b7cee60f-204e-438b-a88f-021d28af6991","crv":"P-256","alg":"ES256","x":"wLez6TfqNReD3FUUyVP4Q7HAGdokmAfE6LwfcM28DlQ","y":"CIxURqWtiFIu9TaatRa85NkNsw1LZHw_ZQ9A45GW_MU","d":"xNx9MxONcuLk8Ai6s2isqXMZaDi3HNGLkFX-qiNyyeo"}`
-
-// For some reason testy.JSONReader confuses echo. I haven't figured out why yet,
-// so I'm using this less efficient version for now.
-func jsonReader(i interface{}) io.Reader {
-	body, err := json.Marshal(i)
-	if err != nil {
-		return testy.ErrorReader("", err)
-	}
-	return bytes.NewReader(body)
-}
 
 func Test_serve_build(t *testing.T) {
 	tests := []struct {
@@ -69,22 +57,6 @@ func Test_serve_build(t *testing.T) {
 				return req
 			}(),
 			err: `code=422, message=no document included`,
-		},
-		{
-			name: "success",
-			req: func() *http.Request {
-				data, err := ioutil.ReadFile("testdata/success.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				body := jsonReader(map[string]interface{}{
-					"data":       json.RawMessage(data),
-					"privatekey": json.RawMessage(signingKeyText),
-				})
-				req, _ := http.NewRequest(http.MethodPost, "/build", body)
-				req.Header.Set("Content-Type", "application/json")
-				return req
-			}(),
 		},
 		{
 			name: "invalid data",

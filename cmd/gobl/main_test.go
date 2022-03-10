@@ -9,10 +9,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
+
+	"github.com/invopop/gobl"
 )
 
 func Test_root(t *testing.T) {
@@ -79,7 +80,7 @@ func Test_verify(t *testing.T) {
 		{
 			name: "success",
 			in: func() io.Reader {
-				f, err := os.Open("testdata/success.json")
+				f, err := os.Open("testdata/signed.json")
 				if err != nil {
 					t.Fatal(err)
 				}

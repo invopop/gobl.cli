@@ -255,6 +255,21 @@ func TestBuild(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("with signature", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/signed.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Template: f,
+				Data:     strings.NewReader("{}"),
+			},
+			err: `code=409, message=document has already been signed`,
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()

@@ -1,5 +1,4 @@
 {
-	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
@@ -9,8 +8,8 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
 		"region": "ES",
+		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
 		"code": "INV2021-001",
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
@@ -162,5 +161,8 @@
 				]
 			}
 		}
-	}
+	},
+	"sigs": [
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImE2YzM5MjBkLThlMzMtNDE1OS1iMzM3LTllNzQ2MTcxNmRmMSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwidHlwIjoiYmlsbC5JbnZvaWNlIiwicmduIjoiRVMiLCJkaWciOnsiYWxnIjoic2hhMjU2IiwidmFsIjoiZGNlM2JjM2M4YmYyOGYzZDIwOWY3ODM5MTdiMzA4MmRkYzAzMzlhNjZlOWJhM2FhNjM4NDllNDM1N2RiMTQyMiJ9fQ.CbBRUWrP1ELBmsoF9KnMWB5D6f1rNkai4lMZYx83vP2oKt3XdIMv-kvME4voFWN7XDjmsFb8dnt1sD00Oi54rQ"
+	]
 }
