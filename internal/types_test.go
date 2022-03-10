@@ -9,7 +9,7 @@ import (
 
 func TestFindType(t *testing.T) {
 	const (
-		idInvoice = "https://gobl.org/draft-0/bill/invoice"
+		idInvoice = "https://gobl.org/draft-0/foo/invoice"
 	)
 	type Invoice struct{}
 	r := map[reflect.Type]schema.ID{
@@ -41,7 +41,7 @@ func TestFindType(t *testing.T) {
 		}
 	})
 	t.Run("implicit schema", func(t *testing.T) {
-		got := findType(r, "bill.Invoice")
+		got := findType(r, "foo.Invoice")
 		if got != idInvoice {
 			t.Errorf("Unexpected result: %v", got)
 		}
