@@ -64,18 +64,18 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	if err = mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
-	switch opts.DocType {
-	case "": // Nothing to do
-	case "bill.Invoice":
+	if opts.DocType != "" {
+		schema := FindType(opts.DocType)
+		if schema == "" {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("unrecognized doc type: %q", opts.DocType))
+		}
 		if err = mergo.Merge(&intermediate, map[string]interface{}{
 			"doc": map[string]interface{}{
-				"$schema": "https://gobl.org/draft-0/bill/invoice",
+				"$schema": schema,
 			},
 		}); err != nil {
 			return nil, err
 		}
-	default:
-		return nil, fmt.Errorf("unrecognized doc type: %q", opts.DocType)
 	}
 
 	encoded, err := json.Marshal(intermediate)
