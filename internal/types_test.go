@@ -40,4 +40,29 @@ func TestFindType(t *testing.T) {
 			t.Errorf("Unexpected result: %v", got)
 		}
 	})
+	t.Run("implicit schema", func(t *testing.T) {
+		got := findType(r, "bill.Invoice")
+		if got != idInvoice {
+			t.Errorf("Unexpected result: %v", got)
+		}
+	})
+}
+
+func Test_toSchema(t *testing.T) {
+	tests := map[string]string{
+		"bill.Invoice":          "/bill/invoice",
+		"bill.SomeOtherInvoice": "/bill/some-other-invoice",
+		"bill.NASAInvoice":      "/bill/nasa-invoice",
+		"https://full/schema":   "https://full/schema",
+		"bill.123Invoice":       "/bill/123-invoice",
+	}
+
+	for input, want := range tests {
+		t.Run(input, func(t *testing.T) {
+			got := toSchema(input)
+			if got != want {
+				t.Errorf("Unexpected result: %q", got)
+			}
+		})
+	}
 }
