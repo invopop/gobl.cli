@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -82,6 +83,24 @@ func Test_serve_build(t *testing.T) {
 				return req
 			}(),
 			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `not an ...` into map[string]interface {}",
+		},
+		{
+			name: "type",
+			req: func() *http.Request {
+				data, err := ioutil.ReadFile("testdata/notype.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, _ := json.Marshal(map[string]interface{}{
+					"type": "bill.Invoice",
+					"data": json.RawMessage(data),
+				})
+
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			err: "code=422, message=signing key required",
 		},
 	}
 
