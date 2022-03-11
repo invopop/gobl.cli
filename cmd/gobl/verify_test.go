@@ -16,27 +16,40 @@ import (
 func Test_verify(t *testing.T) {
 	tests := []struct {
 		name string
+		opts *verifyOpts
 		in   io.Reader
 		args []string
 		err  string
 	}{
 		{
 			name: "invalid stdin",
-			in:   strings.NewReader("this isn't JSON"),
-			err:  "code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+			opts: &verifyOpts{
+				publicKeyFile: "testdata/id_es256.pub.jwk",
+			},
+			in:  strings.NewReader("this isn't JSON"),
+			err: "code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 		{
 			name: "read error",
-			in:   testy.ErrorReader(`{"foo":`, errors.New("read error")),
-			err:  "read error",
+			opts: &verifyOpts{
+				publicKeyFile: "testdata/id_es256.pub.jwk",
+			},
+			in:  testy.ErrorReader(`{"foo":`, errors.New("read error")),
+			err: "read error",
 		},
 		{
 			name: "empty envelope",
-			in:   strings.NewReader(`{}`),
-			err:  "code=422, message=$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
+			opts: &verifyOpts{
+				publicKeyFile: "testdata/id_es256.pub.jwk",
+			},
+			in:  strings.NewReader(`{}`),
+			err: "code=422, message=$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
 		},
 		{
 			name: "success",
+			opts: &verifyOpts{
+				publicKeyFile: "testdata/id_es256.pub.jwk",
+			},
 			in: func() io.Reader {
 				f, err := os.Open("testdata/signed.json")
 				if err != nil {
@@ -50,6 +63,9 @@ func Test_verify(t *testing.T) {
 		},
 		{
 			name: "digest mismatch",
+			opts: &verifyOpts{
+				publicKeyFile: "testdata/id_es256.pub.jwk",
+			},
 			in: func() io.Reader {
 				f, err := os.Open("testdata/digest-mismatch.json")
 				if err != nil {
@@ -64,6 +80,9 @@ func Test_verify(t *testing.T) {
 		},
 		{
 			name: "read from file",
+			opts: &verifyOpts{
+				publicKeyFile: "testdata/id_es256.pub.jwk",
+			},
 			args: []string{"testdata/digest-mismatch.json"},
 			err:  "code=422, message=digest mismatch",
 		},
@@ -74,6 +93,9 @@ func Test_verify(t *testing.T) {
 		},
 		{
 			name: "explicit stdin",
+			opts: &verifyOpts{
+				publicKeyFile: "testdata/id_es256.pub.jwk",
+			},
 			args: []string{"-"},
 			in: func() io.Reader {
 				f, err := os.Open("testdata/digest-mismatch.json")
@@ -99,7 +121,11 @@ func Test_verify(t *testing.T) {
 			}
 			buf := &bytes.Buffer{}
 			c.SetOut(buf)
-			err := verify().runE(c, tt.args)
+			opts := tt.opts
+			if opts == nil {
+				opts = &verifyOpts{}
+			}
+			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
 			} else {

@@ -6,8 +6,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -102,13 +100,9 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer input.Close() // nolint:errcheck
 
-	pkFilename := b.privateKeyFile
-	if strings.HasPrefix(pkFilename, "~/") {
-		home, err := homedir()
-		if err != nil {
-			return err
-		}
-		pkFilename = filepath.Join(home, strings.TrimPrefix(pkFilename, "~/"))
+	pkFilename, err := expandHome(b.privateKeyFile)
+	if err != nil {
+		return err
 	}
 	keyFile, err := os.Open(pkFilename)
 	if err != nil {
