@@ -4,13 +4,13 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "00a1c7bb485818ec361c2ae243c78bdc9ce90ec638eced71c97df04325d84e09"
+			"val": "579ae6960ff82e47a5478f8ed41728dba6298cab985cfea8caf695388fe0d721"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
 		"region": "ES",
+		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
 		"code": "INV2021-001",
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
@@ -82,6 +82,10 @@
 					"price": "200.00"
 				},
 				"sum": "4000.00",
+				"discount": {
+					"value": "200.00",
+					"reason": "just because"
+				},
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -92,7 +96,7 @@
 						"code": "STD"
 					}
 				],
-				"total": "4000.00"
+				"total": "3800.00"
 			},
 			{
 				"i": 2,
@@ -141,12 +145,13 @@
 			{
 				"i": 1,
 				"desc": "Something paid for by us",
-				"amount": "0"
+				"paid": "200.00"
 			}
 		],
 		"totals": {
 			"sum": "5187.50",
-			"total": "5187.50",
+			"discount": "200.00",
+			"total": "4987.50",
 			"taxes": {
 				"categories": [
 					{
@@ -154,19 +159,19 @@
 						"rates": [
 							{
 								"code": "STD",
-								"base": "5000.00",
+								"base": "4800.00",
 								"percent": "21.0%",
-								"amount": "1050.00"
+								"value": "1008.00"
 							},
 							{
 								"code": "RED",
 								"base": "172.50",
 								"percent": "10.0%",
-								"amount": "17.25"
+								"value": "17.25"
 							}
 						],
-						"base": "5172.50",
-						"amount": "1067.25"
+						"base": "4972.50",
+						"value": "1025.25"
 					},
 					{
 						"code": "IRPF",
@@ -174,20 +179,19 @@
 						"rates": [
 							{
 								"code": "STD",
-								"base": "4000.00",
+								"base": "3800.00",
 								"percent": "15.0%",
-								"amount": "600.00"
+								"value": "570.00"
 							}
 						],
-						"base": "4000.00",
-						"amount": "600.00"
+						"base": "3800.00",
+						"value": "570.00"
 					}
 				],
-				"sum": "467.25"
+				"sum": "455.25"
 			},
-			"total_with_tax": "5654.75",
-			"outlays": "0.00",
-			"payable": "5654.75"
+			"outlays": "200.00",
+			"payable": "5642.75"
 		},
 		"payment": {
 			"terms": {
@@ -203,8 +207,5 @@
 				]
 			}
 		}
-	},
-	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6IjExZGE1YzUwLWZjMmYtNDQyZS1hOTdmLTQ0ZjdhZWE3MzU0OCJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAwYTFjN2JiNDg1ODE4ZWMzNjFjMmFlMjQzYzc4YmRjOWNlOTBlYzYzOGVjZWQ3MWM5N2RmMDQzMjVkODRlMDkifX0.ODQkRIk2S4R1GOlbM6oH1UDLUJW0CipIhQqUrB62cDb_KQ8LRrc66rvYT8Mb1Ce6BNgvno_2CRVak_i1EC0j_w"
-	]
+	}
 }
