@@ -42,6 +42,31 @@ func TestVerify(t *testing.T) {
 			key: verifyKey,
 		}
 	})
+	tests.Add("missing sig", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/nosig.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			in:  f,
+			key: verifyKey,
+			err: "code=422, message=sigs: cannot be blank.",
+		}
+	})
+	tests.Add("missing key", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/success.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			in:  f,
+			err: "code=400, message=public key required",
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
@@ -51,6 +76,5 @@ func TestVerify(t *testing.T) {
 		} else {
 			assert.EqualError(t, err, tt.err)
 		}
-
 	})
 }

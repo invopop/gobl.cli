@@ -28,5 +28,8 @@ func Verify(ctx context.Context, in io.Reader, key *dsig.PublicKey) error {
 	if err := env.Validate(); err != nil {
 		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
+	if key == nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "public key required")
+	}
 	return nil
 }
