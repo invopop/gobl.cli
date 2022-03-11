@@ -45,6 +45,7 @@ func homedir() (string, error) {
 	}
 	return user.HomeDir, nil
 }
+
 func defaultKeyfile() (string, error) {
 	const defaultFilename = ".gobl/id_es256.jwk"
 	home, err := homedir()
