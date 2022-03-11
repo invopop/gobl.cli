@@ -16,7 +16,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl.cli/internal"
 )
 
 func main() {
@@ -52,11 +51,7 @@ func root() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
-	root.AddCommand(&cobra.Command{
-		Use:  "verify [infile]",
-		Args: cobra.MaximumNArgs(1),
-		RunE: verify,
-	})
+	root.AddCommand(verify().cmd())
 	root.AddCommand(build().cmd())
 	root.AddCommand(version())
 	root.AddCommand(serve().cmd())
@@ -76,16 +71,6 @@ func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
 		return os.Open(inFile)
 	}
 	return ioutil.NopCloser(cmd.InOrStdin()), nil
-}
-
-func verify(cmd *cobra.Command, args []string) error {
-	input, err := openInput(cmd, args)
-	if err != nil {
-		return err
-	}
-	defer input.Close() // nolint:errcheck
-
-	return internal.Verify(cmdContext(cmd), input, nil)
 }
 
 func version() *cobra.Command {
