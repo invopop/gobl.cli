@@ -142,7 +142,7 @@ func (s *serveOpts) verify() echo.HandlerFunc {
 		if err := c.Bind(req); err != nil {
 			return err
 		}
-		if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data)); err != nil {
+		if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data), nil); err != nil {
 			return err
 		}
 		return c.JSON(http.StatusOK, &verifyResponse{OK: true})

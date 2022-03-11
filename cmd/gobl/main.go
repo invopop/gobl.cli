@@ -85,7 +85,7 @@ func verify(cmd *cobra.Command, args []string) error {
 	}
 	defer input.Close() // nolint:errcheck
 
-	return internal.Verify(cmdContext(cmd), input)
+	return internal.Verify(cmdContext(cmd), input, nil)
 }
 
 func version() *cobra.Command {
