@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -45,7 +46,7 @@ func homedir() (string, error) {
 	return user.HomeDir, nil
 }
 func defaultKeyfile() (string, error) {
-	const defaultFilename = ".gobl/id_es256"
+	const defaultFilename = ".gobl/id_es256.jwk"
 	home, err := homedir()
 	if err != nil {
 		return "", err
@@ -58,6 +59,10 @@ func outputKeyfile(args []string) (string, error) {
 		return defaultKeyfile()
 	}
 	return args[0], nil
+}
+
+func pubfileFromPriv(priv string) string {
+	return strings.TrimSuffix(priv, ".jwk") + ".pub.jwk"
 }
 
 func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
@@ -81,7 +86,7 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 	if err = writeKey(outfile, priv, 0o600, k.overwrite); err != nil {
 		return err
 	}
-	if err = writeKey(outfile+".pub", pub, 0o666, k.overwrite); err != nil {
+	if err = writeKey(pubfileFromPriv(outfile), pub, 0o666, k.overwrite); err != nil {
 		return err
 	}
 	return nil
