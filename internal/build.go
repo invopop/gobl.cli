@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -91,7 +90,7 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 		return nil, echo.NewHTTPError(http.StatusConflict, "document has already been signed")
 	}
 
-	if err = reInsertDoc(env); err != nil {
+	if err = env.Complete(); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
 	if opts.PrivateKey == nil {
@@ -101,31 +100,6 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 		return nil, err
 	}
 	return env, nil
-}
-
-func reInsertDoc(env *gobl.Envelope) error {
-	if env.Document == nil {
-		return errors.New("no document included")
-	}
-	doc, err := extractDoc(env)
-	if err != nil {
-		return err
-	}
-	return env.Insert(doc)
-}
-
-func extractDoc(env *gobl.Envelope) (interface{}, error) {
-	if env.Document == nil {
-		return nil, errors.New("no document found")
-	}
-	if env.Document.Schema() == "" {
-		return nil, errors.New("missing document schema")
-	}
-	doc := env.Extract()
-	if doc == nil {
-		return nil, fmt.Errorf("unrecognized document schema %q", env.Document.Schema())
-	}
-	return doc, nil
 }
 
 func parseSets(opts BuildOptions) (map[string]interface{}, error) {
