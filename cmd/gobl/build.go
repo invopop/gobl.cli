@@ -17,6 +17,7 @@ type buildOpts struct {
 	overwriteOutputFile bool
 	inPlace             bool
 	envelop             bool // when true, assumes source is a document
+	indent              bool // when true, indent output, mainly for testing
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
@@ -30,9 +31,7 @@ func build() *buildOpts {
 }
 
 func envelop() *buildOpts {
-	return &buildOpts{
-		envelop: true,
-	}
+	return &buildOpts{envelop: true}
 }
 
 func (b *buildOpts) cmd() *cobra.Command {
@@ -41,11 +40,11 @@ func (b *buildOpts) cmd() *cobra.Command {
 		RunE: b.runE,
 	}
 	if b.envelop {
-		cmd.Use = "build [infile] [outfile]"
-		cmd.Short = "Combine and complete envelope data"
-	} else {
 		cmd.Use = "envelop [infile] [outfile]"
 		cmd.Short = "Prepare a document and insert into a new envelope"
+	} else {
+		cmd.Use = "build [infile] [outfile]"
+		cmd.Short = "Combine and complete envelope data"
 	}
 	b.setFlags(cmd)
 	return cmd
@@ -144,6 +143,8 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 
 	enc := json.NewEncoder(out)
-	enc.SetIndent("", "\t")
+	if b.indent {
+		enc.SetIndent("", "\t") // Removing JSON formatting by default
+	}
 	return enc.Encode(env)
 }

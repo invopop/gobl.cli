@@ -357,6 +357,7 @@ func Test_build(t *testing.T) {
 			if opts == nil {
 				opts = &buildOpts{}
 			}
+			opts.indent = true // always indent
 			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)

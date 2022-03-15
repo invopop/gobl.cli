@@ -2,6 +2,7 @@
   overwriteOutputFile: (bool) false,
   inPlace: (bool) false,
   envelop: (bool) false,
+  indent: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) (len=1) {
     (string) (len=3) "foo": (string) (len=8) "foo.json"

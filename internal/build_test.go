@@ -337,11 +337,10 @@ func TestEnvelop(t *testing.T) {
 		assert.NotEmpty(t, got.Signatures)
 
 		msg, ok := got.Extract().(*note.Message)
-		if assert.True(t, ok) {
-			assert.Equal(t, "https://gobl.org/draft-0/note/message", got.Document.Schema().String())
-			assert.Equal(t, "Test Message", msg.Title)
-			assert.Equal(t, "We hope you like this test message!", msg.Content)
-		}
+		assert.True(t, ok)
+		assert.Equal(t, "https://gobl.org/draft-0/note/message", got.Document.Schema().String())
+		assert.Equal(t, "Test Message", msg.Title)
+		assert.Equal(t, "We hope you like this test message!", msg.Content)
 	})
 	t.Run("missing doc type", func(t *testing.T) {
 		opts := BuildOptions{
