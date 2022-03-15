@@ -42,8 +42,10 @@ func (b *buildOpts) cmd() *cobra.Command {
 	}
 	if b.envelop {
 		cmd.Use = "build [infile] [outfile]"
+		cmd.Short = "Combine and complete envelope data"
 	} else {
 		cmd.Use = "envelop [infile] [outfile]"
+		cmd.Short = "Prepare a document and insert into a new envelope"
 	}
 	b.setFlags(cmd)
 	return cmd

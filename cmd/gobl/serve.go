@@ -35,8 +35,9 @@ func serve() *serveOpts {
 
 func (s *serveOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "serve",
-		RunE: s.runE,
+		Use:   "serve",
+		Short: "Launch an HTTP server",
+		RunE:  s.runE,
 	}
 	f := cmd.Flags()
 
@@ -52,7 +53,8 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e := echo.New()
 
 	e.GET("/", s.version())
-	e.POST("/build", s.build())
+	e.POST("/build", s.build(false))
+	e.POST("/envelop", s.build(true))
 	e.POST("/verify", s.verify())
 	e.POST("/key", s.keygen())
 
@@ -94,7 +96,7 @@ type buildRequest struct {
 	DocType    string           `json:"type"`
 }
 
-func (s *serveOpts) build() echo.HandlerFunc {
+func (s *serveOpts) build(envelop bool) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
@@ -109,6 +111,7 @@ func (s *serveOpts) build() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusBadRequest, "no payload")
 		}
 		opts := internal.BuildOptions{
+			Envelop:    envelop,
 			Data:       bytes.NewReader(req.Data),
 			PrivateKey: req.PrivateKey,
 			DocType:    req.DocType,

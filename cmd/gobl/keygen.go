@@ -23,9 +23,10 @@ func keygen() *keygenOpts {
 
 func (k *keygenOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "keygen [flags] [outfile]",
-		Args: cobra.MaximumNArgs(1),
-		RunE: k.runE,
+		Use:   "keygen [flags] [outfile]",
+		Short: "Generate a keypair",
+		Args:  cobra.MaximumNArgs(1),
+		RunE:  k.runE,
 	}
 
 	f := cmd.Flags()

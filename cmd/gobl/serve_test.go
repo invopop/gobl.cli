@@ -19,9 +19,11 @@ const signingKeyText = `{"use":"sig","kty":"EC","kid":"b7cee60f-204e-438b-a88f-0
 
 func Test_serve_build(t *testing.T) {
 	tests := []struct {
-		name string
-		req  *http.Request
-		err  string
+		name    string
+		envelop bool
+		req     *http.Request
+		err     string
+		replace []testy.Replacement
 	}{
 		{
 			name: "wrong content type",
@@ -102,6 +104,48 @@ func Test_serve_build(t *testing.T) {
 			}(),
 			err: "code=422, message=signing key required",
 		},
+		{
+			name: "success",
+			req: func() *http.Request {
+				data, err := ioutil.ReadFile("testdata/success.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, _ := json.Marshal(map[string]interface{}{
+					"data":       json.RawMessage(data),
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+		},
+		{
+			name:    "envelop success",
+			envelop: true,
+			req: func() *http.Request {
+				data, err := ioutil.ReadFile("testdata/message.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, _ := json.Marshal(map[string]interface{}{
+					"data":       json.RawMessage(data),
+					"type":       "note.Message",
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+
+				req, _ := http.NewRequest(http.MethodPost, "/envelop", bytes.NewReader(body))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			replace: []testy.Replacement{
+				{
+					Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
+					Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -113,7 +157,7 @@ func Test_serve_build(t *testing.T) {
 			rec := httptest.NewRecorder()
 			c := e.NewContext(tt.req, rec)
 
-			err := serve().build()(c)
+			err := serve().build(tt.envelop)(c)
 			if tt.err == "" {
 				assert.Nil(t, err)
 			} else {
@@ -122,11 +166,14 @@ func Test_serve_build(t *testing.T) {
 			if err != nil {
 				return
 			}
-			re := testy.Replacement{
+			if tt.replace == nil {
+				tt.replace = make([]testy.Replacement, 0)
+			}
+			tt.replace = append(tt.replace, testy.Replacement{
 				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
 				Replacement: `"sigs": ["sig data"]`,
-			}
-			if d := testy.DiffHTTPResponse(testy.Snapshot(t), rec.Result(), re); d != nil {
+			})
+			if d := testy.DiffHTTPResponse(testy.Snapshot(t), rec.Result(), tt.replace...); d != nil {
 				t.Error(d)
 			}
 		})
