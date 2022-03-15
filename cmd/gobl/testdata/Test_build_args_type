@@ -1,13 +1,10 @@
 (*main.buildOpts)({
   overwriteOutputFile: (bool) false,
   inPlace: (bool) false,
-  set: (map[string]string) (len=2) {
-    (string) (len=3) "bar": (string) (len=3) "baz",
-    (string) (len=3) "foo": (string) (len=3) "qux"
-  },
+  set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   template: (string) "",
   privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
-  docType: (string) ""
+  docType: (string) (len=12) "bill.Invoice"
 })

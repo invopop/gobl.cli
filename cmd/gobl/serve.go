@@ -91,6 +91,7 @@ type buildRequest struct {
 	Template   json.RawMessage  `json:"template"`
 	Data       json.RawMessage  `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
+	DocType    string           `json:"type"`
 }
 
 func (s *serveOpts) build() echo.HandlerFunc {
@@ -110,6 +111,7 @@ func (s *serveOpts) build() echo.HandlerFunc {
 		opts := internal.BuildOptions{
 			Data:       bytes.NewReader(req.Data),
 			PrivateKey: req.PrivateKey,
+			DocType:    req.DocType,
 		}
 		if len(req.Template) != 0 {
 			opts.Template = bytes.NewReader(req.Template)
