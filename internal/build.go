@@ -17,12 +17,14 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl.cli/internal/iotools"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/schema"
 )
 
 // BuildOptions are the options to pass to the Build function.
 type BuildOptions struct {
 	Template   io.Reader
 	Data       io.Reader
+	Envelop    bool // when true, data is a document not envelope
 	DocType    string
 	SetYAML    map[string]string
 	SetString  map[string]string
@@ -68,11 +70,7 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 		if schema == "" {
 			return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("unrecognized doc type: %q", opts.DocType))
 		}
-		if err = mergo.Merge(&intermediate, map[string]interface{}{
-			"doc": map[string]interface{}{
-				"$schema": schema,
-			},
-		}); err != nil {
+		if err = mergo.Merge(&intermediate, schemaDocumentData(opts, schema)); err != nil {
 			return nil, err
 		}
 	}
@@ -81,9 +79,17 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	if err != nil {
 		return nil, err
 	}
-	env := new(gobl.Envelope)
-	if err = json.Unmarshal(encoded, env); err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	var env *gobl.Envelope
+	if opts.Envelop {
+		env = gobl.NewEnvelope()
+		if err = json.Unmarshal(encoded, env.Document); err != nil {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+	} else {
+		env = new(gobl.Envelope)
+		if err = json.Unmarshal(encoded, env); err != nil {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
 	}
 
 	if len(env.Signatures) > 0 {
@@ -102,6 +108,18 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 		}
 	}
 	return env, nil
+}
+
+func schemaDocumentData(opts BuildOptions, schema schema.ID) map[string]interface{} {
+	doc := map[string]interface{}{
+		"$schema": schema,
+	}
+	if opts.Envelop {
+		return doc
+	}
+	return map[string]interface{}{
+		"doc": doc,
+	}
 }
 
 func parseSets(opts BuildOptions) (map[string]interface{}, error) {

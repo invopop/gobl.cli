@@ -16,6 +16,7 @@ import (
 type buildOpts struct {
 	overwriteOutputFile bool
 	inPlace             bool
+	envelop             bool // when true, assumes source is a document
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
@@ -28,15 +29,28 @@ func build() *buildOpts {
 	return &buildOpts{}
 }
 
+func envelop() *buildOpts {
+	return &buildOpts{
+		envelop: true,
+	}
+}
+
 func (b *buildOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "build [infile] [outfile]",
 		Args: cobra.MaximumNArgs(2),
 		RunE: b.runE,
 	}
+	if b.envelop {
+		cmd.Use = "build [infile] [outfile]"
+	} else {
+		cmd.Use = "envelop [infile] [outfile]"
+	}
+	b.setFlags(cmd)
+	return cmd
+}
 
+func (b *buildOpts) setFlags(cmd *cobra.Command) {
 	f := cmd.Flags()
-
 	f.BoolVarP(&b.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
 	f.BoolVarP(&b.inPlace, "in-place", "w", false, "overwrite the input file in place  (only outputs JSON)")
 	f.StringToStringVar(&b.set, "set", nil, "set value from the command line")
@@ -45,8 +59,6 @@ func (b *buildOpts) cmd() *cobra.Command {
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
-
-	return cmd
 }
 
 func (b *buildOpts) outputFilename(args []string) string {
@@ -118,6 +130,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	env, err := internal.Build(ctx, internal.BuildOptions{
 		Template:   template,
 		Data:       input,
+		Envelop:    b.envelop,
 		SetFile:    b.setFiles,
 		SetYAML:    b.set,
 		SetString:  b.setStrings,
