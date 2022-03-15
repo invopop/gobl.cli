@@ -91,20 +91,21 @@ func Test_build_args(t *testing.T) {
 	}
 }
 
-func Test_build(t *testing.T) {
-	readFile := func(t *testing.T, filename string) io.Reader {
-		t.Helper()
-		f, err := os.Open(filename)
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() {
-			_ = f.Close()
-		})
-		return f
+func readTestFile(t *testing.T, filename string) io.Reader {
+	t.Helper()
+	f, err := os.Open(filename)
+	if err != nil {
+		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		_ = f.Close()
+	})
+	return f
+}
+
+func Test_build(t *testing.T) {
 	noTotals := func(t *testing.T) io.Reader {
-		return readFile(t, "testdata/nototals.json")
+		return readTestFile(t, "testdata/nototals.json")
 	}
 
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
@@ -113,12 +114,13 @@ func Test_build(t *testing.T) {
 	})
 
 	tests := []struct {
-		name   string
-		opts   *buildOpts
-		in     io.Reader
-		args   []string
-		err    string
-		target string
+		name    string
+		opts    *buildOpts
+		in      io.Reader
+		args    []string
+		err     string
+		target  string
+		replace []testy.Replacement
 	}{
 		{
 			name: "invalid yaml value on command line",
@@ -181,6 +183,20 @@ func Test_build(t *testing.T) {
 			in:   noTotals(t),
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
+			},
+		},
+		{
+			name: "envelop success",
+			in:   readTestFile(t, "testdata/envelop.nototals.json"),
+			opts: &buildOpts{
+				envelop:        true,
+				privateKeyFile: "testdata/id_es256",
+			},
+			replace: []testy.Replacement{
+				{
+					Regexp:      regexp.MustCompile(`"uuid":.?".*"`),
+					Replacement: `"uuid": "00000000-0000-0000-0000-000000000000"`,
+				},
 			},
 		},
 		{
@@ -319,7 +335,7 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "type on command line",
-			in:   readFile(t, "testdata/notype.json"),
+			in:   readTestFile(t, "testdata/notype.json"),
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 				docType:        "bill.Invoice",
@@ -347,12 +363,15 @@ func Test_build(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 			}
-			re := testy.Replacement{
+			if tt.replace == nil {
+				tt.replace = make([]testy.Replacement, 0)
+			}
+			tt.replace = append(tt.replace, testy.Replacement{
 				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
 				Replacement: `"sigs": ["sig data"]`,
-			}
+			})
 
-			if d := testy.DiffText(testy.Snapshot(t), buf.String(), re); d != nil {
+			if d := testy.DiffText(testy.Snapshot(t), buf.String(), tt.replace...); d != nil {
 				t.Error(d)
 			}
 			if tt.target != "" {
@@ -360,7 +379,7 @@ func Test_build(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if d := testy.DiffText(testy.Snapshot(t, "outfile"), result, re); d != nil {
+				if d := testy.DiffText(testy.Snapshot(t, "outfile"), result, tt.replace...); d != nil {
 					t.Error(d)
 				}
 			}
