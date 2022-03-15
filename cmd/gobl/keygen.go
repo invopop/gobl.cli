@@ -35,6 +35,17 @@ func (k *keygenOpts) cmd() *cobra.Command {
 	return cmd
 }
 
+func expandHome(in string) (string, error) {
+	if !strings.HasPrefix(in, "~/") {
+		return in, nil
+	}
+	home, err := homedir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(home, strings.TrimPrefix(in, "~/")), nil
+}
+
 func homedir() (string, error) {
 	if home := os.Getenv("HOME"); home != "" {
 		return home, nil

@@ -125,7 +125,8 @@ func (s *serveOpts) build() echo.HandlerFunc {
 }
 
 type verifyRequest struct {
-	Data json.RawMessage `json:"data"`
+	Data      json.RawMessage `json:"data"`
+	PublicKey *dsig.PublicKey `json:"publickey"`
 }
 
 type verifyResponse struct {
@@ -142,7 +143,7 @@ func (s *serveOpts) verify() echo.HandlerFunc {
 		if err := c.Bind(req); err != nil {
 			return err
 		}
-		if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data)); err != nil {
+		if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
 			return err
 		}
 		return c.JSON(http.StatusOK, &verifyResponse{OK: true})
