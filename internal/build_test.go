@@ -287,6 +287,19 @@ func TestBuild(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("draft", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/draft.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Data: f,
+			},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()

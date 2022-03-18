@@ -96,8 +96,10 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	if opts.PrivateKey == nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, "signing key required")
 	}
-	if err = env.Sign(opts.PrivateKey); err != nil {
-		return nil, err
+	if !env.Head.Draft {
+		if err = env.Sign(opts.PrivateKey); err != nil {
+			return nil, err
+		}
 	}
 	return env, nil
 }
