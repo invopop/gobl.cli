@@ -9,9 +9,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gitlab.com/flimzy/testy"
 
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/note"
 )
 
 var signingKey = new(dsig.PrivateKey)
@@ -309,4 +311,28 @@ func TestBuild(t *testing.T) {
 			t.Error(d)
 		}
 	})
+}
+
+func TestBuildWithPartialEnvelope(t *testing.T) {
+	f, err := os.Open("testdata/message.env.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = f.Close() })
+
+	opts := BuildOptions{
+		Data:       f,
+		PrivateKey: signingKey,
+	}
+	got, err := Build(context.Background(), opts)
+	require.NoError(t, err)
+	assert.NotEmpty(t, got.Head.UUID.String())
+	assert.NotEmpty(t, got.Signatures)
+
+	msg, ok := got.Extract().(*note.Message)
+	if assert.True(t, ok) {
+		assert.Equal(t, "https://gobl.org/draft-0/note/message", got.Document.Schema().String())
+		assert.Equal(t, "Test Message", msg.Title)
+		assert.Equal(t, "We hope you like this test message!", msg.Content)
+	}
 }

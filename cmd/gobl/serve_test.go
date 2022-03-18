@@ -57,7 +57,7 @@ func Test_serve_build(t *testing.T) {
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
-			err: `code=422, message=no document included`,
+			err: `code=422, message=no-document`,
 		},
 		{
 			name: "invalid data",

@@ -199,7 +199,7 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=422, message=no document included",
+			err: "code=422, message=no-document",
 		},
 		{
 			name: "invalid doc",
