@@ -85,6 +85,19 @@ func TestVerify(t *testing.T) {
 			err: "code=422, message=key mismatch",
 		}
 	})
+	tests.Add("draft", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/draft.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			in:  f,
+			key: verifyKey,
+			err: "code=422, message=document is a draft",
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
