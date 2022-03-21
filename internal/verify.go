@@ -31,6 +31,9 @@ func Verify(ctx context.Context, in io.Reader, key *dsig.PublicKey) error {
 	if key == nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "public key required")
 	}
+	if env.Head.Draft {
+		return echo.NewHTTPError(http.StatusUnprocessableEntity, "document is a draft")
+	}
 	if err := env.Signatures[0].VerifyPayload(key, env); err != nil {
 		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
