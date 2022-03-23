@@ -52,11 +52,11 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 
 	e := echo.New()
 
-	e.GET("/", s.version())
-	e.POST("/build", s.build(false))
-	e.POST("/envelop", s.build(true))
-	e.POST("/verify", s.verify())
-	e.POST("/key", s.keygen())
+	e.GET("/", s.version)
+	e.POST("/build", s.build)
+	e.POST("/envelop", s.envelop)
+	e.POST("/verify", s.verify)
+	e.POST("/key", s.keygen)
 
 	var startErr error
 	go func() {
@@ -77,16 +77,14 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	return startErr
 }
 
-func (s *serveOpts) version() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"gobl":    "Welcome",
-			"version": gobl.VERSION,
-			"vendor": map[string]interface{}{
-				"name": vendorName,
-			},
-		})
-	}
+func (s *serveOpts) version(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"gobl":    "Welcome",
+		"version": gobl.VERSION,
+		"vendor": map[string]interface{}{
+			"name": vendorName,
+		},
+	})
 }
 
 type buildRequest struct {
@@ -96,35 +94,57 @@ type buildRequest struct {
 	DocType    string           `json:"type"`
 }
 
-func (s *serveOpts) build(envelop bool) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		ctx := c.Request().Context()
-		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
-		if ct != "application/json" {
-			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
-		}
-		req := new(buildRequest)
-		if err := c.Bind(req); err != nil {
-			return err
-		}
-		if len(req.Data) == 0 {
-			return echo.NewHTTPError(http.StatusBadRequest, "no payload")
-		}
-		opts := internal.BuildOptions{
-			Envelop:    envelop,
-			Data:       bytes.NewReader(req.Data),
-			PrivateKey: req.PrivateKey,
-			DocType:    req.DocType,
-		}
-		if len(req.Template) != 0 {
-			opts.Template = bytes.NewReader(req.Template)
-		}
-		env, err := internal.Build(ctx, opts)
-		if err != nil {
-			return err
-		}
-		return c.JSON(http.StatusOK, env)
+func (s *serveOpts) build(c echo.Context) error {
+	opts, err := prepareBuildOpts(c)
+	if err != nil {
+		return err
 	}
+
+	ctx := c.Request().Context()
+	env, err := internal.Build(ctx, opts)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, env)
+}
+
+func (s *serveOpts) envelop(c echo.Context) error {
+	opts, err := prepareBuildOpts(c)
+	if err != nil {
+		return err
+	}
+
+	ctx := c.Request().Context()
+	env, err := internal.Envelop(ctx, opts)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, env)
+}
+
+func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
+	ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
+	if ct != "application/json" {
+		return nil, echo.NewHTTPError(http.StatusUnsupportedMediaType)
+	}
+	req := new(buildRequest)
+	if err := c.Bind(req); err != nil {
+		return nil, err
+	}
+	if len(req.Data) == 0 {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, "no payload")
+	}
+	opts := &internal.BuildOptions{
+		Data:       bytes.NewReader(req.Data),
+		PrivateKey: req.PrivateKey,
+		DocType:    req.DocType,
+	}
+	if len(req.Template) != 0 {
+		opts.Template = bytes.NewReader(req.Template)
+	}
+	return opts, nil
 }
 
 type verifyRequest struct {
@@ -136,21 +156,19 @@ type verifyResponse struct {
 	OK bool `json:"ok"`
 }
 
-func (s *serveOpts) verify() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
-		if ct != "application/json" {
-			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
-		}
-		req := new(verifyRequest)
-		if err := c.Bind(req); err != nil {
-			return err
-		}
-		if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
-			return err
-		}
-		return c.JSON(http.StatusOK, &verifyResponse{OK: true})
+func (s *serveOpts) verify(c echo.Context) error {
+	ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
+	if ct != "application/json" {
+		return echo.NewHTTPError(http.StatusUnsupportedMediaType)
 	}
+	req := new(verifyRequest)
+	if err := c.Bind(req); err != nil {
+		return err
+	}
+	if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, &verifyResponse{OK: true})
 }
 
 type keygenResponse struct {
@@ -158,13 +176,11 @@ type keygenResponse struct {
 	Public  *dsig.PublicKey  `json:"public"`
 }
 
-func (s *serveOpts) keygen() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		key := dsig.NewES256Key()
+func (s *serveOpts) keygen(c echo.Context) error {
+	key := dsig.NewES256Key()
 
-		return c.JSON(http.StatusOK, keygenResponse{
-			Private: key,
-			Public:  key.Public(),
-		})
-	}
+	return c.JSON(http.StatusOK, keygenResponse{
+		Private: key,
+		Public:  key.Public(),
+	})
 }

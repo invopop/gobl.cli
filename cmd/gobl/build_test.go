@@ -364,9 +364,6 @@ func Test_build(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 			}
-			if tt.replace == nil {
-				tt.replace = make([]testy.Replacement, 0)
-			}
 			tt.replace = append(tt.replace, testy.Replacement{
 				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
 				Replacement: `"sigs": ["sig data"]`,

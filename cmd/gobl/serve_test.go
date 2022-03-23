@@ -157,7 +157,12 @@ func Test_serve_build(t *testing.T) {
 			rec := httptest.NewRecorder()
 			c := e.NewContext(tt.req, rec)
 
-			err := serve().build(tt.envelop)(c)
+			var err error
+			if tt.envelop {
+				err = serve().envelop(c)
+			} else {
+				err = serve().build(c)
+			}
 			if tt.err == "" {
 				assert.Nil(t, err)
 			} else {
@@ -233,7 +238,7 @@ func Test_serve_verify(t *testing.T) {
 			rec := httptest.NewRecorder()
 			c := e.NewContext(tt.req, rec)
 
-			err := serve().verify()(c)
+			err := serve().verify(c)
 			if tt.err == "" {
 				assert.Nil(t, err)
 			} else {
@@ -259,7 +264,7 @@ func Test_serve_keygen(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	err = serve().keygen()(c)
+	err = serve().keygen(c)
 	if err != nil {
 		t.Fatal(err)
 	}

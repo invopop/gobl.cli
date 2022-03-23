@@ -11,5 +11,7 @@
   },
   template: (string) "",
   privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
-  docType: (string) ""
+  docType: (string) "",
+  use: (string) (len=24) "build [infile] [outfile]",
+  short: (string) (len=34) "Combine and complete envelope data"
 })

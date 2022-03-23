@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl.cli/internal"
 	"github.com/invopop/gobl/dsig"
 )
@@ -24,27 +25,33 @@ type buildOpts struct {
 	template            string
 	privateKeyFile      string
 	docType             string
+
+	// Command options
+	use   string
+	short string
 }
 
 func build() *buildOpts {
-	return &buildOpts{}
+	return &buildOpts{
+		use:   "build [infile] [outfile]",
+		short: "Combine and complete envelope data",
+	}
 }
 
 func envelop() *buildOpts {
-	return &buildOpts{envelop: true}
+	return &buildOpts{
+		envelop: true,
+		use:     "envelop [infile] [outfile]",
+		short:   "Prepare a document and insert into a new envelope",
+	}
 }
 
 func (b *buildOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Args: cobra.MaximumNArgs(2),
-		RunE: b.runE,
-	}
-	if b.envelop {
-		cmd.Use = "envelop [infile] [outfile]"
-		cmd.Short = "Prepare a document and insert into a new envelope"
-	} else {
-		cmd.Use = "build [infile] [outfile]"
-		cmd.Short = "Combine and complete envelope data"
+		Args:  cobra.MaximumNArgs(2),
+		RunE:  b.runE,
+		Use:   b.use,
+		Short: b.short,
 	}
 	b.setFlags(cmd)
 	return cmd
@@ -129,16 +136,23 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := internal.Build(ctx, internal.BuildOptions{
+	opts := &internal.BuildOptions{
 		Template:   template,
 		Data:       input,
-		Envelop:    b.envelop,
 		SetFile:    b.setFiles,
 		SetYAML:    b.set,
 		SetString:  b.setStrings,
 		PrivateKey: key,
 		DocType:    b.docType,
-	})
+	}
+	var env *gobl.Envelope
+
+	// We're performing the envelop check here to save extra code
+	if b.envelop {
+		env, err = internal.Envelop(ctx, opts)
+	} else {
+		env, err = internal.Build(ctx, opts)
+	}
 	if err != nil {
 		return err
 	}

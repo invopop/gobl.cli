@@ -170,7 +170,7 @@ func Test_parseSets(t *testing.T) {
 			if opts.PrivateKey == nil {
 				opts.PrivateKey = signingKey
 			}
-			got, err := parseSets(opts)
+			got, err := parseSets(&opts)
 			if tt.err == "" {
 				assert.Nil(t, err)
 			} else {
@@ -284,7 +284,7 @@ func TestBuild(t *testing.T) {
 		if opts.PrivateKey == nil {
 			opts.PrivateKey = signingKey
 		}
-		got, err := Build(context.Background(), opts)
+		got, err := Build(context.Background(), &opts)
 		if tt.err == "" {
 			assert.Nil(t, err)
 		} else {
@@ -305,7 +305,7 @@ func TestBuild(t *testing.T) {
 
 func TestBuildWithPartialEnvelope(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		opts := BuildOptions{
+		opts := &BuildOptions{
 			Data:       openBuildTestFile(t, "testdata/message.env.yaml"),
 			PrivateKey: signingKey,
 		}
@@ -325,13 +325,12 @@ func TestBuildWithPartialEnvelope(t *testing.T) {
 
 func TestEnvelop(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		opts := BuildOptions{
-			Envelop:    true,
+		opts := &BuildOptions{
 			Data:       openBuildTestFile(t, "testdata/message.yaml"),
 			DocType:    "note.Message",
 			PrivateKey: signingKey,
 		}
-		got, err := Build(context.Background(), opts)
+		got, err := Envelop(context.Background(), opts)
 		require.NoError(t, err)
 		assert.NotEmpty(t, got.Head.UUID.String())
 		assert.NotEmpty(t, got.Signatures)
@@ -343,12 +342,11 @@ func TestEnvelop(t *testing.T) {
 		assert.Equal(t, "We hope you like this test message!", msg.Content)
 	})
 	t.Run("missing doc type", func(t *testing.T) {
-		opts := BuildOptions{
-			Envelop:    true,
+		opts := &BuildOptions{
 			Data:       openBuildTestFile(t, "testdata/message.yaml"),
 			PrivateKey: signingKey,
 		}
-		_, err := Build(context.Background(), opts)
+		_, err := Envelop(context.Background(), opts)
 		if assert.Error(t, err) {
 			assert.Contains(t, err.Error(), "unregistered schema")
 		}
