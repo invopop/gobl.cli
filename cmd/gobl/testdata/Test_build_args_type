@@ -1,10 +1,14 @@
 (*main.buildOpts)({
   overwriteOutputFile: (bool) false,
   inPlace: (bool) false,
+  envelop: (bool) false,
+  indent: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   template: (string) "",
   privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
-  docType: (string) (len=12) "bill.Invoice"
+  docType: (string) (len=12) "bill.Invoice",
+  use: (string) (len=24) "build [infile] [outfile]",
+  short: (string) (len=34) "Combine and complete envelope data"
 })

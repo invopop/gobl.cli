@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl.cli/internal"
 	"github.com/invopop/gobl/dsig"
 )
@@ -16,37 +17,57 @@ import (
 type buildOpts struct {
 	overwriteOutputFile bool
 	inPlace             bool
+	envelop             bool // when true, assumes source is a document
+	indent              bool // when true, indent output, mainly for testing
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
 	template            string
 	privateKeyFile      string
 	docType             string
+
+	// Command options
+	use   string
+	short string
 }
 
 func build() *buildOpts {
-	return &buildOpts{}
+	return &buildOpts{
+		use:   "build [infile] [outfile]",
+		short: "Combine and complete envelope data",
+	}
+}
+
+func envelop() *buildOpts {
+	return &buildOpts{
+		envelop: true,
+		use:     "envelop [infile] [outfile]",
+		short:   "Prepare a document and insert into a new envelope",
+	}
 }
 
 func (b *buildOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "build [infile] [outfile]",
-		Args: cobra.MaximumNArgs(2),
-		RunE: b.runE,
+		Args:  cobra.MaximumNArgs(2),
+		RunE:  b.runE,
+		Use:   b.use,
+		Short: b.short,
 	}
+	b.setFlags(cmd)
+	return cmd
+}
 
+func (b *buildOpts) setFlags(cmd *cobra.Command) {
 	f := cmd.Flags()
-
 	f.BoolVarP(&b.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
 	f.BoolVarP(&b.inPlace, "in-place", "w", false, "overwrite the input file in place  (only outputs JSON)")
+	f.BoolVarP(&b.indent, "indent", "i", false, "format JSON output with indentation")
 	f.StringToStringVar(&b.set, "set", nil, "set value from the command line")
 	f.StringToStringVar(&b.setFiles, "set-file", nil, "set value from the specified YAML or JSON file")
 	f.StringToStringVar(&b.setStrings, "set-string", nil, "set STRING value from the command line")
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
-
-	return cmd
 }
 
 func (b *buildOpts) outputFilename(args []string) string {
@@ -115,7 +136,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := internal.Build(ctx, internal.BuildOptions{
+	opts := &internal.BuildOptions{
 		Template:   template,
 		Data:       input,
 		SetFile:    b.setFiles,
@@ -123,12 +144,22 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		SetString:  b.setStrings,
 		PrivateKey: key,
 		DocType:    b.docType,
-	})
+	}
+	var env *gobl.Envelope
+
+	// We're performing the envelop check here to save extra code
+	if b.envelop {
+		env, err = internal.Envelop(ctx, opts)
+	} else {
+		env, err = internal.Build(ctx, opts)
+	}
 	if err != nil {
 		return err
 	}
 
 	enc := json.NewEncoder(out)
-	enc.SetIndent("", "\t")
+	if b.indent {
+		enc.SetIndent("", "\t") // Removing JSON formatting by default
+	}
 	return enc.Encode(env)
 }

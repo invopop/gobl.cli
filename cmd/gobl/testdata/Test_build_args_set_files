@@ -1,6 +1,8 @@
 (*main.buildOpts)({
   overwriteOutputFile: (bool) false,
   inPlace: (bool) false,
+  envelop: (bool) false,
+  indent: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) (len=1) {
     (string) (len=3) "foo": (string) (len=8) "foo.json"
@@ -8,5 +10,7 @@
   setStrings: (map[string]string) <nil>,
   template: (string) "",
   privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
-  docType: (string) ""
+  docType: (string) "",
+  use: (string) (len=24) "build [infile] [outfile]",
+  short: (string) (len=34) "Combine and complete envelope data"
 })

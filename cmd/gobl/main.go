@@ -52,6 +52,7 @@ func root() *cobra.Command {
 		SilenceErrors: true,
 	}
 	root.AddCommand(verify().cmd())
+	root.AddCommand(envelop().cmd()) // see build
 	root.AddCommand(build().cmd())
 	root.AddCommand(version())
 	root.AddCommand(serve().cmd())
