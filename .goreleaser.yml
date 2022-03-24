@@ -1,0 +1,32 @@
+before:
+  hooks:
+  - go mod download
+builds:
+- env:
+  - CGO_ENABLED=0
+  id: gobl.cli
+  goos:
+  - linux
+  - windows
+  - darwin
+  main: ./cmd/gobl
+  binary: gobl
+archives:
+- format: tar.gz
+  name_template: "gobl.cli_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  wrap_in_directory: true
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+release:
+  github:
+    owner: invopop
+    name: gobl.cli
+  prerelease: auto
