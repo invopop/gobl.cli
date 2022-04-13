@@ -1,8 +1,12 @@
 package internal
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"io"
+
+	"github.com/invopop/gobl/dsig"
 )
 
 // BulkRequest represents a single request in the stream of bulk requests.
@@ -33,7 +37,7 @@ type BulkResponse struct {
 }
 
 // Bulk processes a stream of bulk requests.
-func Bulk(in io.Reader) <-chan *BulkResponse {
+func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 	dec := json.NewDecoder(in)
 	var seq int64
 	resCh := make(chan *BulkResponse, 1)
@@ -42,15 +46,7 @@ func Bulk(in io.Reader) <-chan *BulkResponse {
 		for {
 			var req BulkRequest
 			err := dec.Decode(&req)
-			res := &BulkResponse{
-				ReqID:   req.ReqID,
-				SeqID:   seq,
-				IsFinal: err != nil,
-			}
-			if err != nil && err != io.EOF {
-				res.Error = err.Error()
-			}
-			resCh <- res
+			resCh <- processRequest(ctx, req, seq, err)
 			if err != nil {
 				return
 			}
@@ -58,4 +54,44 @@ func Bulk(in io.Reader) <-chan *BulkResponse {
 		}
 	}()
 	return resCh
+}
+
+func processRequest(ctx context.Context, req BulkRequest, seq int64, err error) *BulkResponse {
+	res := &BulkResponse{
+		ReqID: req.ReqID,
+		SeqID: seq,
+	}
+	if err != nil {
+		res.IsFinal = true
+		if err != io.EOF {
+			res.Error = err.Error()
+		}
+		return res
+	}
+	switch req.Action {
+	case "verify":
+		vrfy := &VerifyRequest{}
+		if err := json.Unmarshal(req.Payload, vrfy); err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		err := Verify(ctx, bytes.NewReader(vrfy.Data), vrfy.PublicKey)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload, _ = json.Marshal(VerifyResponse{OK: true})
+	}
+	return res
+}
+
+// VerifyRequest is the payload for a verification request.
+type VerifyRequest struct {
+	Data      json.RawMessage `json:"data"`
+	PublicKey *dsig.PublicKey `json:"publickey"`
+}
+
+// VerifyResponse is the response to a verification request.
+type VerifyResponse struct {
+	OK bool `json:"ok"`
 }

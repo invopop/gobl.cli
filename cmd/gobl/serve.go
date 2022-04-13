@@ -147,28 +147,19 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 	return opts, nil
 }
 
-type verifyRequest struct {
-	Data      json.RawMessage `json:"data"`
-	PublicKey *dsig.PublicKey `json:"publickey"`
-}
-
-type verifyResponse struct {
-	OK bool `json:"ok"`
-}
-
 func (s *serveOpts) verify(c echo.Context) error {
 	ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
 	if ct != "application/json" {
 		return echo.NewHTTPError(http.StatusUnsupportedMediaType)
 	}
-	req := new(verifyRequest)
+	req := new(internal.VerifyRequest)
 	if err := c.Bind(req); err != nil {
 		return err
 	}
 	if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, &verifyResponse{OK: true})
+	return c.JSON(http.StatusOK, &internal.VerifyResponse{OK: true})
 }
 
 type keygenResponse struct {

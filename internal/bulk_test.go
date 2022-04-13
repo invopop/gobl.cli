@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -9,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"gitlab.com/flimzy/testy"
 )
 
@@ -35,10 +35,13 @@ func TestBulk(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		req, err := json.Marshal(BulkRequest{
-			Action:  "verify",
-			ReqID:   "asdf",
-			Payload: payload,
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "verify",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":      json.RawMessage(payload),
+				"publickey": verifyKey,
+			},
 		})
 		if err != nil {
 			t.Fatal(err)
@@ -49,6 +52,7 @@ func TestBulk(t *testing.T) {
 				{
 					ReqID:   "asdf",
 					SeqID:   0,
+					Payload: []byte(`{"ok":true}`),
 					IsFinal: false,
 				},
 				{
@@ -60,12 +64,12 @@ func TestBulk(t *testing.T) {
 	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
-		ch := Bulk(tt.in)
+		ch := Bulk(context.Background(), tt.in)
 		results := []*BulkResponse{}
 		for res := range ch {
 			results = append(results, res)
 		}
-		if d := cmp.Diff(results, tt.want, cmpopts.IgnoreFields(BulkResponse{}, "Payload")); d != "" {
+		if d := cmp.Diff(results, tt.want); d != "" {
 			t.Error(d)
 		}
 	})
