@@ -81,6 +81,21 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, err error) 
 			return res
 		}
 		res.Payload, _ = json.Marshal(VerifyResponse{OK: true})
+	case "build":
+		bld := &BuildRequest{}
+		if err := json.Unmarshal(req.Payload, bld); err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		env, err := Build(ctx, &BuildOptions{
+			Data:       bytes.NewReader(bld.Data),
+			PrivateKey: bld.PrivateKey,
+		})
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload, _ = json.Marshal(env)
 	}
 	return res
 }
@@ -94,4 +109,12 @@ type VerifyRequest struct {
 // VerifyResponse is the response to a verification request.
 type VerifyResponse struct {
 	OK bool `json:"ok"`
+}
+
+// BuildRequest is the payload for a build reqeuest.
+type BuildRequest struct {
+	Template   json.RawMessage  `json:"template"`
+	Data       json.RawMessage  `json:"data"`
+	PrivateKey *dsig.PrivateKey `json:"privatekey"`
+	DocType    string           `json:"type"`
 }

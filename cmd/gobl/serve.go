@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"mime"
 	"net/http"
@@ -87,13 +86,6 @@ func (s *serveOpts) version(c echo.Context) error {
 	})
 }
 
-type buildRequest struct {
-	Template   json.RawMessage  `json:"template"`
-	Data       json.RawMessage  `json:"data"`
-	PrivateKey *dsig.PrivateKey `json:"privatekey"`
-	DocType    string           `json:"type"`
-}
-
 func (s *serveOpts) build(c echo.Context) error {
 	opts, err := prepareBuildOpts(c)
 	if err != nil {
@@ -129,7 +121,7 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 	if ct != "application/json" {
 		return nil, echo.NewHTTPError(http.StatusUnsupportedMediaType)
 	}
-	req := new(buildRequest)
+	req := new(internal.BuildRequest)
 	if err := c.Bind(req); err != nil {
 		return nil, err
 	}

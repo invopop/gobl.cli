@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"gitlab.com/flimzy/testy"
 )
 
@@ -186,6 +187,127 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("one build, already signed", func(t *testing.T) interface{} {
+		payload, err := ioutil.ReadFile("testdata/success.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "build",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":       json.RawMessage(payload),
+				"privatekey": signingKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: bytes.NewReader(req),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					Error:   `code=409, message=document has already been signed`,
+					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
+	tests.Add("one build, success", func(t *testing.T) interface{} {
+		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "build",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":       json.RawMessage(payload),
+				"privatekey": signingKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: bytes.NewReader(req),
+			want: []*BulkResponse{
+				{
+					ReqID: "asdf",
+					SeqID: 1,
+					Payload: json.RawMessage(`{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {},
+	"doc": {}
+					}`),
+					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
+	tests.Add("non-fatal payload error, build", func(t *testing.T) interface{} {
+		req, err := json.Marshal(map[string]interface{}{
+			"action":  "build",
+			"req_id":  "asdf",
+			"payload": "not an object",
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: io.MultiReader(bytes.NewReader(req)),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					IsFinal: false,
+					Error:   `json: cannot unmarshal string into Go value of type internal.BuildRequest`,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
+	tests.Add("non-fatal data error, build", func(t *testing.T) interface{} {
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "build",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":      json.RawMessage(`"oink"`),
+				"publickey": verifyKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: io.MultiReader(bytes.NewReader(req)),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					IsFinal: false,
+					Error:   "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `oink` into map[string]interface {}",
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		ch := Bulk(context.Background(), tt.in)
@@ -193,7 +315,7 @@ func TestBulk(t *testing.T) {
 		for res := range ch {
 			results = append(results, res)
 		}
-		if d := cmp.Diff(results, tt.want); d != "" {
+		if d := cmp.Diff(tt.want, results, cmpopts.IgnoreFields(BulkResponse{}, "Payload")); d != "" {
 			t.Error(d)
 		}
 	})
