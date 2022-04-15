@@ -31,6 +31,15 @@ func TestBulk(t *testing.T) {
 			},
 		},
 	})
+	tests.Add("no input", tt{
+		in: strings.NewReader(""),
+		want: []*BulkResponse{
+			{
+				SeqID:   1,
+				IsFinal: true,
+			},
+		},
+	})
 	tests.Add("one verification", func(t *testing.T) interface{} {
 		payload, err := ioutil.ReadFile("testdata/success.json")
 		if err != nil {
