@@ -97,6 +97,14 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, err error) 
 			return res
 		}
 		res.Payload, _ = json.Marshal(env)
+	case "keygen":
+		key := dsig.NewES256Key()
+
+		res.Payload, _ = json.Marshal(KeygenResponse{
+			Private: key,
+			Public:  key.Public(),
+		})
+
 	default:
 		res.Error = fmt.Sprintf("Unrecognized action '%s'", req.Action)
 	}
@@ -120,4 +128,10 @@ type BuildRequest struct {
 	Data       json.RawMessage  `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
+}
+
+// KeygenResponse is the payload for a key generation response.
+type KeygenResponse struct {
+	Private *dsig.PrivateKey `json:"private"`
+	Public  *dsig.PublicKey  `json:"public"`
 }

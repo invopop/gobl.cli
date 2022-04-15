@@ -154,15 +154,10 @@ func (s *serveOpts) verify(c echo.Context) error {
 	return c.JSON(http.StatusOK, &internal.VerifyResponse{OK: true})
 }
 
-type keygenResponse struct {
-	Private *dsig.PrivateKey `json:"private"`
-	Public  *dsig.PublicKey  `json:"public"`
-}
-
 func (s *serveOpts) keygen(c echo.Context) error {
 	key := dsig.NewES256Key()
 
-	return c.JSON(http.StatusOK, keygenResponse{
+	return c.JSON(http.StatusOK, internal.KeygenResponse{
 		Private: key,
 		Public:  key.Public(),
 	})
