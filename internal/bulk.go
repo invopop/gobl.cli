@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"sync/atomic"
 
 	"github.com/invopop/gobl/dsig"
 )
@@ -25,7 +26,7 @@ type BulkResponse struct {
 	// ReqID is an exact copy of the value provided in the request, if any.
 	ReqID string `json:"req_id,omitempty"`
 	// SeqID is the sequence ID of the request this response correspond to,
-	// starting at 0.
+	// starting at 1.
 	SeqID int64 `json:"seq_id"`
 	// Payload is the response payload.
 	Payload json.RawMessage `json:"payload"`
@@ -46,11 +47,10 @@ func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 		for {
 			var req BulkRequest
 			err := dec.Decode(&req)
-			resCh <- processRequest(ctx, req, seq, err)
+			resCh <- processRequest(ctx, req, atomic.AddInt64(&seq, 1), err)
 			if err != nil {
 				return
 			}
-			seq++
 		}
 	}()
 	return resCh

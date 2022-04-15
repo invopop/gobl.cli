@@ -24,7 +24,7 @@ func TestBulk(t *testing.T) {
 		in: strings.NewReader("this ain't json"),
 		want: []*BulkResponse{
 			{
-				SeqID:   0,
+				SeqID:   1,
 				Error:   "invalid character 'h' in literal true (expecting 'r')",
 				IsFinal: true,
 			},
@@ -51,18 +51,55 @@ func TestBulk(t *testing.T) {
 			want: []*BulkResponse{
 				{
 					ReqID:   "asdf",
-					SeqID:   0,
+					SeqID:   1,
 					Payload: []byte(`{"ok":true}`),
 					IsFinal: false,
 				},
 				{
-					SeqID:   1,
+					SeqID:   2,
 					IsFinal: true,
 				},
 			},
 		}
 	})
-
+	tests.Add("two verifications", func(t *testing.T) interface{} {
+		payload, err := ioutil.ReadFile("testdata/success.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "verify",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":      json.RawMessage(payload),
+				"publickey": verifyKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: io.MultiReader(bytes.NewReader(req), bytes.NewReader(req)),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					Payload: []byte(`{"ok":true}`),
+					IsFinal: false,
+				},
+				{
+					ReqID:   "asdf",
+					SeqID:   2,
+					Payload: []byte(`{"ok":true}`),
+					IsFinal: false,
+				},
+				{
+					SeqID:   3,
+					IsFinal: true,
+				},
+			},
+		}
+	})
 	tests.Run(t, func(t *testing.T, tt tt) {
 		ch := Bulk(context.Background(), tt.in)
 		results := []*BulkResponse{}
