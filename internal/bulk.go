@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"sync/atomic"
 
@@ -96,6 +97,8 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, err error) 
 			return res
 		}
 		res.Payload, _ = json.Marshal(env)
+	default:
+		res.Error = fmt.Sprintf("Unrecognized action '%s'", req.Action)
 	}
 	return res
 }

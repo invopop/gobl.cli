@@ -308,6 +308,30 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("unknown action", func(t *testing.T) interface{} {
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "frobnicate",
+			"req_id": "asdf",
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: io.MultiReader(bytes.NewReader(req)),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					Error:   "Unrecognized action 'frobnicate'",
+					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		ch := Bulk(context.Background(), tt.in)
