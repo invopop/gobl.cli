@@ -100,6 +100,93 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("success the failure", func(t *testing.T) interface{} {
+		payload, err := ioutil.ReadFile("testdata/success.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "verify",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":      json.RawMessage(payload),
+				"publickey": verifyKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: io.MultiReader(bytes.NewReader(req), strings.NewReader("not json")),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					Payload: []byte(`{"ok":true}`),
+					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					Error:   "invalid character 'o' in literal null (expecting 'u')",
+					IsFinal: true,
+				},
+			},
+		}
+	})
+	tests.Add("non-fatal payload error", func(t *testing.T) interface{} {
+		req, err := json.Marshal(map[string]interface{}{
+			"action":  "verify",
+			"req_id":  "asdf",
+			"payload": "not an object",
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: io.MultiReader(bytes.NewReader(req)),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					IsFinal: false,
+					Error:   `json: cannot unmarshal string into Go value of type internal.VerifyRequest`,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
+	tests.Add("non-fatal data error", func(t *testing.T) interface{} {
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "verify",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":      json.RawMessage(`"oink"`),
+				"publickey": verifyKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: io.MultiReader(bytes.NewReader(req)),
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					IsFinal: false,
+					Error:   `code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope`,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
+
 	tests.Run(t, func(t *testing.T, tt tt) {
 		ch := Bulk(context.Background(), tt.in)
 		results := []*BulkResponse{}
