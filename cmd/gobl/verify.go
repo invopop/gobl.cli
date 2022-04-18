@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/spf13/cobra"
+
 	"github.com/invopop/gobl.cli/internal"
 	"github.com/invopop/gobl/dsig"
-	"github.com/spf13/cobra"
 )
 
 type verifyOpts struct {

@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"mime"
 	"net/http"
@@ -87,13 +86,6 @@ func (s *serveOpts) version(c echo.Context) error {
 	})
 }
 
-type buildRequest struct {
-	Template   json.RawMessage  `json:"template"`
-	Data       json.RawMessage  `json:"data"`
-	PrivateKey *dsig.PrivateKey `json:"privatekey"`
-	DocType    string           `json:"type"`
-}
-
 func (s *serveOpts) build(c echo.Context) error {
 	opts, err := prepareBuildOpts(c)
 	if err != nil {
@@ -129,7 +121,7 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 	if ct != "application/json" {
 		return nil, echo.NewHTTPError(http.StatusUnsupportedMediaType)
 	}
-	req := new(buildRequest)
+	req := new(internal.BuildRequest)
 	if err := c.Bind(req); err != nil {
 		return nil, err
 	}
@@ -147,39 +139,25 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 	return opts, nil
 }
 
-type verifyRequest struct {
-	Data      json.RawMessage `json:"data"`
-	PublicKey *dsig.PublicKey `json:"publickey"`
-}
-
-type verifyResponse struct {
-	OK bool `json:"ok"`
-}
-
 func (s *serveOpts) verify(c echo.Context) error {
 	ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
 	if ct != "application/json" {
 		return echo.NewHTTPError(http.StatusUnsupportedMediaType)
 	}
-	req := new(verifyRequest)
+	req := new(internal.VerifyRequest)
 	if err := c.Bind(req); err != nil {
 		return err
 	}
 	if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, &verifyResponse{OK: true})
-}
-
-type keygenResponse struct {
-	Private *dsig.PrivateKey `json:"private"`
-	Public  *dsig.PublicKey  `json:"public"`
+	return c.JSON(http.StatusOK, &internal.VerifyResponse{OK: true})
 }
 
 func (s *serveOpts) keygen(c echo.Context) error {
 	key := dsig.NewES256Key()
 
-	return c.JSON(http.StatusOK, keygenResponse{
+	return c.JSON(http.StatusOK, internal.KeygenResponse{
 		Private: key,
 		Public:  key.Public(),
 	})
