@@ -13,19 +13,19 @@ import (
 
 var jwkREs = []testy.Replacement{
 	{
-		Regexp:      regexp.MustCompile(`"kid":"[^"]*"`),
+		Regexp:      regexp.MustCompile(`"kid": ?"[^"]*"`),
 		Replacement: `"kid":"..."`,
 	},
 	{
-		Regexp:      regexp.MustCompile(`"x":"[^"]*"`),
+		Regexp:      regexp.MustCompile(`"x": ?"[^"]*"`),
 		Replacement: `"x":"..."`,
 	},
 	{
-		Regexp:      regexp.MustCompile(`"y":"[^"]*"`),
+		Regexp:      regexp.MustCompile(`"y": ?"[^"]*"`),
 		Replacement: `"y":"..."`,
 	},
 	{
-		Regexp:      regexp.MustCompile(`"d":"[^"]*"`),
+		Regexp:      regexp.MustCompile(`"d": ?"[^"]*"`),
 		Replacement: `"d":"..."`,
 	},
 }
@@ -40,6 +40,14 @@ func Test_keygen(t *testing.T) {
 
 	tests := testy.NewTable()
 	tests.Add("stdout", tt{
+		args: []string{"-"},
+	})
+	tests.Add("indent", tt{
+		opts: &keygenOpts{
+			rootOpts: &rootOpts{
+				indent: true,
+			},
+		},
 		args: []string{"-"},
 	})
 	tests.Add("target does not exist", tt{
@@ -94,6 +102,9 @@ func Test_keygen(t *testing.T) {
 		opts := tt.opts
 		if opts == nil {
 			opts = &keygenOpts{}
+		}
+		if opts.rootOpts == nil {
+			opts.rootOpts = &rootOpts{}
 		}
 		err := opts.runE(c, tt.args)
 		if !testy.ErrorMatchesRE(tt.err, err) {

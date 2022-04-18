@@ -58,7 +58,7 @@ func root() *cobra.Command {
 	root.AddCommand(build(opts).cmd())
 	root.AddCommand(version())
 	root.AddCommand(serve().cmd())
-	root.AddCommand(keygen().cmd())
+	root.AddCommand(keygen(opts).cmd())
 	return root
 }
 
