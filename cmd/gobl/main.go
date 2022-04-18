@@ -46,14 +46,16 @@ func run() error {
 }
 
 func root() *cobra.Command {
+	opts := &rootOpts{}
 	root := &cobra.Command{
 		Use:           "gobl",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
+	opts.setFlags(root)
 	root.AddCommand(verify().cmd())
 	root.AddCommand(envelop().cmd()) // see build
-	root.AddCommand(build().cmd())
+	root.AddCommand(build(opts).cmd())
 	root.AddCommand(version())
 	root.AddCommand(serve().cmd())
 	root.AddCommand(keygen().cmd())
