@@ -288,8 +288,10 @@ func Test_build(t *testing.T) {
 		{
 			name: "overwrite output file",
 			opts: &buildOpts{
-				overwriteOutputFile: true,
-				privateKeyFile:      "testdata/id_es256",
+				rootOpts: &rootOpts{
+					overwriteOutputFile: true,
+				},
+				privateKeyFile: "testdata/id_es256",
 			},
 			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "overwrite.json")},
 			target: filepath.Join(tmpdir, "overwrite.json"),
@@ -297,7 +299,9 @@ func Test_build(t *testing.T) {
 		{
 			name: "overwrite input file",
 			opts: &buildOpts{
-				inPlace:        true,
+				rootOpts: &rootOpts{
+					inPlace: true,
+				},
 				privateKeyFile: "testdata/id_es256",
 			},
 			args:   []string{filepath.Join(tmpdir, "input.json")},
@@ -306,7 +310,9 @@ func Test_build(t *testing.T) {
 		{
 			name: "overwrite stdin",
 			opts: &buildOpts{
-				inPlace: true,
+				rootOpts: &rootOpts{
+					inPlace: true,
+				},
 			},
 			err: "cannot overwrite STDIN",
 		},
@@ -357,9 +363,10 @@ func Test_build(t *testing.T) {
 			if opts == nil {
 				opts = &buildOpts{}
 			}
-			opts.rootOpts = &rootOpts{
-				indent: true,
+			if opts.rootOpts == nil {
+				opts.rootOpts = &rootOpts{}
 			}
+			opts.rootOpts.indent = true
 			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
@@ -380,7 +387,7 @@ func Test_build(t *testing.T) {
 					t.Fatal(err)
 				}
 				if d := testy.DiffText(testy.Snapshot(t, "outfile"), result, tt.replace...); d != nil {
-					t.Error(d)
+					t.Errorf("outfile:\n%s", d)
 				}
 			}
 		})
