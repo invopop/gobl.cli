@@ -374,8 +374,8 @@ func Test_build(t *testing.T) {
 			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
-			} else {
-				assert.Nil(t, err)
+			} else if err != nil {
+				t.Errorf("Unexpected error: %s", err)
 			}
 			tt.replace = append(tt.replace, testy.Replacement{
 				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),

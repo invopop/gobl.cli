@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"io/ioutil"
 	"os"
@@ -60,3 +61,23 @@ func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
 	}
 	return ioutil.NopCloser(cmd.InOrStdin()), nil
 }
+
+func (o *rootOpts) openOutput(cmd *cobra.Command, args []string) (io.WriteCloser, error) {
+	if outFile := o.outputFilename(args); outFile != "" {
+		flags := os.O_CREATE | os.O_WRONLY
+		if !o.overwriteOutputFile && !o.inPlace {
+			flags |= os.O_EXCL
+		}
+		return os.OpenFile(outFile, flags, os.ModePerm)
+	}
+	if o.inPlace {
+		return nil, errors.New("cannot overwrite STDIN")
+	}
+	return writeCloser{cmd.OutOrStdout()}, nil
+}
+
+type writeCloser struct {
+	io.Writer
+}
+
+func (writeCloser) Close() error { return nil }
