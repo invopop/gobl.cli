@@ -8,7 +8,11 @@ type rootOpts struct {
 	inPlace             bool
 }
 
-func root() *cobra.Command {
+func root() *rootOpts {
+	return &rootOpts{}
+}
+
+func (o *rootOpts) cmd() *cobra.Command {
 	opts := &rootOpts{}
 	cmd := &cobra.Command{
 		Use:           "gobl",

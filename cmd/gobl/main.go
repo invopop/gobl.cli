@@ -42,7 +42,7 @@ func run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
-	return root().ExecuteContext(ctx)
+	return root().cmd().ExecuteContext(ctx)
 }
 
 func inputFilename(args []string) string {
