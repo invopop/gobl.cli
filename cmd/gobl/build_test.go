@@ -72,9 +72,14 @@ func Test_build_args(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			opts := build(&rootOpts{})
+			root := root()
+			rootCmd := &cobra.Command{}
+			root.setFlags(rootCmd)
+
+			opts := build(root)
 
 			cmd := opts.cmd()
+			rootCmd.AddCommand(cmd)
 			err := cmd.ParseFlags(tt.args)
 			if tt.err == "" {
 				assert.Nil(t, err)
