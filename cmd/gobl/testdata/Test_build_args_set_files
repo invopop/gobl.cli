@@ -1,9 +1,9 @@
 (*main.buildOpts)({
   rootOpts: (*main.rootOpts)({
-    indent: (bool) false
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
   }),
-  overwriteOutputFile: (bool) false,
-  inPlace: (bool) false,
   envelop: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) (len=1) {

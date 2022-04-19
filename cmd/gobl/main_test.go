@@ -29,7 +29,7 @@ func Test_root(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			cmd := root()
+			cmd := root().cmd()
 			cmd.SetArgs(tt.args)
 			var err error
 			stdout, stderr := testy.RedirIO(tt.stdin, func() {
@@ -66,5 +66,4 @@ func Test_version(t *testing.T) {
 	if serr, _ := ioutil.ReadAll(stderr); string(serr) != wantErr {
 		t.Errorf("Unexpected STDERR: %s", serr)
 	}
-
 }

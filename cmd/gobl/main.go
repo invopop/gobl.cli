@@ -42,24 +42,7 @@ func run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
-	return root().ExecuteContext(ctx)
-}
-
-func root() *cobra.Command {
-	opts := &rootOpts{}
-	root := &cobra.Command{
-		Use:           "gobl",
-		SilenceUsage:  true,
-		SilenceErrors: true,
-	}
-	opts.setFlags(root)
-	root.AddCommand(verify().cmd())
-	root.AddCommand(envelop().cmd()) // see build
-	root.AddCommand(build(opts).cmd())
-	root.AddCommand(version())
-	root.AddCommand(serve().cmd())
-	root.AddCommand(keygen(opts).cmd())
-	return root
+	return root().cmd().ExecuteContext(ctx)
 }
 
 func inputFilename(args []string) string {
