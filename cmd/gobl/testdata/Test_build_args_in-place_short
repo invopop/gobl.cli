@@ -1,8 +1,10 @@
 (*main.buildOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false
+  }),
   overwriteOutputFile: (bool) false,
   inPlace: (bool) true,
   envelop: (bool) false,
-  indent: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,

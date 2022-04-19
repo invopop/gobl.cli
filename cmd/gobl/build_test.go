@@ -72,7 +72,7 @@ func Test_build_args(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			opts := build()
+			opts := build(&rootOpts{})
 
 			cmd := opts.cmd()
 			err := cmd.ParseFlags(tt.args)
@@ -357,7 +357,9 @@ func Test_build(t *testing.T) {
 			if opts == nil {
 				opts = &buildOpts{}
 			}
-			opts.indent = true // always indent
+			opts.rootOpts = &rootOpts{
+				indent: true,
+			}
 			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)

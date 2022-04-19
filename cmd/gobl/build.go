@@ -15,10 +15,10 @@ import (
 )
 
 type buildOpts struct {
+	*rootOpts
 	overwriteOutputFile bool
 	inPlace             bool
 	envelop             bool // when true, assumes source is a document
-	indent              bool // when true, indent output, mainly for testing
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
@@ -31,10 +31,11 @@ type buildOpts struct {
 	short string
 }
 
-func build() *buildOpts {
+func build(root *rootOpts) *buildOpts {
 	return &buildOpts{
-		use:   "build [infile] [outfile]",
-		short: "Combine and complete envelope data",
+		rootOpts: root,
+		use:      "build [infile] [outfile]",
+		short:    "Combine and complete envelope data",
 	}
 }
 
@@ -53,21 +54,18 @@ func (b *buildOpts) cmd() *cobra.Command {
 		Use:   b.use,
 		Short: b.short,
 	}
-	b.setFlags(cmd)
-	return cmd
-}
 
-func (b *buildOpts) setFlags(cmd *cobra.Command) {
 	f := cmd.Flags()
 	f.BoolVarP(&b.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
 	f.BoolVarP(&b.inPlace, "in-place", "w", false, "overwrite the input file in place  (only outputs JSON)")
-	f.BoolVarP(&b.indent, "indent", "i", false, "format JSON output with indentation")
 	f.StringToStringVar(&b.set, "set", nil, "set value from the command line")
 	f.StringToStringVar(&b.setFiles, "set-file", nil, "set value from the specified YAML or JSON file")
 	f.StringToStringVar(&b.setStrings, "set-string", nil, "set STRING value from the command line")
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
+
+	return cmd
 }
 
 func (b *buildOpts) outputFilename(args []string) string {

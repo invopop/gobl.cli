@@ -14,10 +14,11 @@ import (
 )
 
 type keygenOpts struct {
+	*rootOpts
 	overwrite bool
 }
 
-func keygen() *keygenOpts {
+func keygen(root *rootOpts) *keygenOpts {
 	return &keygenOpts{}
 }
 
@@ -80,11 +81,17 @@ func pubfileFromPriv(priv string) string {
 
 func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 	key := dsig.NewES256Key()
-	priv, err := json.Marshal(key)
+	marshal := json.Marshal
+	if k.indent {
+		marshal = func(i interface{}) ([]byte, error) {
+			return json.MarshalIndent(i, "", "\t")
+		}
+	}
+	priv, err := marshal(key)
 	if err != nil {
 		return err
 	}
-	pub, err := json.Marshal(key.Public())
+	pub, err := marshal(key.Public())
 	if err != nil {
 		return err
 	}
