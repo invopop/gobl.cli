@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"io"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -20,6 +21,12 @@ func Test_bulk(t *testing.T) {
 	}
 
 	tests := testy.NewTable()
+	tests.Add("no input", tt{
+		in: strings.NewReader(""),
+	})
+	tests.Add("non json", tt{
+		in: strings.NewReader("not json"),
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()

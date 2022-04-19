@@ -30,7 +30,7 @@ type BulkResponse struct {
 	// starting at 1.
 	SeqID int64 `json:"seq_id"`
 	// Payload is the response payload.
-	Payload json.RawMessage `json:"payload"`
+	Payload json.RawMessage `json:"payload,omitempty"`
 	// Error represents an error processing a request item.
 	Error string `json:"error"`
 	// IsFinal will be true once the end of the request input stream has been
