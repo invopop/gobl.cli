@@ -64,16 +64,6 @@ func (b *buildOpts) cmd() *cobra.Command {
 	return cmd
 }
 
-func (b *buildOpts) outputFilename(args []string) string {
-	if b.inPlace {
-		return inputFilename(args)
-	}
-	if len(args) >= 2 && args[1] != "-" {
-		return args[1]
-	}
-	return ""
-}
-
 func cmdContext(cmd *cobra.Command) context.Context {
 	if ctx := cmd.Context(); ctx != nil {
 		return ctx
