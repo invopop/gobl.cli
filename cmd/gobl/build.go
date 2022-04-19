@@ -88,6 +88,8 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	defer input.Close() // nolint:errcheck
+
 	out := cmd.OutOrStdout()
 	if outFile := b.outputFilename(args); outFile != "" {
 		flags := os.O_CREATE | os.O_WRONLY
@@ -103,7 +105,6 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	} else if b.inPlace {
 		return errors.New("cannot overwrite STDIN")
 	}
-	defer input.Close() // nolint:errcheck
 
 	pkFilename, err := expandHome(b.privateKeyFile)
 	if err != nil {

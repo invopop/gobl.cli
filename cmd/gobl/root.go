@@ -1,6 +1,12 @@
 package main
 
-import "github.com/spf13/cobra"
+import (
+	"io"
+	"io/ioutil"
+	"os"
+
+	"github.com/spf13/cobra"
+)
 
 type rootOpts struct {
 	indent              bool // when true, indent output, mainly for testing
@@ -46,4 +52,11 @@ func (o *rootOpts) outputFilename(args []string) string {
 		return args[1]
 	}
 	return ""
+}
+
+func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
+	if inFile := inputFilename(args); inFile != "" {
+		return os.Open(inFile)
+	}
+	return ioutil.NopCloser(cmd.InOrStdin()), nil
 }
