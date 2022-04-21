@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -375,8 +374,8 @@ func Test_build(t *testing.T) {
 			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
-			} else {
-				assert.Nil(t, err)
+			} else if err != nil {
+				t.Errorf("Unexpected error: %s", err)
 			}
 			tt.replace = append(tt.replace, testy.Replacement{
 				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
@@ -387,11 +386,7 @@ func Test_build(t *testing.T) {
 				t.Error(d)
 			}
 			if tt.target != "" {
-				result, err := ioutil.ReadFile(tt.target)
-				if err != nil {
-					t.Fatal(err)
-				}
-				if d := testy.DiffText(testy.Snapshot(t, "outfile"), result, tt.replace...); d != nil {
+				if d := testy.DiffText(testy.Snapshot(t, "outfile"), &testy.File{Path: tt.target}, tt.replace...); d != nil {
 					t.Errorf("outfile:\n%s", d)
 				}
 			}

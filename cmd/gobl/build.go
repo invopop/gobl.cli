@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"io"
 	"os"
 
@@ -88,22 +87,13 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	out := cmd.OutOrStdout()
-	if outFile := b.outputFilename(args); outFile != "" {
-		flags := os.O_CREATE | os.O_WRONLY
-		if !b.overwriteOutputFile && !b.inPlace {
-			flags |= os.O_EXCL
-		}
-		f, err := os.OpenFile(outFile, flags, os.ModePerm)
-		if err != nil {
-			return err
-		}
-		defer f.Close() // nolint:errcheck
-		out = f
-	} else if b.inPlace {
-		return errors.New("cannot overwrite STDIN")
-	}
 	defer input.Close() // nolint:errcheck
+
+	out, err := b.openOutput(cmd, args)
+	if err != nil {
+		return err
+	}
+	defer out.Close() // nolint:errcheck
 
 	pkFilename, err := expandHome(b.privateKeyFile)
 	if err != nil {

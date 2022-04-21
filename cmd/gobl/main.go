@@ -6,8 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"os"
 	"os/signal"
 	"syscall"
@@ -50,13 +48,6 @@ func inputFilename(args []string) string {
 		return args[0]
 	}
 	return ""
-}
-
-func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
-	if inFile := inputFilename(args); inFile != "" {
-		return os.Open(inFile)
-	}
-	return ioutil.NopCloser(cmd.InOrStdin()), nil
 }
 
 func version() *cobra.Command {
