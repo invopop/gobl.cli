@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"mime"
 	"net/http"
@@ -56,6 +57,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e.POST("/envelop", s.envelop)
 	e.POST("/verify", s.verify)
 	e.POST("/key", s.keygen)
+	e.POST("/bulk", s.bulk)
 
 	var startErr error
 	go func() {
@@ -161,4 +163,18 @@ func (s *serveOpts) keygen(c echo.Context) error {
 		Private: key,
 		Public:  key.Public(),
 	})
+}
+
+func (s *serveOpts) bulk(c echo.Context) error {
+	ctx := c.Request().Context()
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	c.Response().WriteHeader(http.StatusOK)
+
+	enc := json.NewEncoder(c.Response())
+	for result := range internal.Bulk(ctx, c.Request().Body) {
+		if err := enc.Encode(result); err != nil {
+			return err
+		}
+	}
+	return nil
 }
