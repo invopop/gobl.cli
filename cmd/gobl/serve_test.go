@@ -273,3 +273,23 @@ func Test_serve_keygen(t *testing.T) {
 		t.Error(d)
 	}
 }
+
+func Test_serve_bulk(t *testing.T) {
+	req, err := http.NewRequest(http.MethodPost, "/bulk", strings.NewReader(`{"action":"oink"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	e := echo.New()
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	err = serve().bulk(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if d := testy.DiffHTTPResponse(testy.Snapshot(t), rec.Result(), jwkREs...); d != nil {
+		t.Error(d)
+	}
+}
