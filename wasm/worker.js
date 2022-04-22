@@ -8,8 +8,6 @@ if (!WebAssembly.instantiateStreaming) {
     };
 }
 
-
-
 // initialize the Go WASM glue
 const go = new self.Go();
 WebAssembly
