@@ -280,7 +280,7 @@ func TestBulk(t *testing.T) {
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   `json: cannot unmarshal string into Go value of type internal.BuildRequest`,
+					Error:   `invalid payload: json: cannot unmarshal string into Go value of type internal.BuildRequest`,
 				},
 				{
 					SeqID:   2,
