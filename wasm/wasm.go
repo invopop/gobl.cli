@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"syscall/js"
 
 	"github.com/invopop/gobl.cli/internal"
@@ -16,7 +17,9 @@ func main() {
 	js.Global().Call("addEventListener", "message", js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		jsonEvent := js.Global().Get("JSON").Call("stringify", args[0].Get("data")).String()
 		fmt.Println("got a message", jsonEvent)
-		_, _ = fmt.Fprintln(w, jsonEvent)
+		if _, err := fmt.Fprintln(w, jsonEvent); err != nil {
+			fmt.Fprintln(os.Stderr, "failed to send event: %s", err)
+		}
 		return nil
 	}))
 

@@ -1,3 +1,4 @@
 import { keygen } from "./gobl.js";
 
-keygen();
+const result = await keygen();
+console.log(`RESULT: ${result}`);

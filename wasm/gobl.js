@@ -1,5 +1,7 @@
 var ready = false;
 var queue = [];
+var inFlight = {};
+var req_id = 0;
 
 const worker = new window.Worker("worker.js");
 
@@ -10,22 +12,51 @@ worker.onmessage = (event) => {
         for (var i = 0; i < queue.length; i++) {
             worker.postMessage(queue[i]);
         }
-        return;
+        return true;
     }
-    console.log(event);
+    console.log("EVENT");
+    console.log(event.data);
+    const waiting = inFlight[event.data.req_id];
+    delete inFlight[event.data.req_id];
+    if (!waiting) {
+        console.log("got a response for an unregistered request: " + event.data.req_id);
+        return true;
+    }
+    if (event.data.error) {
+        console.log("rejecting");
+        waiting.reject(event.data.error);
+        return true;
+    }
+    console.log("resolving");
+    waiting.resolve(event.data.payload);
 };
 
 console.log("loaded");
 
-function sendMessage(msg) {
+function sendMessage(data) {
+    if (!data.req_id) {
+        data.req_id = `req${++req_id}`;
+    }
+    console.log("DATA");
+    console.log(data);
+    const promise = new Promise((resolve, reject) => {
+        inFlight[data.req_id] = {
+            "resolve": resolve,
+            "reject": reject,
+        };
+        // resolve("foo");
+    })
     if (!ready) {
         console.log("not ready, queueing")
-        queue.push(msg);
-        return;
+        queue.push(data);
+        return promise;
     }
-    worker.postMessage(msg);
+    worker.postMessage(data);
+    return promise;
 }
 
-export function keygen() {
-    sendMessage({ "action": "keygen" })
-}
+const keygen = async function keygen() {
+    return sendMessage({ "action": "keygen" })
+};
+
+export { keygen };
