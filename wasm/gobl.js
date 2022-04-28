@@ -55,8 +55,22 @@ function sendMessage(data) {
     return promise;
 }
 
-const keygen = async function keygen() {
+const keygen = async function () {
     return sendMessage({ "action": "keygen" })
 };
 
-export { keygen };
+const build = async function (opts) {
+    return sendMessage({
+        "action": "build",
+        "payload": opts,
+    });
+};
+
+const verify = async function (opts) {
+    return sendMessage({
+        "action": "verify",
+        "payload": opts,
+    });
+}
+
+export { keygen, build, verify };
