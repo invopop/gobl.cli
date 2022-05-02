@@ -64,4 +64,11 @@ const verify = async function (opts) {
     });
 }
 
-export { keygen, build, verify };
+const envelop = async function (opts) {
+    return sendMessage({
+        "action": "envelop",
+        "payload": opts,
+    })
+}
+
+export { keygen, build, verify, envelop };
