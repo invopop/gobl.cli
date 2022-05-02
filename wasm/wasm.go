@@ -13,12 +13,9 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello, world!")
-
 	r, w := io.Pipe()
 	js.Global().Call("addEventListener", "message", js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		jsonEvent := js.Global().Get("JSON").Call("stringify", args[0].Get("data")).String()
-		fmt.Println("got a message", jsonEvent)
 		if _, err := fmt.Fprintln(w, jsonEvent); err != nil {
 			fmt.Fprintln(os.Stderr, "failed to send event: %s", err)
 		}
@@ -27,7 +24,6 @@ func main() {
 
 	js.Global().Call("postMessage", map[string]interface{}{"ready": true})
 
-	fmt.Println("waiting")
 	for result := range internal.Bulk(context.TODO(), r) {
 		response := js.Global().Get("Object").New()
 		if result.ReqID != "" {
