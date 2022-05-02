@@ -88,10 +88,15 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, err error) 
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		env, err := Build(ctx, &BuildOptions{
+		opts := &BuildOptions{
+			DocType:    bld.DocType,
 			Data:       bytes.NewReader(bld.Data),
 			PrivateKey: bld.PrivateKey,
-		})
+		}
+		if len(bld.Template) > 0 {
+			opts.Template = bytes.NewReader(bld.Template)
+		}
+		env, err := Build(ctx, opts)
 		if err != nil {
 			res.Error = err.Error()
 			return res
