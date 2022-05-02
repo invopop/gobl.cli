@@ -264,6 +264,58 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("build, invalid doc type", func(t *testing.T) interface{} {
+		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, _ := json.Marshal(map[string]interface{}{
+			"action": "build",
+			"payload": map[string]interface{}{
+				"data": json.RawMessage(payload),
+				"type": "chicken",
+			},
+		})
+		return tt{
+			in: bytes.NewReader(req),
+			want: []*BulkResponse{
+				{
+					SeqID: 1,
+					Error: `code=400, message=unrecognized doc type: "chicken"`,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
+	tests.Add("build, invalid template", func(t *testing.T) interface{} {
+		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, _ := json.Marshal(map[string]interface{}{
+			"action": "build",
+			"payload": map[string]interface{}{
+				"data":     json.RawMessage(payload),
+				"template": "chicken",
+			},
+		})
+		return tt{
+			in: bytes.NewReader(req),
+			want: []*BulkResponse{
+				{
+					SeqID: 1,
+					Error: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `chicken` into map[string]interface {}",
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
 	tests.Add("non-fatal payload error, build", func(t *testing.T) interface{} {
 		req, err := json.Marshal(map[string]interface{}{
 			"action":  "build",
