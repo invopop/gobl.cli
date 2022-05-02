@@ -316,6 +316,42 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("envelop success", func(t *testing.T) interface{} {
+		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "envelop",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data":       json.RawMessage(payload),
+				"privatekey": signingKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			in: bytes.NewReader(req),
+			want: []*BulkResponse{
+				{
+					ReqID: "asdf",
+					SeqID: 1,
+					Payload: json.RawMessage(`{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {},
+	"doc": {}
+					}`),
+					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
 	tests.Add("non-fatal payload error, build", func(t *testing.T) interface{} {
 		req, err := json.Marshal(map[string]interface{}{
 			"action":  "build",
