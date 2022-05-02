@@ -85,7 +85,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, err error) 
 	case "build":
 		bld := &BuildRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
-			res.Error = err.Error()
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
 		env, err := Build(ctx, &BuildOptions{
