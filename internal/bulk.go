@@ -48,26 +48,28 @@ func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 		for {
 			var req BulkRequest
 			err := dec.Decode(&req)
-			resCh <- processRequest(ctx, req, atomic.AddInt64(&seq, 1), err)
 			if err != nil {
+				res := &BulkResponse{
+					ReqID:   req.ReqID,
+					SeqID:   atomic.AddInt64(&seq, 1),
+					IsFinal: true,
+				}
+				if err != io.EOF {
+					res.Error = err.Error()
+				}
+				resCh <- res
 				return
 			}
+			resCh <- processRequest(ctx, req, atomic.AddInt64(&seq, 1))
 		}
 	}()
 	return resCh
 }
 
-func processRequest(ctx context.Context, req BulkRequest, seq int64, err error) *BulkResponse {
+func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkResponse {
 	res := &BulkResponse{
 		ReqID: req.ReqID,
 		SeqID: seq,
-	}
-	if err != nil {
-		res.IsFinal = true
-		if err != io.EOF {
-			res.Error = err.Error()
-		}
-		return res
 	}
 	switch req.Action {
 	case "verify":
