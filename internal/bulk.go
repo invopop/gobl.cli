@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/invopop/gobl/dsig"
 )
@@ -41,17 +43,20 @@ type BulkResponse struct {
 // Bulk processes a stream of bulk requests.
 func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 	dec := json.NewDecoder(in)
-	var seq int64
 	resCh := make(chan *BulkResponse, 1)
+	wg := &sync.WaitGroup{}
 	go func() {
+		var seq int64
 		defer close(resCh)
 		for {
+			seq := atomic.AddInt64(&seq, 1)
 			var req BulkRequest
 			err := dec.Decode(&req)
 			if err != nil {
+				wg.Wait()
 				res := &BulkResponse{
 					ReqID:   req.ReqID,
-					SeqID:   atomic.AddInt64(&seq, 1),
+					SeqID:   seq,
 					IsFinal: true,
 				}
 				if err != io.EOF {
@@ -60,7 +65,11 @@ func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 				resCh <- res
 				return
 			}
-			resCh <- processRequest(ctx, req, atomic.AddInt64(&seq, 1))
+			wg.Add(1)
+			go func() {
+				resCh <- processRequest(ctx, req, seq)
+				wg.Done()
+			}()
 		}
 	}()
 	return resCh
@@ -130,6 +139,25 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 		res.Payload, _ = json.Marshal(KeygenResponse{
 			Private: key,
 			Public:  key.Public(),
+		})
+	case "ping":
+		res.Payload, _ = json.Marshal(map[string]interface{}{
+			"pong": true,
+		})
+	case "sleep":
+		var delay string
+		if err := json.Unmarshal(req.Payload, &delay); err != nil {
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			return res
+		}
+		dur, err := time.ParseDuration(delay)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		time.Sleep(dur)
+		res.Payload, _ = json.Marshal(map[string]interface{}{
+			"sleep": "done",
 		})
 
 	default:

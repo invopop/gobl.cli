@@ -438,7 +438,7 @@ func TestBulk(t *testing.T) {
 			t.Fatal(err)
 		}
 		return tt{
-			in: io.MultiReader(bytes.NewReader(req)),
+			in: bytes.NewReader(req),
 			want: []*BulkResponse{
 				{
 					ReqID:   "asdf",
@@ -451,6 +451,28 @@ func TestBulk(t *testing.T) {
 				},
 			},
 		}
+	})
+	tests.Add("ping", tt{
+		in: strings.NewReader(`{"action":"ping"}`),
+		want: []*BulkResponse{
+			{SeqID: 1},
+			{SeqID: 2, IsFinal: true},
+		},
+	})
+	tests.Add("sleep", tt{
+		in: strings.NewReader(`{"action":"sleep","payload":"10ms"}`),
+		want: []*BulkResponse{
+			{SeqID: 1},
+			{SeqID: 2, IsFinal: true},
+		},
+	})
+	tests.Add("out of order", tt{
+		in: strings.NewReader(`{"action":"sleep","payload":"100ms","req_id":"sleep"} {"action":"ping","req_id":"ping"}`),
+		want: []*BulkResponse{
+			{SeqID: 2, ReqID: "ping"},
+			{SeqID: 1, ReqID: "sleep"},
+			{SeqID: 3, IsFinal: true},
+		},
 	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
