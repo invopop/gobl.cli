@@ -50,7 +50,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":      json.RawMessage(payload),
-				"publickey": verifyKey,
+				"publickey": publicKey,
 			},
 		})
 		if err != nil {
@@ -82,7 +82,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":      json.RawMessage(payload),
-				"publickey": verifyKey,
+				"publickey": publicKey,
 			},
 		})
 		if err != nil {
@@ -120,7 +120,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":      json.RawMessage(payload),
-				"publickey": verifyKey,
+				"publickey": publicKey,
 			},
 		})
 		if err != nil {
@@ -174,7 +174,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":      json.RawMessage(`"oink"`),
-				"publickey": verifyKey,
+				"publickey": publicKey,
 			},
 		})
 		if err != nil {
@@ -206,7 +206,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":       json.RawMessage(payload),
-				"privatekey": signingKey,
+				"privatekey": privateKey,
 			},
 		})
 		if err != nil {
@@ -238,7 +238,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":       json.RawMessage(payload),
-				"privatekey": signingKey,
+				"privatekey": privateKey,
 			},
 		})
 		if err != nil {
@@ -326,7 +326,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":       json.RawMessage(payload),
-				"privatekey": signingKey,
+				"privatekey": privateKey,
 			},
 		})
 		if err != nil {
@@ -383,7 +383,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":      json.RawMessage(`"oink"`),
-				"publickey": verifyKey,
+				"publickey": publicKey,
 			},
 		})
 		if err != nil {

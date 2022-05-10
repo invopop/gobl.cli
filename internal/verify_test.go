@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -12,14 +13,28 @@ import (
 	"gitlab.com/flimzy/testy"
 )
 
-var verifyKey = new(dsig.PublicKey)
-
-const verifyKeyText = `{"use":"sig","kty":"EC","kid":"11da5c50-fc2f-442e-a97f-44f7aea73548","crv":"P-256","alg":"ES256","x":"TWfhO3rcAtagXo84QvtApjsSEinAw9yHueiNYArZbBU","y":"RCjVid5EkxVBV-e-r2bqaH1uhsmr6rKmysHuI8dS84g"}`
-
-func init() {
-	if err := json.Unmarshal([]byte(verifyKeyText), verifyKey); err != nil {
-		panic(err)
+func signedDoc(t *testing.T) []byte {
+	t.Helper()
+	in, err := os.Open("testdata/invoice-es-es.env.yaml")
+	if err != nil {
+		t.Fatal(err)
 	}
+	defer in.Close() //nolint:errcheck
+	env, err := Build(context.Background(), &BuildOptions{
+		Data: in,
+		SetFile: map[string]string{
+			"doc": "testdata/invoice-es-es.yaml",
+		},
+		PrivateKey: privateKey,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, err := json.Marshal(env)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return out
 }
 
 func TestVerify(t *testing.T) {
@@ -31,15 +46,9 @@ func TestVerify(t *testing.T) {
 
 	tests := testy.NewTable()
 	tests.Add("validation pass", func(t *testing.T) interface{} {
-		f, err := os.Open("testdata/success.json")
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() { _ = f.Close() })
-
 		return tt{
-			in:  f,
-			key: verifyKey,
+			in:  bytes.NewReader(signedDoc(t)),
+			key: publicKey,
 		}
 	})
 	tests.Add("missing sig", func(t *testing.T) interface{} {
@@ -51,7 +60,7 @@ func TestVerify(t *testing.T) {
 
 		return tt{
 			in:  f,
-			key: verifyKey,
+			key: publicKey,
 			err: "code=422, message=sigs: cannot be blank.",
 		}
 	})
@@ -94,7 +103,7 @@ func TestVerify(t *testing.T) {
 
 		return tt{
 			in:  f,
-			key: verifyKey,
+			key: publicKey,
 			err: "code=422, message=document is a draft",
 		}
 	})

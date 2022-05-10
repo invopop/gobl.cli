@@ -87,41 +87,6 @@ func Test_serve_build(t *testing.T) {
 			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `not an ...` into map[string]interface {}",
 		},
 		{
-			name: "type",
-			req: func() *http.Request {
-				data, err := ioutil.ReadFile("testdata/notype.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				body, _ := json.Marshal(map[string]interface{}{
-					"type": "bill.Invoice",
-					"data": json.RawMessage(data),
-				})
-
-				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
-				req.Header.Set("Content-Type", "application/json")
-				return req
-			}(),
-			err: "code=422, message=signing key required",
-		},
-		{
-			name: "success",
-			req: func() *http.Request {
-				data, err := ioutil.ReadFile("testdata/success.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				body, _ := json.Marshal(map[string]interface{}{
-					"data":       json.RawMessage(data),
-					"privatekey": json.RawMessage(signingKeyText),
-				})
-
-				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
-				req.Header.Set("Content-Type", "application/json")
-				return req
-			}(),
-		},
-		{
 			name:    "envelop success",
 			envelop: true,
 			req: func() *http.Request {

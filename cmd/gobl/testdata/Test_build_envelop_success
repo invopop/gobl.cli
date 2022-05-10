@@ -4,13 +4,12 @@
 		"uuid": "00000000-0000-0000-0000-000000000000",
 		"dig": {
 			"alg": "sha256",
-			"val": "00a1c7bb485818ec361c2ae243c78bdc9ce90ec638eced71c97df04325d84e09"
+			"val": "2a61cf397a17a11a9db60d2df9c1918748d36a735e7e89238177c17e861d1736"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"uuid": "00000000-0000-0000-0000-000000000000",
-		"region": "ES",
 		"code": "INV2021-001",
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
@@ -85,11 +84,11 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "STD"
+						"rate": "standard"
 					},
 					{
 						"cat": "IRPF",
-						"code": "STD"
+						"rate": "pro"
 					}
 				],
 				"total": "4000.00"
@@ -105,7 +104,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "STD"
+						"rate": "standard"
 					}
 				],
 				"total": "1000.00"
@@ -121,7 +120,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "RED"
+						"rate": "zero"
 					}
 				],
 				"total": "172.50"
@@ -144,51 +143,6 @@
 				"amount": "0"
 			}
 		],
-		"totals": {
-			"sum": "5187.50",
-			"total": "5187.50",
-			"taxes": {
-				"categories": [
-					{
-						"code": "VAT",
-						"rates": [
-							{
-								"code": "STD",
-								"base": "5000.00",
-								"percent": "21.0%",
-								"amount": "1050.00"
-							},
-							{
-								"code": "RED",
-								"base": "172.50",
-								"percent": "10.0%",
-								"amount": "17.25"
-							}
-						],
-						"base": "5172.50",
-						"amount": "1067.25"
-					},
-					{
-						"code": "IRPF",
-						"retained": true,
-						"rates": [
-							{
-								"code": "STD",
-								"base": "4000.00",
-								"percent": "15.0%",
-								"amount": "600.00"
-							}
-						],
-						"base": "4000.00",
-						"amount": "600.00"
-					}
-				],
-				"sum": "467.25"
-			},
-			"total_with_tax": "5654.75",
-			"outlays": "0.00",
-			"payable": "5654.75"
-		},
 		"payment": {
 			"terms": {
 				"code": "instant"
@@ -202,6 +156,52 @@
 					}
 				]
 			}
+		},
+		"totals": {
+			"sum": "5187.50",
+			"total": "5187.50",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "5000.00",
+								"percent": "21.0%",
+								"amount": "1050.00"
+							},
+							{
+								"key": "zero",
+								"base": "172.50",
+								"percent": "0.0%",
+								"amount": "0.00"
+							}
+						],
+						"base": "5172.50",
+						"amount": "1050.00"
+					},
+					{
+						"code": "IRPF",
+						"retained": true,
+						"rates": [
+							{
+								"key": "pro",
+								"base": "4000.00",
+								"percent": "15.0%",
+								"amount": "600.00"
+							}
+						],
+						"base": "4000.00",
+						"amount": "600.00"
+					}
+				],
+				"sum": "450.00"
+			},
+			"tax": "450.00",
+			"total_with_tax": "5637.50",
+			"outlays": "0.00",
+			"payable": "5637.50"
 		}
 	},
 	"sigs": ["sig data"]

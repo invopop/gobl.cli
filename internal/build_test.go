@@ -17,14 +17,22 @@ import (
 	"github.com/invopop/gobl/note"
 )
 
-var signingKey = new(dsig.PrivateKey)
+var privateKey = new(dsig.PrivateKey)
+var publicKey = new(dsig.PublicKey)
+var verifyKeyText string
 
 const signingKeyText = `{"use":"sig","kty":"EC","kid":"b7cee60f-204e-438b-a88f-021d28af6991","crv":"P-256","alg":"ES256","x":"wLez6TfqNReD3FUUyVP4Q7HAGdokmAfE6LwfcM28DlQ","y":"CIxURqWtiFIu9TaatRa85NkNsw1LZHw_ZQ9A45GW_MU","d":"xNx9MxONcuLk8Ai6s2isqXMZaDi3HNGLkFX-qiNyyeo"}`
 
 func init() {
-	if err := json.Unmarshal([]byte(signingKeyText), signingKey); err != nil {
+	if err := json.Unmarshal([]byte(signingKeyText), privateKey); err != nil {
 		panic(err)
 	}
+	publicKey = privateKey.Public()
+	pub, err := json.Marshal(publicKey)
+	if err != nil {
+		panic(err)
+	}
+	verifyKeyText = string(pub)
 }
 
 func openBuildTestFile(t *testing.T, filename string) io.Reader {
@@ -168,7 +176,7 @@ func Test_parseSets(t *testing.T) {
 
 			opts := tt.opts
 			if opts.PrivateKey == nil {
-				opts.PrivateKey = signingKey
+				opts.PrivateKey = privateKey
 			}
 			got, err := parseSets(&opts)
 			if tt.err == "" {
@@ -229,7 +237,7 @@ func TestBuild(t *testing.T) {
 				}
 			}`),
 		},
-		err: `code=400, message=marshal: unregistered schema: https://example.com/duck`,
+		err: `code=400, message=marshal: unregistered or invalid schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{
@@ -282,7 +290,7 @@ func TestBuild(t *testing.T) {
 		t.Parallel()
 		opts := tt.opts
 		if opts.PrivateKey == nil {
-			opts.PrivateKey = signingKey
+			opts.PrivateKey = privateKey
 		}
 		got, err := Build(context.Background(), &opts)
 		if tt.err == "" {
@@ -307,7 +315,7 @@ func TestBuildWithPartialEnvelope(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		opts := &BuildOptions{
 			Data:       openBuildTestFile(t, "testdata/message.env.yaml"),
-			PrivateKey: signingKey,
+			PrivateKey: privateKey,
 		}
 		got, err := Build(context.Background(), opts)
 		require.NoError(t, err)
@@ -328,7 +336,7 @@ func TestEnvelop(t *testing.T) {
 		opts := &BuildOptions{
 			Data:       openBuildTestFile(t, "testdata/message.yaml"),
 			DocType:    "note.Message",
-			PrivateKey: signingKey,
+			PrivateKey: privateKey,
 		}
 		got, err := Envelop(context.Background(), opts)
 		require.NoError(t, err)
@@ -344,11 +352,11 @@ func TestEnvelop(t *testing.T) {
 	t.Run("missing doc type", func(t *testing.T) {
 		opts := &BuildOptions{
 			Data:       openBuildTestFile(t, "testdata/message.yaml"),
-			PrivateKey: signingKey,
+			PrivateKey: privateKey,
 		}
 		_, err := Envelop(context.Background(), opts)
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "unregistered schema")
+			assert.Contains(t, err.Error(), "unregistered or invalid schema")
 		}
 	})
 }
