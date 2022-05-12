@@ -127,34 +127,6 @@ func Test_build(t *testing.T) {
 		replace []testy.Replacement
 	}{
 		{
-			name: "invalid yaml value on command line",
-			opts: &buildOpts{
-				set:            map[string]string{"foo": ":"},
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: `yaml: did not find expected key`,
-		},
-		{
-			name: "valid yaml on command line",
-			in:   noTotals(t),
-			opts: &buildOpts{
-				set: map[string]string{
-					"doc.supplier.name": "one two three",
-				},
-				privateKeyFile: "testdata/id_es256",
-			},
-		},
-		{
-			name: "valid string",
-			in:   noTotals(t),
-			opts: &buildOpts{
-				setStrings: map[string]string{
-					"doc.supplier.name": "123",
-				},
-				privateKeyFile: "testdata/id_es256",
-			},
-		},
-		{
 			name: "missing file",
 			opts: &buildOpts{
 				setFiles: map[string]string{
@@ -253,7 +225,7 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=marshal: unregistered schema: ",
+			err: "code=400, message=marshal: unregistered or invalid schema",
 		},
 		{
 			name: "input file",
@@ -335,22 +307,6 @@ func Test_build(t *testing.T) {
 			},
 			err: "open missing.yaml: no such file or directory",
 		},
-		{
-			name: "template",
-			in:   strings.NewReader("{}"),
-			opts: &buildOpts{
-				template:       "testdata/success.yaml",
-				privateKeyFile: "testdata/id_es256",
-			},
-		},
-		{
-			name: "type on command line",
-			in:   readTestFile(t, "testdata/notype.json"),
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-				docType:        "bill.Invoice",
-			},
-		},
 	}
 
 	for _, tt := range tests {
@@ -375,7 +331,7 @@ func Test_build(t *testing.T) {
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
 			} else if err != nil {
-				t.Errorf("Unexpected error: %s", err)
+				t.Errorf("Unexpected error: %q", err)
 			}
 			tt.replace = append(tt.replace, testy.Replacement{
 				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),

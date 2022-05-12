@@ -88,11 +88,11 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "STD"
+						"rate": "standard"
 					},
 					{
 						"cat": "IRPF",
-						"code": "STD"
+						"rate": "pro"
 					}
 				],
 				"total": "3800.00"
@@ -108,7 +108,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "STD"
+						"rate": "standard"
 					}
 				],
 				"total": "1000.00"
@@ -124,7 +124,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "RED"
+						"rate": "reduced"
 					}
 				],
 				"total": "172.50"

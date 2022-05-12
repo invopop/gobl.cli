@@ -1,24 +1,133 @@
 {
     "$schema": "https://gobl.org/draft-0/envelope",
-    "head": {
-        "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
-        "dig": {
-            "alg": "sha256",
-            "val": "7f90caa1a46526ab35c8c80a03fbf9cbdc97a0b6aa9d286dcb82143fe23bbb73"
-        }
-    },
     "doc": {
         "$schema": "https://gobl.org/draft-0/bill/invoice",
-        "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
-        "region": "ES",
         "code": "INV2021-001",
         "currency": "EUR",
-        "issue_date": "2021-06-16",
-        "supplier": {
+        "customer": {
+            "addresses": [
+                {
+                    "code": "28792",
+                    "country": "ES",
+                    "locality": "Miraflores de la Sierra",
+                    "num": "1629",
+                    "region": "Madrid",
+                    "street": "Calle Diseminado"
+                }
+            ],
+            "emails": [
+                {
+                    "addr": "sam.lown@invopop.com"
+                }
+            ],
+            "name": "Autofiscal S.L.",
             "tax_id": {
-                "country": "ES",
-                "code": "B91983379"
+                "code": "B-85905495",
+                "country": "ES"
+            }
+        },
+        "issue_date": "2021-06-16",
+        "lines": [
+            {
+                "i": 1,
+                "item": {
+                    "name": "Development services day rate",
+                    "price": "200.00"
+                },
+                "quantity": "20",
+                "sum": "4000.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "rate": "standard"
+                    },
+                    {
+                        "cat": "IRPF",
+                        "rate": "pro"
+                    }
+                ],
+                "total": "4000.00"
             },
+            {
+                "i": 2,
+                "item": {
+                    "name": "Something random",
+                    "price": "100.00"
+                },
+                "quantity": "10",
+                "sum": "1000.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "rate": "standard"
+                    }
+                ],
+                "total": "1000.00"
+            },
+            {
+                "i": 3,
+                "item": {
+                    "name": "Additional random services",
+                    "price": "34.50"
+                },
+                "quantity": "5",
+                "sum": "172.50",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "rate": "zero"
+                    }
+                ],
+                "total": "172.50"
+            },
+            {
+                "i": 4,
+                "item": {
+                    "name": "Impuesto local",
+                    "price": "5.00"
+                },
+                "quantity": "3",
+                "sum": "15.00",
+                "total": "15.00"
+            }
+        ],
+        "outlays": [
+            {
+                "amount": "0",
+                "desc": "Something paid for by us",
+                "i": 1
+            }
+        ],
+        "payment": {
+            "instructions": {
+                "code": "credit_transfer",
+                "credit_transfer": [
+                    {
+                        "iban": "ES06 0128 0011 3901 0008 1391",
+                        "name": "Bankinter"
+                    }
+                ]
+            },
+            "terms": {
+                "code": "instant"
+            }
+        },
+        "supplier": {
+            "addresses": [
+                {
+                    "code": "28003",
+                    "country": "ES",
+                    "locality": "Madrid",
+                    "num": "10",
+                    "region": "Madrid",
+                    "street": "Calle Mayor"
+                }
+            ],
+            "emails": [
+                {
+                    "addr": "contact@company.com"
+                }
+            ],
             "name": "Other Company",
             "people": [
                 {
@@ -29,21 +138,10 @@
                     }
                 }
             ],
-            "addresses": [
-                {
-                    "num": "10",
-                    "street": "Calle Mayor",
-                    "locality": "Madrid",
-                    "region": "Madrid",
-                    "code": "28003",
-                    "country": "ES"
-                }
-            ],
-            "emails": [
-                {
-                    "addr": "contact@company.com"
-                }
-            ],
+            "tax_id": {
+                "code": "B91983379",
+                "country": "ES"
+            },
             "telephones": [
                 {
                     "label": "mobile",
@@ -51,161 +149,62 @@
                 }
             ]
         },
-        "customer": {
-            "tax_id": {
-                "country": "ES",
-                "code": "B-85905495"
-            },
-            "name": "Autofiscal S.L.",
-            "addresses": [
-                {
-                    "num": "1629",
-                    "street": "Calle Diseminado",
-                    "locality": "Miraflores de la Sierra",
-                    "region": "Madrid",
-                    "code": "28792",
-                    "country": "ES"
-                }
-            ],
-            "emails": [
-                {
-                    "addr": "sam.lown@invopop.com"
-                }
-            ]
-        },
-        "lines": [
-            {
-                "i": 1,
-                "quantity": "20",
-                "item": {
-                    "name": "Development services day rate",
-                    "price": "200.00"
-                },
-                "sum": "4000.00",
-                "taxes": [
-                    {
-                        "cat": "VAT",
-                        "code": "STD"
-                    },
-                    {
-                        "cat": "IRPF",
-                        "code": "STD"
-                    }
-                ],
-                "total": "4000.00"
-            },
-            {
-                "i": 2,
-                "quantity": "10",
-                "item": {
-                    "name": "Something random",
-                    "price": "100.00"
-                },
-                "sum": "1000.00",
-                "taxes": [
-                    {
-                        "cat": "VAT",
-                        "code": "STD"
-                    }
-                ],
-                "total": "1000.00"
-            },
-            {
-                "i": 3,
-                "quantity": "5",
-                "item": {
-                    "name": "Additional random services",
-                    "price": "34.50"
-                },
-                "sum": "172.50",
-                "taxes": [
-                    {
-                        "cat": "VAT",
-                        "code": "RED"
-                    }
-                ],
-                "total": "172.50"
-            },
-            {
-                "i": 4,
-                "quantity": "3",
-                "item": {
-                    "name": "Impuesto local",
-                    "price": "5.00"
-                },
-                "sum": "15.00",
-                "total": "15.00"
-            }
-        ],
-        "outlays": [
-            {
-                "i": 1,
-                "desc": "Something paid for by us",
-                "amount": "0"
-            }
-        ],
         "totals": {
+            "outlays": "0.00",
+            "payable": "5637.50",
             "sum": "5187.50",
-            "total": "5187.50",
+            "tax": "450.00",
             "taxes": {
                 "categories": [
                     {
+                        "amount": "1050.00",
+                        "base": "5172.50",
                         "code": "VAT",
                         "rates": [
                             {
-                                "code": "STD",
+                                "amount": "1050.00",
                                 "base": "5000.00",
-                                "percent": "21.0%",
-                                "amount": "1050.00"
+                                "key": "standard",
+                                "percent": "21.0%"
                             },
                             {
-                                "code": "RED",
+                                "amount": "0.00",
                                 "base": "172.50",
-                                "percent": "10.0%",
-                                "amount": "17.25"
+                                "key": "zero",
+                                "percent": "0.0%"
                             }
-                        ],
-                        "base": "5172.50",
-                        "amount": "1067.25"
+                        ]
                     },
                     {
+                        "amount": "600.00",
+                        "base": "4000.00",
                         "code": "IRPF",
-                        "retained": true,
                         "rates": [
                             {
-                                "code": "STD",
+                                "amount": "600.00",
                                 "base": "4000.00",
-                                "percent": "15.0%",
-                                "amount": "600.00"
+                                "key": "pro",
+                                "percent": "15.0%"
                             }
                         ],
-                        "base": "4000.00",
-                        "amount": "600.00"
+                        "retained": true
                     }
                 ],
-                "sum": "467.25"
+                "sum": "450.00"
             },
-            "total_with_tax": "5654.75",
-            "outlays": "0.00",
-            "payable": "5654.75"
+            "total": "5187.50",
+            "total_with_tax": "5637.50"
         },
-        "payment": {
-            "terms": {
-                "code": "instant"
-            },
-            "instructions": {
-                "code": "credit_transfer",
-                "credit_transfer": [
-                    {
-                        "iban": "ES06 0128 0011 3901 0008 1391",
-                        "name": "Bankinter"
-                    }
-                ]
-            }
-        }
+        "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
+    },
+    "head": {
+        "dig": {
+            "alg": "sha256",
+            "val": "25cafc67d328bdf09d8387f21ba3e2625aa3d4075b23033e3f19d7d80f55a227"
+        },
+        "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImE2YzM5MjBkLThlMzMtNDE1OS1iMzM3LTllNzQ2MTcxNmRmMSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwidHlwIjoiYmlsbC5JbnZvaWNlIiwicmduIjoiRVMiLCJkaWciOnsiYWxnIjoic2hhMjU2IiwidmFsIjoiZGNlM2JjM2M4YmYyOGYzZDIwOWY3ODM5MTdiMzA4MmRkYzAzMzlhNjZlOWJhM2FhNjM4NDllNDM1N2RiMTQyMiJ9fQ.CbBRUWrP1ELBmsoF9KnMWB5D6f1rNkai4lMZYx83vP2oKt3XdIMv-kvME4voFWN7XDjmsFb8dnt1sD00Oi54rQ",
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjdmOTBjYWExYTQ2NTI2YWIzNWM4YzgwYTAzZmJmOWNiZGM5N2EwYjZhYTlkMjg2ZGNiODIxNDNmZTIzYmJiNzMifX0.E5Cu5WGQeDx7iUWOvkMgH5m_vm0yqy5PJWioZYy4i0F_9HgvdEhntE3R392KUxxOCfb5O5Q51qkQWT8ogj5JyA"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjI1Y2FmYzY3ZDMyOGJkZjA5ZDgzODdmMjFiYTNlMjYyNWFhM2Q0MDc1YjIzMDMzZTNmMTlkN2Q4MGY1NWEyMjcifX0.DsAgZzdLr2uBVpBJbq8fynx65cvZsvG109h7BjHyBDOT53qjvnChoAHrkcP5oAjmJIlnchl5ES0xs2_LjPFWSA"
     ]
 }

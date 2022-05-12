@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"os"
 	"strings"
 	"testing"
 
@@ -46,45 +45,12 @@ func Test_verify(t *testing.T) {
 			err: "code=422, message=$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
 		},
 		{
-			name: "success",
-			opts: &verifyOpts{
-				publicKeyFile: "testdata/id_es256.pub.jwk",
-			},
-			in: func() io.Reader {
-				f, err := os.Open("testdata/signed.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				t.Cleanup(func() {
-					_ = f.Close()
-				})
-				return f
-			}(),
-		},
-		{
-			name: "digest mismatch",
-			opts: &verifyOpts{
-				publicKeyFile: "testdata/id_es256.pub.jwk",
-			},
-			in: func() io.Reader {
-				f, err := os.Open("testdata/digest-mismatch.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				t.Cleanup(func() {
-					_ = f.Close()
-				})
-				return f
-			}(),
-			err: "code=422, message=digest mismatch",
-		},
-		{
 			name: "read from file",
 			opts: &verifyOpts{
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
-			args: []string{"testdata/digest-mismatch.json"},
-			err:  "code=422, message=digest mismatch",
+			args: []string{"testdata/invalid.json"},
+			err:  "code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 		{
 			name: "file missing",
@@ -97,17 +63,8 @@ func Test_verify(t *testing.T) {
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
 			args: []string{"-"},
-			in: func() io.Reader {
-				f, err := os.Open("testdata/digest-mismatch.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				t.Cleanup(func() {
-					_ = f.Close()
-				})
-				return f
-			}(),
-			err: "code=422, message=digest mismatch",
+			in:   strings.NewReader("not really valid"),
+			err:  "code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 	}
 

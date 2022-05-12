@@ -39,11 +39,11 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "code": "STD"
+                        "rate": "standard"
                     },
                     {
                         "cat": "IRPF",
-                        "code": "STD"
+                        "rate": "pro"
                     }
                 ],
                 "total": "4000.00"
@@ -59,7 +59,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "code": "STD"
+                        "rate": "standard"
                     }
                 ],
                 "total": "1000.00"
@@ -75,7 +75,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "code": "RED"
+                        "rate": "zero"
                     }
                 ],
                 "total": "172.50"
@@ -112,7 +112,6 @@
                 "code": "instant"
             }
         },
-        "region": "ES",
         "supplier": {
             "addresses": [
                 {
@@ -152,26 +151,27 @@
         },
         "totals": {
             "outlays": "0.00",
-            "payable": "5654.75",
+            "payable": "5637.50",
             "sum": "5187.50",
+            "tax": "450.00",
             "taxes": {
                 "categories": [
                     {
-                        "amount": "1067.25",
+                        "amount": "1050.00",
                         "base": "5172.50",
                         "code": "VAT",
                         "rates": [
                             {
                                 "amount": "1050.00",
                                 "base": "5000.00",
-                                "code": "STD",
+                                "key": "standard",
                                 "percent": "21.0%"
                             },
                             {
-                                "amount": "17.25",
+                                "amount": "0.00",
                                 "base": "172.50",
-                                "code": "RED",
-                                "percent": "10.0%"
+                                "key": "zero",
+                                "percent": "0.0%"
                             }
                         ]
                     },
@@ -183,24 +183,24 @@
                             {
                                 "amount": "600.00",
                                 "base": "4000.00",
-                                "code": "STD",
+                                "key": "pro",
                                 "percent": "15.0%"
                             }
                         ],
                         "retained": true
                     }
                 ],
-                "sum": "467.25"
+                "sum": "450.00"
             },
             "total": "5187.50",
-            "total_with_tax": "5654.75"
+            "total_with_tax": "5637.50"
         },
         "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "00a1c7bb485818ec361c2ae243c78bdc9ce90ec638eced71c97df04325d84e09"
+            "val": "2a61cf397a17a11a9db60d2df9c1918748d36a735e7e89238177c17e861d1736"
         },
         "draft": true,
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
