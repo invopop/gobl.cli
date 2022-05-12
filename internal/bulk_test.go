@@ -73,32 +73,27 @@ func TestBulk(t *testing.T) {
 		}
 	})
 	tests.Add("two verifications", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/success.json")
-		if err != nil {
-			t.Fatal(err)
-		}
-		req, err := json.Marshal(map[string]interface{}{
-			"action": "verify",
-			"req_id": "asdf",
-			"payload": map[string]interface{}{
-				"data":      json.RawMessage(payload),
-				"publickey": publicKey,
-			},
+		req1, _ := json.Marshal(map[string]interface{}{
+			"action":  "sleep",
+			"req_id":  "abc",
+			"payload": "10ms",
 		})
-		if err != nil {
-			t.Fatal(err)
-		}
+		req2, _ := json.Marshal(map[string]interface{}{
+			"action":  "sleep",
+			"req_id":  "def",
+			"payload": "50ms",
+		})
 		return tt{
-			in: io.MultiReader(bytes.NewReader(req), bytes.NewReader(req)),
+			in: io.MultiReader(bytes.NewReader(req1), bytes.NewReader(req2)),
 			want: []*BulkResponse{
 				{
-					ReqID:   "asdf",
+					ReqID:   "abc",
 					SeqID:   1,
 					Payload: []byte(`{"ok":true}`),
 					IsFinal: false,
 				},
 				{
-					ReqID:   "asdf",
+					ReqID:   "def",
 					SeqID:   2,
 					Payload: []byte(`{"ok":true}`),
 					IsFinal: false,
