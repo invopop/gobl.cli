@@ -75,7 +75,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "rate": "zero"
+                        "rate": "reduced"
                     }
                 ],
                 "total": "172.50"
@@ -151,13 +151,13 @@
         },
         "totals": {
             "outlays": "0.00",
-            "payable": "5637.50",
+            "payable": "5654.75",
             "sum": "5187.50",
-            "tax": "450.00",
+            "tax": "467.25",
             "taxes": {
                 "categories": [
                     {
-                        "amount": "1050.00",
+                        "amount": "1067.25",
                         "base": "5172.50",
                         "code": "VAT",
                         "rates": [
@@ -168,10 +168,10 @@
                                 "percent": "21.0%"
                             },
                             {
-                                "amount": "0.00",
+                                "amount": "17.25",
                                 "base": "172.50",
-                                "key": "zero",
-                                "percent": "0.0%"
+                                "key": "reduced",
+                                "percent": "10.0%"
                             }
                         ]
                     },
@@ -190,21 +190,21 @@
                         "retained": true
                     }
                 ],
-                "sum": "450.00"
+                "sum": "467.25"
             },
             "total": "5187.50",
-            "total_with_tax": "5637.50"
+            "total_with_tax": "5654.75"
         },
         "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "2a61cf397a17a11a9db60d2df9c1918748d36a735e7e89238177c17e861d1736"
+            "val": "370efd7eafd14683967751e22cda47ebf2dfb2bcef62c57056da6b8d48c7b177"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjJhNjFjZjM5N2ExN2ExMWE5ZGI2MGQyZGY5YzE5MTg3NDhkMzZhNzM1ZTdlODkyMzgxNzdjMTdlODYxZDE3MzYifX0.HBxIS9OO83y585kdJvdgc4eltfbawA3DC2LEn0hGh3W-nXD4vOfS9fxK1ze7cDrbInxkixym906WdwhnMO1Q7g"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjM3MGVmZDdlYWZkMTQ2ODM5Njc3NTFlMjJjZGE0N2ViZjJkZmIyYmNlZjYyYzU3MDU2ZGE2YjhkNDhjN2IxNzcifX0.hPC2g7WOpk27dMaQRvFjBNlRxJ2VrA0l57Ug3_oMbMDTTAxh0a3T-fUsiV7x6zBjjEJLfhRGLYIfLE4awsU0rg"
     ]
 }
