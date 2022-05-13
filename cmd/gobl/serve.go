@@ -100,7 +100,12 @@ func (s *serveOpts) build(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, env)
+	blob, err := marshal(c)(env)
+	if err != nil {
+		return err
+	}
+
+	return c.JSONBlob(http.StatusOK, blob)
 }
 
 func (s *serveOpts) envelop(c echo.Context) error {
@@ -115,7 +120,12 @@ func (s *serveOpts) envelop(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, env)
+	blob, err := marshal(c)(env)
+	if err != nil {
+		return err
+	}
+
+	return c.JSONBlob(http.StatusOK, blob)
 }
 
 func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
@@ -153,16 +163,26 @@ func (s *serveOpts) verify(c echo.Context) error {
 	if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data), req.PublicKey); err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, &internal.VerifyResponse{OK: true})
+	blob, err := marshal(c)(&internal.VerifyResponse{OK: true})
+	if err != nil {
+		return err
+	}
+
+	return c.JSONBlob(http.StatusOK, blob)
 }
 
 func (s *serveOpts) keygen(c echo.Context) error {
 	key := dsig.NewES256Key()
 
-	return c.JSON(http.StatusOK, internal.KeygenResponse{
+	blob, err := marshal(c)(internal.KeygenResponse{
 		Private: key,
 		Public:  key.Public(),
 	})
+	if err != nil {
+		return err
+	}
+
+	return c.JSONBlob(http.StatusOK, blob)
 }
 
 func (s *serveOpts) bulk(c echo.Context) error {
@@ -171,6 +191,9 @@ func (s *serveOpts) bulk(c echo.Context) error {
 	c.Response().WriteHeader(http.StatusOK)
 
 	enc := json.NewEncoder(c.Response())
+	if c.QueryParam("indent") == "true" {
+		enc.SetIndent("", "\t")
+	}
 	for result := range internal.Bulk(ctx, c.Request().Body) {
 		if err := enc.Encode(result); err != nil {
 			return err
