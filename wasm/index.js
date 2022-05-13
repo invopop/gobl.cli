@@ -8,7 +8,7 @@ window.gobl.build = build;
 let goblData = {};
 
 const generateAndDisplayKey = async () => {
-  const key = await keygen();
+  const key = await keygen({ indent: true });
   goblData.key = JSON.parse(key);
   document.getElementById("key").value = key;
 };
@@ -19,6 +19,7 @@ const processInputFile = async () => {
   const buildData = {
     data: JSON.parse(inputFile),
     privatekey: goblData.key.private,
+    indent: true,
   };
 
   try {

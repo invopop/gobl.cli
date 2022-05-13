@@ -48,28 +48,38 @@ function sendMessage(data) {
   return promise;
 }
 
-const keygen = async function () {
-  return sendMessage({ action: "keygen" });
+const keygen = async function (opts) {
+  const indent = delete opts.indent;
+  return sendMessage({
+    action: "keygen",
+    indent: indent,
+  });
 };
 
 const build = async function (opts) {
+  const indent = delete opts.indent;
   return sendMessage({
     action: "build",
     payload: opts,
+    indent: indent,
   });
 };
 
 const verify = async function (opts) {
+  const indent = delete opts.indent;
   return sendMessage({
     action: "verify",
     payload: opts,
+    indent: indent,
   });
 };
 
 const envelop = async function (opts) {
+  const indent = delete opts.indent;
   return sendMessage({
     action: "envelop",
     payload: opts,
+    indent: indent,
   });
 };
 
