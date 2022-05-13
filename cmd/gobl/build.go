@@ -36,11 +36,12 @@ func build(root *rootOpts) *buildOpts {
 	}
 }
 
-func envelop() *buildOpts {
+func envelop(root *rootOpts) *buildOpts {
 	return &buildOpts{
-		envelop: true,
-		use:     "envelop [infile] [outfile]",
-		short:   "Prepare a document and insert into a new envelope",
+		rootOpts: root,
+		envelop:  true,
+		use:      "envelop [infile] [outfile]",
+		short:    "Prepare a document and insert into a new envelope",
 	}
 }
 

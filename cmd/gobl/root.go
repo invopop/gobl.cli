@@ -20,21 +20,20 @@ func root() *rootOpts {
 }
 
 func (o *rootOpts) cmd() *cobra.Command {
-	opts := &rootOpts{}
 	cmd := &cobra.Command{
 		Use:           "gobl",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
 
-	opts.setFlags(cmd)
+	o.setFlags(cmd)
 
 	cmd.AddCommand(verify().cmd())
-	cmd.AddCommand(envelop().cmd()) // see build
-	cmd.AddCommand(build(opts).cmd())
+	cmd.AddCommand(envelop(o).cmd()) // see build
+	cmd.AddCommand(build(o).cmd())
 	cmd.AddCommand(version())
 	cmd.AddCommand(serve().cmd())
-	cmd.AddCommand(keygen(opts).cmd())
+	cmd.AddCommand(keygen(o).cmd())
 	return cmd
 }
 
