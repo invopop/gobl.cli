@@ -111,6 +111,31 @@ func Test_serve_build(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:    "envelop success indented",
+			envelop: true,
+			req: func() *http.Request {
+				data, err := ioutil.ReadFile("testdata/message.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, _ := json.Marshal(map[string]interface{}{
+					"data":       json.RawMessage(data),
+					"type":       "note.Message",
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+
+				req, _ := http.NewRequest(http.MethodPost, "/envelop?indent=true", bytes.NewReader(body))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			replace: []testy.Replacement{
+				{
+					Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
+					Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
