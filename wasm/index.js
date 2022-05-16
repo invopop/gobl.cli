@@ -17,7 +17,7 @@ const processInputFile = async () => {
   const inputFile = document.getElementById("input-file").value;
 
   const buildData = {
-    data: JSON.parse(inputFile),
+    data: btoa(inputFile),
     privatekey: goblData.key.private,
     indent: true,
   };
