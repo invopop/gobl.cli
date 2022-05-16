@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -55,7 +56,7 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "missing doc",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":{}}`))
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"e30K"}`))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -65,7 +66,7 @@ func Test_serve_build(t *testing.T) {
 			name: "invalid data",
 			req: func() *http.Request {
 				body, err := json.Marshal(map[string]interface{}{
-					"data":       "not an object",
+					"data":       base64.StdEncoding.EncodeToString([]byte("not an object")),
 					"privatekey": json.RawMessage(signingKeyText),
 				})
 				if err != nil {
@@ -84,7 +85,7 @@ func Test_serve_build(t *testing.T) {
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
-			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `not an ...` into map[string]interface {}",
+			err: "code=400, message=illegal base64 data at input byte 3, internal=illegal base64 data at input byte 3",
 		},
 		{
 			name:    "envelop success",
@@ -95,7 +96,7 @@ func Test_serve_build(t *testing.T) {
 					t.Fatal(err)
 				}
 				body, _ := json.Marshal(map[string]interface{}{
-					"data":       json.RawMessage(data),
+					"data":       base64.StdEncoding.EncodeToString(data),
 					"type":       "note.Message",
 					"privatekey": json.RawMessage(signingKeyText),
 				})
@@ -120,7 +121,7 @@ func Test_serve_build(t *testing.T) {
 					t.Fatal(err)
 				}
 				body, _ := json.Marshal(map[string]interface{}{
-					"data":       json.RawMessage(data),
+					"data":       base64.StdEncoding.EncodeToString(data),
 					"type":       "note.Message",
 					"privatekey": json.RawMessage(signingKeyText),
 				})
@@ -215,7 +216,7 @@ func Test_serve_verify(t *testing.T) {
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
-			err: "code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+			err: "code=400, message=illegal base64 data at input byte 3, internal=illegal base64 data at input byte 3",
 		},
 	}
 
