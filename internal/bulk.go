@@ -22,6 +22,8 @@ type BulkRequest struct {
 	ReqID string `json:"req_id"`
 	// Payload is the payload upon which to perform the action.
 	Payload json.RawMessage `json:"payload"`
+	// When true, responses are indented for easier human consumption
+	Indent bool `json:"indent"`
 }
 
 // BulkResponse represents a singel response in the stream of bulk responses.
@@ -76,6 +78,12 @@ func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 }
 
 func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkResponse {
+	marshal := json.Marshal
+	if req.Indent {
+		marshal = func(i interface{}) ([]byte, error) {
+			return json.MarshalIndent(i, "", "\t")
+		}
+	}
 	res := &BulkResponse{
 		ReqID: req.ReqID,
 		SeqID: seq,
@@ -92,7 +100,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			res.Error = err.Error()
 			return res
 		}
-		res.Payload, _ = json.Marshal(VerifyResponse{OK: true})
+		res.Payload, _ = marshal(VerifyResponse{OK: true})
 	case "build":
 		bld := &BuildRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
@@ -112,7 +120,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			res.Error = err.Error()
 			return res
 		}
-		res.Payload, _ = json.Marshal(env)
+		res.Payload, _ = marshal(env)
 	case "envelop":
 		bld := &BuildRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
@@ -136,12 +144,12 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 	case "keygen":
 		key := dsig.NewES256Key()
 
-		res.Payload, _ = json.Marshal(KeygenResponse{
+		res.Payload, _ = marshal(KeygenResponse{
 			Private: key,
 			Public:  key.Public(),
 		})
 	case "ping":
-		res.Payload, _ = json.Marshal(map[string]interface{}{
+		res.Payload, _ = marshal(map[string]interface{}{
 			"pong": true,
 		})
 	case "sleep":
@@ -156,7 +164,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			return res
 		}
 		time.Sleep(dur)
-		res.Payload, _ = json.Marshal(map[string]interface{}{
+		res.Payload, _ = marshal(map[string]interface{}{
 			"sleep": "done",
 		})
 
