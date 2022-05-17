@@ -3,6 +3,7 @@ package internal
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -49,7 +50,7 @@ func TestBulk(t *testing.T) {
 			"action": "verify",
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
-				"data":      json.RawMessage(payload),
+				"data":      base64.StdEncoding.EncodeToString(payload),
 				"publickey": publicKey,
 			},
 		})
@@ -105,7 +106,7 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
-	tests.Add("success the failure", func(t *testing.T) interface{} {
+	tests.Add("success then failure", func(t *testing.T) interface{} {
 		payload, err := ioutil.ReadFile("testdata/success.json")
 		if err != nil {
 			t.Fatal(err)
@@ -114,7 +115,7 @@ func TestBulk(t *testing.T) {
 			"action": "verify",
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
-				"data":      json.RawMessage(payload),
+				"data":      base64.StdEncoding.EncodeToString(payload),
 				"publickey": publicKey,
 			},
 		})
@@ -182,7 +183,7 @@ func TestBulk(t *testing.T) {
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   `code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope`,
+					Error:   `code=400, message=error converting YAML to JSON: yaml: invalid leading UTF-8 octet`,
 				},
 				{
 					SeqID:   2,
@@ -200,7 +201,7 @@ func TestBulk(t *testing.T) {
 			"action": "build",
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
-				"data":       json.RawMessage(payload),
+				"data":       base64.StdEncoding.EncodeToString(payload),
 				"privatekey": privateKey,
 			},
 		})
@@ -232,7 +233,7 @@ func TestBulk(t *testing.T) {
 			"action": "build",
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
-				"data":       json.RawMessage(payload),
+				"data":       base64.StdEncoding.EncodeToString(payload),
 				"privatekey": privateKey,
 			},
 		})
@@ -267,7 +268,7 @@ func TestBulk(t *testing.T) {
 		req, _ := json.Marshal(map[string]interface{}{
 			"action": "build",
 			"payload": map[string]interface{}{
-				"data": json.RawMessage(payload),
+				"data": base64.StdEncoding.EncodeToString(payload),
 				"type": "chicken",
 			},
 		})
@@ -293,7 +294,7 @@ func TestBulk(t *testing.T) {
 		req, _ := json.Marshal(map[string]interface{}{
 			"action": "build",
 			"payload": map[string]interface{}{
-				"data":     json.RawMessage(payload),
+				"data":     base64.StdEncoding.EncodeToString(payload),
 				"template": "chicken",
 			},
 		})
@@ -302,7 +303,7 @@ func TestBulk(t *testing.T) {
 			want: []*BulkResponse{
 				{
 					SeqID: 1,
-					Error: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `chicken` into map[string]interface {}",
+					Error: "invalid payload: illegal base64 data at input byte 4",
 				},
 				{
 					SeqID:   2,
@@ -320,7 +321,7 @@ func TestBulk(t *testing.T) {
 			"action": "envelop",
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
-				"data":       json.RawMessage(payload),
+				"data":       base64.StdEncoding.EncodeToString(payload),
 				"privatekey": privateKey,
 			},
 		})
@@ -377,7 +378,7 @@ func TestBulk(t *testing.T) {
 			"action": "build",
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
-				"data":      json.RawMessage(`"oink"`),
+				"data":      base64.StdEncoding.EncodeToString([]byte(`"oink"`)),
 				"publickey": publicKey,
 			},
 		})

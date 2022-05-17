@@ -176,7 +176,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 
 // VerifyRequest is the payload for a verification request.
 type VerifyRequest struct {
-	Data      json.RawMessage `json:"data"`
+	Data      []byte          `json:"data"`
 	PublicKey *dsig.PublicKey `json:"publickey"`
 }
 
@@ -187,8 +187,8 @@ type VerifyResponse struct {
 
 // BuildRequest is the payload for a build reqeuest.
 type BuildRequest struct {
-	Template   json.RawMessage  `json:"template"`
-	Data       json.RawMessage  `json:"data"`
+	Template   []byte           `json:"template"`
+	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
 }
