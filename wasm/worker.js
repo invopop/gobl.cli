@@ -10,7 +10,7 @@ if (!WebAssembly.instantiateStreaming) {
 
 // initialize the Go WASM glue
 const go = new self.Go();
-WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then(
+WebAssembly.instantiateStreaming(fetch("gobl.wasm"), go.importObject).then(
   (result) => {
     go.run(result.instance);
   }
