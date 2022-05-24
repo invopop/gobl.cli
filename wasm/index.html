@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GOBL.js Playground</title>
   <meta name="description" content="GOBL.js Playground" />
-  <script type="module" src="index.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
 </head>
 
@@ -19,8 +18,13 @@
   </div>
   <div class="flex flex-wrap">
     <div class="flex-1 p-4">
-      <label for="input-file" class="text-lg p-2 bg-slate-50 rounded-t-xl border border-b-0 border-slate-300">
-        Input File
+      <label for="input-file" class="text-lg p-2 bg-slate-50 rounded-t-xl border border-b-0 border-slate-300"
+        x-mode="build">
+        Build
+      </label>
+      <label for="input-file" class="text-lg p-2 bg-slate-500 rounded-t-xl border border-b-0 border-slate-300"
+        x-mode="envelop">
+        Envelop
       </label>
       <textarea id="input-file" class="w-100 h-96 min-w-full border border-slate-300">
 {
@@ -34,7 +38,7 @@
     </div>
     <div class="flex-1 p-4">
       <label for="output-file" class="text-lg p-2 bg-slate-50 rounded-t-xl border border-b-0 border-slate-300">
-        Output File
+        Result
       </label>
       <textarea id="output-file" class="w-100 h-96 min-w-full border border-slate-300">
         </textarea>
@@ -43,6 +47,7 @@
   <div id="status" class="mx-4 my-0 rounded-xl p-4 text-center bg-green-200">
     Success!
   </div>
+  <script type="module" src="index.js"></script>
 </body>
 
 </html>

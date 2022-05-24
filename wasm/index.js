@@ -62,3 +62,20 @@ document.getElementById("input-file").oninput =
   function updateOnInputFileChange() {
     processInputFile();
   };
+
+let modes = document.querySelectorAll("label[x-mode]");
+function setMode() {
+  for (var i = 0; i < modes.length; i++) {
+    if (modes[i].getAttribute('x-mode') != this.getAttribute('x-mode')) {
+      modes[i].classList.remove("bg-slate-50");
+      modes[i].classList.add("bg-slate-500");
+    } else {
+      modes[i].classList.remove("bg-slate-500");
+      modes[i].classList.add("bg-slate-50");
+    }
+  }
+};
+
+for (var i = 0; i < modes.length; i++) {
+  modes[i].onclick = setMode;
+}
