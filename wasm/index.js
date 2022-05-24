@@ -1,4 +1,4 @@
-import { keygen, build } from "./gobl.js";
+import { keygen, build, envelop, verify } from "./gobl.js";
 
 // assigning these to the global namespace for cypress tests
 window.gobl = {};
@@ -22,9 +22,34 @@ const processInputFile = async () => {
     indent: true,
   };
 
+  const mode = getMode();
+
   try {
-    const buildResult = await build(buildData);
-    document.getElementById("output-file").value = buildResult;
+    var result = "";
+    switch (mode) {
+      case "build":
+        result = await build({
+          data: btoa(inputFile),
+          privatekey: goblData.key.private,
+          indent: true,
+        });
+        break;
+      case "envelop":
+        result = await envelop({
+          data: btoa(inputFile),
+          privatekey: goblData.key.private,
+          indent: true,
+        });
+        break;
+      case "verify":
+        result = await verify({
+          data: btoa(inputFile),
+          publickey: goblData.key.public,
+          indent: true,
+        });
+        break;
+    }
+    document.getElementById("output-file").value = result;
     updateStatus("success");
   } catch (e) {
     document.getElementById("output-file").value = "";
@@ -73,8 +98,13 @@ function setMode() {
       modes[i].classList.remove("bg-slate-500");
       modes[i].classList.add("bg-slate-50");
     }
+    processInputFile();
   }
 };
+
+function getMode() {
+  return document.querySelector("label.bg-slate-50[x-mode]").getAttribute('x-mode');
+}
 
 for (var i = 0; i < modes.length; i++) {
   modes[i].onclick = setMode;
