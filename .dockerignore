@@ -1,0 +1,11 @@
+.git
+.dockerignore
+Dockerfile
+.vscode
+.gitignore
+.github
+.goreleaser.yml
+*/node_modules
+*/cypress/videos/*
+*/cypress/screenshots/*
+wasm/wasm_exec.js
