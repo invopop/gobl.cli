@@ -29,6 +29,7 @@ type BuildOptions struct {
 	SetString  map[string]string
 	SetFile    map[string]string
 	PrivateKey *dsig.PrivateKey
+	Draft      bool
 }
 
 // decodeInto unmarshals in as YAML, then merges it into dest.
@@ -117,6 +118,9 @@ func prepareIntermediate(ctx context.Context, opts *BuildOptions, schemaDataFunc
 }
 
 func finalizeEnvelope(ctx context.Context, env *gobl.Envelope, opts *BuildOptions) error {
+	if opts.Draft {
+		env.Head.Draft = true
+	}
 	if len(env.Signatures) > 0 {
 		return echo.NewHTTPError(http.StatusConflict, "document has already been signed")
 	}
@@ -129,6 +133,9 @@ func finalizeEnvelope(ctx context.Context, env *gobl.Envelope, opts *BuildOption
 	if !env.Head.Draft {
 		if err := env.Sign(opts.PrivateKey); err != nil {
 			return err
+		}
+		if err := env.Validate(); err != nil {
+			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 	}
 	return nil

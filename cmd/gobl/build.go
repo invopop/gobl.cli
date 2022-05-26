@@ -16,6 +16,7 @@ import (
 type buildOpts struct {
 	*rootOpts
 	envelop        bool // when true, assumes source is a document
+	draft          bool // when true, adds draft property to head, skips signatures
 	set            map[string]string
 	setFiles       map[string]string
 	setStrings     map[string]string
@@ -54,12 +55,13 @@ func (b *buildOpts) cmd() *cobra.Command {
 	}
 
 	f := cmd.Flags()
-	f.StringToStringVar(&b.set, "set", nil, "set value from the command line")
-	f.StringToStringVar(&b.setFiles, "set-file", nil, "set value from the specified YAML or JSON file")
-	f.StringToStringVar(&b.setStrings, "set-string", nil, "set STRING value from the command line")
+	f.StringToStringVar(&b.set, "set", nil, "Set value from the command line")
+	f.StringToStringVar(&b.setFiles, "set-file", nil, "Set value from the specified YAML or JSON file")
+	f.StringToStringVar(&b.setStrings, "set-string", nil, "Set STRING value from the command line")
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
+	f.BoolVarP(&b.draft, "draft", "d", false, "Set draft property in headers, skip sigs and validation")
 
 	return cmd
 }
@@ -119,6 +121,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		SetString:  b.setStrings,
 		PrivateKey: key,
 		DocType:    b.docType,
+		Draft:      b.draft,
 	}
 	var env *gobl.Envelope
 

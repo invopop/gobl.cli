@@ -3,15 +3,15 @@ module github.com/invopop/gobl.cli
 go 1.17
 
 require (
-	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.5.8
 	github.com/imdario/mergo v0.3.12
-	github.com/invopop/gobl v0.22.0
+	github.com/invopop/gobl v0.22.3
+	github.com/invopop/yaml v0.1.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.1
 	gitlab.com/flimzy/testy v0.10.2
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.0
 )
 
 require (
@@ -39,5 +39,4 @@ require (
 	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

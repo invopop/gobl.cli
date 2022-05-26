@@ -33,4 +33,4 @@ doc:
         price: "100.00"
       taxes:
         - cat: "VAT"
-          code: "STD"
+          rate: "standard"

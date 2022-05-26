@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	jsonyaml "github.com/ghodss/yaml"
+	jsonyaml "github.com/invopop/yaml"
 	"github.com/labstack/echo/v4"
 
 	"github.com/invopop/gobl"
