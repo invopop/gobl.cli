@@ -133,7 +133,7 @@
                     "addr": "contact@company.com"
                 }
             ],
-            "name": "A Company Name S.L.",
+            "name": "Other Company",
             "people": [
                 {
                     "name": {
@@ -205,7 +205,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "24967af6b0dbd057543a31906248f8881e529a9a129d575fb8234d18189ce75c"
+            "val": "56dddbec82a6ac9cea9223057b7d979d60cc37f6711041ad7f0a6e57a45cfa31"
         },
         "draft": true,
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"

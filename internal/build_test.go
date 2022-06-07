@@ -250,7 +250,7 @@ func TestBuild(t *testing.T) {
 	tests.Add("template with empty input", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Template: openBuildTestFile(t, "testdata/noname.json"),
+				Template: openBuildTestFile(t, "testdata/nosig.json"),
 				Data:     strings.NewReader("{}"),
 			},
 		}

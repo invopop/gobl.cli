@@ -313,7 +313,7 @@ func TestBulk(t *testing.T) {
 		}
 	})
 	tests.Add("envelop success", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		payload, err := ioutil.ReadFile("testdata/invoice.json")
 		if err != nil {
 			t.Fatal(err)
 		}
