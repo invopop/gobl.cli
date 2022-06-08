@@ -21,20 +21,17 @@ const (
 func Build() error {
 	changed, err := target.Dir("./"+name, ".")
 	if os.IsNotExist(err) || (err == nil && changed) {
-		args := []string{"build"}
-		flags, err := buildFlags()
-		if err != nil {
-			return err
-		}
-		args = append(args, flags...)
-		args = append(args, "./cmd/"+name)
-		return sh.RunV("go", args...)
+		return build("build")
 	}
 	return nil
 }
 
 func Install() error {
-	args := []string{"install"}
+	return build("install")
+}
+
+func build(action string) error {
+	args := []string{action}
 	flags, err := buildFlags()
 	if err != nil {
 		return err
@@ -53,11 +50,6 @@ func buildFlags() ([]string, error) {
 	} else if v != "" {
 		ldflags = append(ldflags, fmt.Sprintf("-X 'main.Version=%s'", v))
 	}
-	if c, err := commit(); err != nil {
-		return nil, err
-	} else if c != "" {
-		ldflags = append(ldflags, fmt.Sprintf("-X 'main.BuildCommit=%s'", c))
-	}
 
 	out := []string{}
 	if len(ldflags) > 0 {
@@ -67,32 +59,28 @@ func buildFlags() ([]string, error) {
 }
 
 func version() (string, error) {
-	b, err := branch()
+	vt, err := versionTag()
 	if err != nil {
 		return "", err
 	}
-	if b == mainBranch {
-		if b, err = versionTag(); err != nil {
-			return "", err
-		}
+	v := []string{vt}
+	if b, err := branch(); err != nil {
+		return "", err
+	} else if b != mainBranch {
+		v = append(v, b)
 	}
 	if uncommittedChanges() {
-		return fmt.Sprintf("%s-uncommitted", b), nil
+		v = append(v, "uncommitted")
 	}
+	return strings.Join(v, "-"), nil
+}
 
-	return b, nil
+func versionTag() (string, error) {
+	return trimOutput("git", "describe", "--tags") // no "--exact-match"
 }
 
 func branch() (string, error) {
 	return trimOutput("git", "rev-parse", "--abbrev-ref", "HEAD")
-}
-
-func versionTag() (string, error) {
-	return trimOutput("git", "describe", "--exact-match", "--tags")
-}
-
-func commit() (string, error) {
-	return trimOutput("git", "rev-parse", "--short", "HEAD")
 }
 
 func uncommittedChanges() bool {

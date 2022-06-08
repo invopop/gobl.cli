@@ -18,9 +18,8 @@ import (
 
 // Build Data
 var (
-	Version     = "dev"
-	BuildDate   = ""
-	BuildCommit = ""
+	Version   = "dev"
+	BuildDate = ""
 )
 
 func main() {
@@ -61,12 +60,9 @@ func version() *cobra.Command {
 	return &cobra.Command{
 		Use: "version",
 		Run: func(cmd *cobra.Command, _ []string) {
-			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "CLI: %s\nGOBL %s\n", Version, gobl.VERSION)
-			if BuildCommit != "" {
-				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Commit: %s\n", BuildCommit)
-			}
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\nGOBL %s\n", Version, gobl.VERSION)
 			if BuildDate != "" {
-				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Date: %s\n", BuildDate)
+				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\n", BuildDate)
 			}
 		},
 	}
