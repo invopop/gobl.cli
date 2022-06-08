@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"io/ioutil"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -51,19 +52,19 @@ func Test_root(t *testing.T) {
 }
 
 func Test_version(t *testing.T) {
-	cmd := version()
+	cmd := versionCmd()
 	stdout, stderr := testy.RedirIO(nil, func() {
 		err := cmd.Execute()
 		if err != nil {
 			t.Fatal(err)
 		}
 	})
-	wantOut := "GOBL version " + string(gobl.VERSION) + "\n"
+	wantOut := "GOBL " + string(gobl.VERSION)
 	wantErr := ""
-	if sout, _ := ioutil.ReadAll(stdout); string(sout) != wantOut {
+	if sout, _ := ioutil.ReadAll(stdout); !strings.Contains(string(sout), wantOut) {
 		t.Errorf("Unexpected STDOUT: %s", sout)
 	}
-	if serr, _ := ioutil.ReadAll(stderr); string(serr) != wantErr {
+	if serr, _ := ioutil.ReadAll(stderr); !strings.Contains(string(serr), wantErr) {
 		t.Errorf("Unexpected STDERR: %s", serr)
 	}
 }

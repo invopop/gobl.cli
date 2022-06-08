@@ -16,10 +16,10 @@ import (
 	"github.com/invopop/gobl"
 )
 
-// Build Data
+// build data provided by goreleaser and mage setup
 var (
-	Version   = "dev"
-	BuildDate = ""
+	version = "dev"
+	date    = ""
 )
 
 func main() {
@@ -56,13 +56,13 @@ func inputFilename(args []string) string {
 	return ""
 }
 
-func version() *cobra.Command {
+func versionCmd() *cobra.Command {
 	return &cobra.Command{
 		Use: "version",
 		Run: func(cmd *cobra.Command, _ []string) {
-			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\nGOBL %s\n", Version, gobl.VERSION)
-			if BuildDate != "" {
-				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\n", BuildDate)
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\nGOBL %s\n", version, gobl.VERSION)
+			if date != "" {
+				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\n", date)
 			}
 		},
 	}

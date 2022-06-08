@@ -18,6 +18,7 @@ const (
 	mainBranch = "main"
 )
 
+// Build the binary
 func Build() error {
 	changed, err := target.Dir("./"+name, ".")
 	if os.IsNotExist(err) || (err == nil && changed) {
@@ -26,6 +27,7 @@ func Build() error {
 	return nil
 }
 
+// Install the binary into your go bin path
 func Install() error {
 	return build("install")
 }
@@ -43,12 +45,12 @@ func build(action string) error {
 
 func buildFlags() ([]string, error) {
 	ldflags := []string{
-		fmt.Sprintf("-X 'main.BuildDate=%s'", date()),
+		fmt.Sprintf("-X 'main.date=%s'", date()),
 	}
 	if v, err := version(); err != nil {
 		return nil, err
 	} else if v != "" {
-		ldflags = append(ldflags, fmt.Sprintf("-X 'main.Version=%s'", v))
+		ldflags = append(ldflags, fmt.Sprintf("-X 'main.version=%s'", v))
 	}
 
 	out := []string{}
