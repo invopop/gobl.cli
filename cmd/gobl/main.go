@@ -16,6 +16,13 @@ import (
 	"github.com/invopop/gobl"
 )
 
+// Build Data
+var (
+	Version     = "dev"
+	BuildDate   = ""
+	BuildCommit = ""
+)
+
 func main() {
 	if err := run(); err != nil {
 		echoErr := new(echo.HTTPError)
@@ -54,7 +61,13 @@ func version() *cobra.Command {
 	return &cobra.Command{
 		Use: "version",
 		Run: func(cmd *cobra.Command, _ []string) {
-			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "GOBL version %s\n", gobl.VERSION)
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "CLI: %s\nGOBL %s\n", Version, gobl.VERSION)
+			if BuildCommit != "" {
+				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Commit: %s\n", BuildCommit)
+			}
+			if BuildDate != "" {
+				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Date: %s\n", BuildDate)
+			}
 		},
 	}
 }
