@@ -39,11 +39,14 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "percent": "21.0%",
                         "rate": "standard"
                     },
                     {
                         "cat": "IRPF",
-                        "rate": "pro"
+                        "percent": "15.0%",
+                        "rate": "pro",
+                        "retained": true
                     }
                 ],
                 "total": "4000.00"
@@ -59,6 +62,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "percent": "21.0%",
                         "rate": "standard"
                     }
                 ],
@@ -75,6 +79,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "percent": "0.0%",
                         "rate": "zero"
                     }
                 ],
@@ -128,7 +133,7 @@
                     "addr": "contact@company.com"
                 }
             ],
-            "name": "",
+            "name": "A Company Name S.L.",
             "people": [
                 {
                     "name": {
@@ -200,11 +205,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "7998fc1ef3b72d0a014aae16739cb05f9be14fa8e0893b04fdb5231a44c34958"
+            "val": "24967af6b0dbd057543a31906248f8881e529a9a129d575fb8234d18189ce75c"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6Ijc5OThmYzFlZjNiNzJkMGEwMTRhYWUxNjczOWNiMDVmOWJlMTRmYThlMDg5M2IwNGZkYjUyMzFhNDRjMzQ5NTgifX0.OrMtxjkTPPrFuLjON54xp2WRQHJQtgejLYXuafR8Qvb0F3SBJftEKNcXNJm_sx2eKpx9uME4KmaHQ7Q_GaZ2zA"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjI0OTY3YWY2YjBkYmQwNTc1NDNhMzE5MDYyNDhmODg4MWU1MjlhOWExMjlkNTc1ZmI4MjM0ZDE4MTg5Y2U3NWMifX0.0rAwhxvZ7o8-ixfr4XUVnjY1TkJnGHvGfMFNp6shaeyxRVZ6pFOAg-Ce-J0Gxq3jjFWI5XThinD_-zlLOdWcgw"
     ]
 }

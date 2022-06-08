@@ -39,11 +39,14 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "percent": "21.0%",
                         "rate": "standard"
                     },
                     {
                         "cat": "IRPF",
-                        "rate": "pro"
+                        "percent": "15.0%",
+                        "rate": "pro",
+                        "retained": true
                     }
                 ],
                 "total": "4000.00"
@@ -59,6 +62,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "percent": "21.0%",
                         "rate": "standard"
                     }
                 ],
@@ -75,6 +79,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "percent": "0.0%",
                         "rate": "zero"
                     }
                 ],
@@ -128,7 +133,7 @@
                     "addr": "contact@company.com"
                 }
             ],
-            "name": "A Company Name S.L.",
+            "name": "Other Company",
             "people": [
                 {
                     "name": {
@@ -200,7 +205,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "2a61cf397a17a11a9db60d2df9c1918748d36a735e7e89238177c17e861d1736"
+            "val": "56dddbec82a6ac9cea9223057b7d979d60cc37f6711041ad7f0a6e57a45cfa31"
         },
         "draft": true,
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"

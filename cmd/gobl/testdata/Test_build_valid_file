@@ -4,7 +4,7 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "f2d3c1ae8d6e988a0a0117b2118834448cd627f8bf575969fa3a9cb846e256af"
+			"val": "633b28b113c2e086ff1a4a309dd4350839c2183238f8907064349d2b15c4cdd0"
 		}
 	},
 	"doc": {
@@ -84,11 +84,14 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard"
+						"rate": "standard",
+						"percent": "21.0%"
 					},
 					{
 						"cat": "IRPF",
-						"rate": "pro"
+						"rate": "pro",
+						"percent": "15.0%",
+						"retained": true
 					}
 				],
 				"total": "4000.00"
@@ -104,7 +107,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard"
+						"rate": "standard",
+						"percent": "21.0%"
 					}
 				],
 				"total": "1000.00"
@@ -120,7 +124,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "zero"
+						"rate": "zero",
+						"percent": "0.0%"
 					}
 				],
 				"total": "172.50"
