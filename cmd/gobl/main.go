@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -15,6 +16,22 @@ import (
 
 	"github.com/invopop/gobl"
 )
+
+// build data provided by goreleaser and mage setup
+var (
+	version = "dev"
+	date    = ""
+)
+
+var versionOutput = struct {
+	Version string `json:"version"`
+	GOBL    string `json:"gobl"`
+	Date    string `json:"date,omitempty"`
+}{
+	Version: version,
+	GOBL:    string(gobl.VERSION),
+	Date:    date,
+}
 
 func main() {
 	if err := run(); err != nil {
@@ -50,11 +67,13 @@ func inputFilename(args []string) string {
 	return ""
 }
 
-func version() *cobra.Command {
+func versionCmd() *cobra.Command {
 	return &cobra.Command{
 		Use: "version",
-		Run: func(cmd *cobra.Command, _ []string) {
-			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "GOBL version %s\n", gobl.VERSION)
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			enc := json.NewEncoder(cmd.OutOrStdout())
+			enc.SetIndent("", "\t") // always indent version
+			return enc.Encode(versionOutput)
 		},
 	}
 }

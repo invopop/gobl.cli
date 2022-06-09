@@ -13,13 +13,13 @@ This repo contains a `gobl` CLI tool which can be used to manipulate GOBL docume
 Build with:
 
 ```sh
-go build ./cmd/gobl
+mage -v build
 ```
 
 Install with:
 
 ```sh
-go install github.com/invopop/gobl.cli/cmd/gobl
+mage -v install
 ```
 
 ### `gobl build`

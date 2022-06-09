@@ -5,9 +5,10 @@ go 1.17
 require (
 	github.com/google/go-cmp v0.5.8
 	github.com/imdario/mergo v0.3.12
-	github.com/invopop/gobl v0.23.0
+	github.com/invopop/gobl v0.24.0
 	github.com/invopop/yaml v0.2.0
 	github.com/labstack/echo/v4 v4.7.2
+	github.com/magefile/mage v1.13.0
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.1
 	gitlab.com/flimzy/testy v0.10.2

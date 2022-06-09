@@ -45,8 +45,7 @@
                     {
                         "cat": "IRPF",
                         "percent": "15.0%",
-                        "rate": "pro",
-                        "retained": true
+                        "rate": "pro"
                     }
                 ],
                 "total": "4000.00"
@@ -205,11 +204,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "24967af6b0dbd057543a31906248f8881e529a9a129d575fb8234d18189ce75c"
+            "val": "2526f001dbfaf65b5840ef952c8e4d2e934786cbe0acec2e0c99c2d704036e66"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjI0OTY3YWY2YjBkYmQwNTc1NDNhMzE5MDYyNDhmODg4MWU1MjlhOWExMjlkNTc1ZmI4MjM0ZDE4MTg5Y2U3NWMifX0.0rAwhxvZ7o8-ixfr4XUVnjY1TkJnGHvGfMFNp6shaeyxRVZ6pFOAg-Ce-J0Gxq3jjFWI5XThinD_-zlLOdWcgw"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjI1MjZmMDAxZGJmYWY2NWI1ODQwZWY5NTJjOGU0ZDJlOTM0Nzg2Y2JlMGFjZWMyZTBjOTljMmQ3MDQwMzZlNjYifX0.WQtT6Uh6OzXKntJ6yWIbMw6GKktHCSOGqGIHCdtHv6nqam7HTB5a10uV9IR8mn7bdsKmosJV_28KlCH4PuLLeg"
     ]
 }
