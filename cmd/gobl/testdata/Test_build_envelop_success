@@ -4,7 +4,7 @@
 		"uuid": "00000000-0000-0000-0000-000000000000",
 		"dig": {
 			"alg": "sha256",
-			"val": "24967af6b0dbd057543a31906248f8881e529a9a129d575fb8234d18189ce75c"
+			"val": "2526f001dbfaf65b5840ef952c8e4d2e934786cbe0acec2e0c99c2d704036e66"
 		}
 	},
 	"doc": {
@@ -90,8 +90,7 @@
 					{
 						"cat": "IRPF",
 						"rate": "pro",
-						"percent": "15.0%",
-						"retained": true
+						"percent": "15.0%"
 					}
 				],
 				"total": "4000.00"

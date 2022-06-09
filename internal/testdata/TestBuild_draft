@@ -45,8 +45,7 @@
                     {
                         "cat": "IRPF",
                         "percent": "15.0%",
-                        "rate": "pro",
-                        "retained": true
+                        "rate": "pro"
                     }
                 ],
                 "total": "4000.00"
@@ -205,7 +204,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "56dddbec82a6ac9cea9223057b7d979d60cc37f6711041ad7f0a6e57a45cfa31"
+            "val": "646639692fd5fb3f9b705391a88252dc7e9a381442802233b11399d5553a24f1"
         },
         "draft": true,
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
