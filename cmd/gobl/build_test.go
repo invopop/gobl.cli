@@ -208,7 +208,7 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type gobl.schemaDoc",
+			err: "code=400, message=unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
 		},
 		{
 			name: "incomplete",
