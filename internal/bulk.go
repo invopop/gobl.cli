@@ -142,7 +142,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			res.Error = err.Error()
 			return res
 		}
-		res.Payload, _ = json.Marshal(env)
+		res.Payload, _ = marshal(env)
 	case "keygen":
 		key := dsig.NewES256Key()
 
