@@ -2,23 +2,41 @@ before:
   hooks:
     - go mod download
 builds:
-  - env:
+  - id: gobl.cli
+    env:
       - CGO_ENABLED=0
-    id: gobl.cli
     goos:
       - linux
       - windows
       - darwin
     main: ./cmd/gobl
     binary: gobl
+  - id: gobl.wasm
+    goos:
+      - js
+    main: ./wasm
+    binary: gobl.wasm
+    goarch:
+      - "wasm"
 archives:
-  - format: tar.gz
+  - id: cli
+    builds:
+      - gobl.cli
+    format: tar.gz
     name_template: "gobl.cli_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     wrap_in_directory: true
+  - id: wasm
+    builds:
+      - gobl.wasm
+    format: gz
+    name_template: "gobl.{{ .Version }}.wasm"
+    files:
+      - none*
+    wrap_in_directory: false
 checksum:
   name_template: "checksums.txt"
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .Tag }}"
 changelog:
   sort: asc
   filters:
