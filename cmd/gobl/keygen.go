@@ -19,7 +19,9 @@ type keygenOpts struct {
 }
 
 func keygen(root *rootOpts) *keygenOpts {
-	return &keygenOpts{}
+	return &keygenOpts{
+		rootOpts: root,
+	}
 }
 
 func (k *keygenOpts) cmd() *cobra.Command {
