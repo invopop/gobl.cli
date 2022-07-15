@@ -4,7 +4,7 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "68c988a8a1e1954d183d8267e0950a4f9f957182f6e1a7d3a6b970631a903932"
+			"val": "1125d5d9adf430705e54e15f22d70c4b998dc5103817cdbfb98b2d909c5d773f"
 		}
 	},
 	"doc": {
@@ -149,10 +149,10 @@
 		],
 		"payment": {
 			"terms": {
-				"code": "instant"
+				"key": "instant"
 			},
 			"instructions": {
-				"code": "credit_transfer",
+				"key": "credit-transfer",
 				"credit_transfer": [
 					{
 						"iban": "ES06 0128 0011 3901 0008 1391",

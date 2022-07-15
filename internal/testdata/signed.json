@@ -1,158 +1,92 @@
 {
+	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+		"uuid": "4905f174-0384-11ed-9fa6-b24117999d50",
 		"dig": {
 			"alg": "sha256",
-			"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+			"val": "005454e011384f8138b83164a3c5cdfae47bdc891da22cc46ca75eb5c40a9b30"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"region": "ES",
-		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
-		"code": "INV2021-001",
+		"code": "SAMPLE-001",
 		"currency": "EUR",
-		"issue_date": "2021-06-16",
+		"issue_date": "2022-02-01",
 		"supplier": {
 			"tax_id": {
 				"country": "ES",
-				"code": "B91983379"
+				"code": "58384285G"
 			},
-			"name": "A Company Name S.L.",
+			"name": "MªF. Services",
 			"people": [
 				{
 					"name": {
-						"alias": "Paco",
-						"given": "Francisco",
-						"surname": "Smith"
+						"given": "MARIA FRANCISCA",
+						"surname": "MONTERO",
+						"surname2": "ESTEBAN"
 					}
 				}
 			],
 			"addresses": [
 				{
-					"num": "10",
-					"street": "Calle Mayor",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "28003",
+					"num": "9",
+					"street": "CAMÍ MADRID",
+					"locality": "CANENA",
+					"region": "JAÉN",
+					"code": "23480",
 					"country": "ES"
 				}
 			],
 			"emails": [
 				{
-					"addr": "contact@company.com"
-				}
-			],
-			"telephones": [
-				{
-					"label": "mobile",
-					"num": "+34644123123"
+					"addr": "billing@example.com"
 				}
 			]
 		},
 		"customer": {
 			"tax_id": {
 				"country": "ES",
-				"code": "B-85905495"
+				"code": "54387763P"
 			},
-			"name": "Autofiscal S.L.",
-			"addresses": [
-				{
-					"num": "1629",
-					"street": "Calle Diseminado",
-					"locality": "Miraflores de la Sierra",
-					"region": "Madrid",
-					"code": "28792",
-					"country": "ES"
-				}
-			],
-			"emails": [
-				{
-					"addr": "sam.lown@invopop.com"
-				}
-			]
+			"name": "Sample Consumer"
 		},
 		"lines": [
 			{
 				"i": 1,
 				"quantity": "20",
 				"item": {
-					"name": "Development services day rate",
-					"price": "200.00"
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
 				},
-				"sum": "4000.00",
-				"discount": {
-					"value": "200.00",
-					"reason": "just because"
-				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "STD"
+						"rate": "standard",
+						"percent": "21.0%"
 					},
 					{
 						"cat": "IRPF",
-						"code": "STD"
+						"percent": "15.0%"
 					}
 				],
-				"total": "3800.00"
-			},
-			{
-				"i": 2,
-				"quantity": "10",
-				"item": {
-					"name": "Something random",
-					"price": "100.00"
-				},
-				"sum": "1000.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"code": "STD"
-					}
-				],
-				"total": "1000.00"
-			},
-			{
-				"i": 3,
-				"quantity": "5",
-				"item": {
-					"name": "Additional random services",
-					"price": "34.50"
-				},
-				"sum": "172.50",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"code": "RED"
-					}
-				],
-				"total": "172.50"
-			},
-			{
-				"i": 4,
-				"quantity": "3",
-				"item": {
-					"name": "Impuesto local",
-					"price": "5.00"
-				},
-				"sum": "15.00",
-				"total": "15.00"
-			}
-		],
-		"outlays": [
-			{
-				"i": 1,
-				"desc": "Something paid for by us",
-				"paid": "200.00"
+				"total": "1620.00"
 			}
 		],
 		"payment": {
 			"terms": {
-				"code": "instant"
+				"key": "instant"
 			},
 			"instructions": {
-				"code": "credit_transfer",
+				"key": "credit-transfer",
 				"credit_transfer": [
 					{
 						"iban": "ES06 0128 0011 3901 0008 1391",
@@ -160,9 +94,47 @@
 					}
 				]
 			}
+		},
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1620.00",
+								"percent": "21.0%",
+								"amount": "340.20"
+							}
+						],
+						"base": "1620.00",
+						"amount": "340.20"
+					},
+					{
+						"code": "IRPF",
+						"retained": true,
+						"rates": [
+							{
+								"base": "1620.00",
+								"percent": "15.0%",
+								"amount": "243.00"
+							}
+						],
+						"base": "1620.00",
+						"amount": "243.00"
+					}
+				],
+				"sum": "97.20"
+			},
+			"tax": "97.20",
+			"total_with_tax": "1717.20",
+			"payable": "1717.20"
 		}
 	},
 	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImE2YzM5MjBkLThlMzMtNDE1OS1iMzM3LTllNzQ2MTcxNmRmMSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwidHlwIjoiYmlsbC5JbnZvaWNlIiwicmduIjoiRVMiLCJkaWciOnsiYWxnIjoic2hhMjU2IiwidmFsIjoiZGNlM2JjM2M4YmYyOGYzZDIwOWY3ODM5MTdiMzA4MmRkYzAzMzlhNjZlOWJhM2FhNjM4NDllNDM1N2RiMTQyMiJ9fQ.CbBRUWrP1ELBmsoF9KnMWB5D6f1rNkai4lMZYx83vP2oKt3XdIMv-kvME4voFWN7XDjmsFb8dnt1sD00Oi54rQ"
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6Ijg0MWI2NjgwLTA1M2UtNGQyZC1iZDJiLTVmMTM5NDkyY2U2MyJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAwNTQ1NGUwMTEzODRmODEzOGI4MzE2NGEzYzVjZGZhZTQ3YmRjODkxZGEyMmNjNDZjYTc1ZWI1YzQwYTliMzAifX0.3Ol3AY1-V9ph20eHCxWhW0lxnEjhg704fpRg7RR979SwqTeiyz68EvZ4e-J4bpwpWZAkMaBsebGLoQdcQjSYIw"
 	]
 }

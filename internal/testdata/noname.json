@@ -144,10 +144,10 @@
     ],
     "payment": {
       "terms": {
-        "code": "instant"
+        "key": "instant"
       },
       "instructions": {
-        "code": "credit_transfer",
+        "key": "credit-transfer",
         "credit_transfer": [
           {
             "iban": "ES06 0128 0011 3901 0008 1391",

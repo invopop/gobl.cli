@@ -104,16 +104,16 @@
         ],
         "payment": {
             "instructions": {
-                "code": "credit_transfer",
                 "credit_transfer": [
                     {
                         "iban": "ES06 0128 0011 3901 0008 1391",
                         "name": "Bankinter"
                     }
-                ]
+                ],
+                "key": "credit-transfer"
             },
             "terms": {
-                "code": "instant"
+                "key": "instant"
             }
         },
         "supplier": {
@@ -204,11 +204,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "2526f001dbfaf65b5840ef952c8e4d2e934786cbe0acec2e0c99c2d704036e66"
+            "val": "e8d3696b5532c4d1ce7415280fec02281128381ac0d8cec154663dc41417e97f"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjI1MjZmMDAxZGJmYWY2NWI1ODQwZWY5NTJjOGU0ZDJlOTM0Nzg2Y2JlMGFjZWMyZTBjOTljMmQ3MDQwMzZlNjYifX0.b-y0DLNnIYIEzalGA6kZvqS6HN1WlCRCNWKHZCAdogAqWu_aqrfBjKxwsHBW05j4JgWw1TYHuv60YQW7wLYWKg"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImU4ZDM2OTZiNTUzMmM0ZDFjZTc0MTUyODBmZWMwMjI4MTEyODM4MWFjMGQ4Y2VjMTU0NjYzZGM0MTQxN2U5N2YifX0.pcLgMRTH_cmGiaT72_xNCEGgORLDxtQHHe3lG0nvXV1OZD9bMzoj-8IdFbfbKq_RjL-6ukyq8iZMLYYKPF401Q"
     ]
 }

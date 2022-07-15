@@ -104,16 +104,16 @@
         ],
         "payment": {
             "instructions": {
-                "code": "credit_transfer",
                 "credit_transfer": [
                     {
                         "iban": "ES06 0128 0011 3901 0008 1391",
                         "name": "Bankinter"
                     }
-                ]
+                ],
+                "key": "credit-transfer"
             },
             "terms": {
-                "code": "instant"
+                "key": "instant"
             }
         },
         "supplier": {
@@ -204,10 +204,9 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "646639692fd5fb3f9b705391a88252dc7e9a381442802233b11399d5553a24f1"
+            "val": "8f0e6964592fb7b163e9067b518d7c28e6d9b64b15b84343f8da0ae43eca18d4"
         },
         "draft": true,
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
-    },
-    "sigs": null
+    }
 }

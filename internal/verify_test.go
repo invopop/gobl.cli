@@ -51,19 +51,6 @@ func TestVerify(t *testing.T) {
 			key: publicKey,
 		}
 	})
-	tests.Add("missing sig", func(t *testing.T) interface{} {
-		f, err := os.Open("testdata/nosig.json")
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() { _ = f.Close() })
-
-		return tt{
-			in:  f,
-			key: publicKey,
-			err: "code=422, message=sigs: cannot be blank.",
-		}
-	})
 	tests.Add("missing key", func(t *testing.T) interface{} {
 		f, err := os.Open("testdata/success.json")
 		if err != nil {
