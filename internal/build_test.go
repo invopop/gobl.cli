@@ -18,9 +18,11 @@ import (
 	"github.com/invopop/gobl/note"
 )
 
-var privateKey = new(dsig.PrivateKey)
-var publicKey = new(dsig.PublicKey)
-var verifyKeyText string
+var (
+	privateKey    = new(dsig.PrivateKey)
+	publicKey     = new(dsig.PublicKey)
+	verifyKeyText string
+)
 
 const signingKeyFile = "testdata/private.jwk"
 
@@ -325,7 +327,7 @@ func TestBuildWithPartialEnvelope(t *testing.T) {
 		got, err := Build(context.Background(), opts)
 		require.NoError(t, err)
 		assert.NotEmpty(t, got.Head.UUID.String())
-		assert.NotEmpty(t, got.Signatures)
+		assert.Empty(t, got.Signatures)
 
 		msg, ok := got.Extract().(*note.Message)
 		if assert.True(t, ok) {

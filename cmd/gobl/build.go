@@ -121,7 +121,6 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		SetString:  b.setStrings,
 		PrivateKey: key,
 		DocType:    b.docType,
-		Draft:      b.draft,
 	}
 	var env *gobl.Envelope
 

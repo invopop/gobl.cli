@@ -111,7 +111,6 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			DocType:    bld.DocType,
 			Data:       bytes.NewReader(bld.Data),
 			PrivateKey: bld.PrivateKey,
-			Draft:      bld.Draft,
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
@@ -132,7 +131,6 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			DocType:    bld.DocType,
 			Data:       bytes.NewReader(bld.Data),
 			PrivateKey: bld.PrivateKey,
-			Draft:      bld.Draft,
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
@@ -193,7 +191,6 @@ type BuildRequest struct {
 	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
-	Draft      bool             `json:"draft"`
 }
 
 // KeygenResponse is the payload for a key generation response.

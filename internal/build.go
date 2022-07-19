@@ -29,7 +29,6 @@ type BuildOptions struct {
 	SetString  map[string]string
 	SetFile    map[string]string
 	PrivateKey *dsig.PrivateKey
-	Draft      bool
 }
 
 // decodeInto unmarshals in as YAML, then merges it into dest.
@@ -45,7 +44,8 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 	return nil
 }
 
-// Build builds and validates a GOBL envelope from the opts.
+// Build parses a GOBL document into an envelope, performs calculations and
+// validates it. It doesn't sign the envelope and only works with drafts.
 func Build(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
 	encoded, err := prepareIntermediate(ctx, opts, docInEnvelopeSchemaData)
 	if err != nil {
@@ -57,9 +57,21 @@ func Build(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
 	if err := json.Unmarshal(encoded, env); err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if err := finalizeEnvelope(ctx, env, opts); err != nil {
-		return nil, err
+
+	// Signed documents should be regarded as immutable.
+	// Attempting to build an already signed document returns an error.
+	if len(env.Signatures) > 0 {
+		return nil, echo.NewHTTPError(http.StatusConflict, "document has already been signed")
 	}
+
+	if err := env.Calculate(); err != nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+
+	if err := env.Validate(); err != nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+
 	return env, nil
 }
 
@@ -118,9 +130,6 @@ func prepareIntermediate(ctx context.Context, opts *BuildOptions, schemaDataFunc
 }
 
 func finalizeEnvelope(ctx context.Context, env *gobl.Envelope, opts *BuildOptions) error {
-	if opts.Draft {
-		env.Head.Draft = true
-	}
 	if len(env.Signatures) > 0 {
 		return echo.NewHTTPError(http.StatusConflict, "document has already been signed")
 	}
@@ -148,7 +157,6 @@ func docSchemaData(schema schema.ID) map[string]interface{} {
 	return map[string]interface{}{
 		"$schema": schema,
 	}
-
 }
 
 func parseSets(opts *BuildOptions) (map[string]interface{}, error) {
