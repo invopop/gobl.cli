@@ -1,86 +1,72 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+		"uuid": "4905f174-0384-11ed-9fa6-b24117999d50",
 		"dig": {
 			"alg": "sha256",
-			"val": "baaef9497d77270ae3b3b9eab76a8d4c816c0c7d9fadaca83b3b958f7f68aaa8"
+			"val": "58ae6b7f41923f6509621e1faaf27e800bc76647beae5874b293dd67975b4545"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
-		"code": "INV2021-001",
+		"code": "SAMPLE-001",
 		"currency": "MXN",
-		"issue_date": "2021-06-16",
+		"issue_date": "2022-02-01",
 		"supplier": {
 			"tax_id": {
 				"country": "ES",
-				"code": "B91983379"
+				"code": "58384285G"
 			},
-			"name": "A Company Name S.L.",
+			"name": "MªF. Services",
 			"people": [
 				{
 					"name": {
-						"alias": "Paco",
-						"given": "Francisco",
-						"surname": "Smith"
+						"given": "MARIA FRANCISCA",
+						"surname": "MONTERO",
+						"surname2": "ESTEBAN"
 					}
 				}
 			],
 			"addresses": [
 				{
-					"num": "10",
-					"street": "Calle Mayor",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "28003",
+					"num": "9",
+					"street": "CAMÍ MADRID",
+					"locality": "CANENA",
+					"region": "JAÉN",
+					"code": "23480",
 					"country": "ES"
 				}
 			],
 			"emails": [
 				{
-					"addr": "contact@company.com"
-				}
-			],
-			"telephones": [
-				{
-					"label": "mobile",
-					"num": "+34644123123"
+					"addr": "billing@example.com"
 				}
 			]
 		},
 		"customer": {
 			"tax_id": {
 				"country": "ES",
-				"code": "B-85905495"
+				"code": "54387763P"
 			},
-			"name": "Autofiscal S.L.",
-			"addresses": [
-				{
-					"num": "1629",
-					"street": "Calle Diseminado",
-					"locality": "Miraflores de la Sierra",
-					"region": "Madrid",
-					"code": "28792",
-					"country": "ES"
-				}
-			],
-			"emails": [
-				{
-					"addr": "sam.lown@invopop.com"
-				}
-			]
+			"name": "Sample Consumer"
 		},
 		"lines": [
 			{
 				"i": 1,
 				"quantity": "20",
 				"item": {
-					"name": "Development services day rate",
-					"price": "200.00"
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
 				},
-				"sum": "4000.00",
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -89,70 +75,18 @@
 					},
 					{
 						"cat": "IRPF",
-						"rate": "pro",
 						"percent": "15.0%"
 					}
 				],
-				"total": "4000.00"
-			},
-			{
-				"i": 2,
-				"quantity": "10",
-				"item": {
-					"name": "Something random",
-					"price": "100.00"
-				},
-				"sum": "1000.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"rate": "standard",
-						"percent": "21.0%"
-					}
-				],
-				"total": "1000.00"
-			},
-			{
-				"i": 3,
-				"quantity": "5",
-				"item": {
-					"name": "Additional random services",
-					"price": "34.50"
-				},
-				"sum": "172.50",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"rate": "zero",
-						"percent": "0.0%"
-					}
-				],
-				"total": "172.50"
-			},
-			{
-				"i": 4,
-				"quantity": "3",
-				"item": {
-					"name": "Impuesto local",
-					"price": "5.00"
-				},
-				"sum": "15.00",
-				"total": "15.00"
-			}
-		],
-		"outlays": [
-			{
-				"i": 1,
-				"desc": "Something paid for by us",
-				"amount": "0"
+				"total": "1620.00"
 			}
 		],
 		"payment": {
 			"terms": {
-				"code": "instant"
+				"key": "instant"
 			},
 			"instructions": {
-				"code": "credit_transfer",
+				"key": "credit-transfer",
 				"credit_transfer": [
 					{
 						"iban": "ES06 0128 0011 3901 0008 1391",
@@ -162,8 +96,8 @@
 			}
 		},
 		"totals": {
-			"sum": "5187.50",
-			"total": "5187.50",
+			"sum": "1620.00",
+			"total": "1620.00",
 			"taxes": {
 				"categories": [
 					{
@@ -171,41 +105,33 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "5000.00",
+								"base": "1620.00",
 								"percent": "21.0%",
-								"amount": "1050.00"
-							},
-							{
-								"key": "zero",
-								"base": "172.50",
-								"percent": "0.0%",
-								"amount": "0.00"
+								"amount": "340.20"
 							}
 						],
-						"base": "5172.50",
-						"amount": "1050.00"
+						"base": "1620.00",
+						"amount": "340.20"
 					},
 					{
 						"code": "IRPF",
 						"retained": true,
 						"rates": [
 							{
-								"key": "pro",
-								"base": "4000.00",
+								"base": "1620.00",
 								"percent": "15.0%",
-								"amount": "600.00"
+								"amount": "243.00"
 							}
 						],
-						"base": "4000.00",
-						"amount": "600.00"
+						"base": "1620.00",
+						"amount": "243.00"
 					}
 				],
-				"sum": "450.00"
+				"sum": "97.20"
 			},
-			"tax": "450.00",
-			"total_with_tax": "5637.50",
-			"outlays": "0.00",
-			"payable": "5637.50"
+			"tax": "97.20",
+			"total_with_tax": "1717.20",
+			"payable": "1717.20"
 		}
 	},
 	"sigs": ["sig data"]

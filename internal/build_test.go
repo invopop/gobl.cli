@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
@@ -21,10 +22,14 @@ var privateKey = new(dsig.PrivateKey)
 var publicKey = new(dsig.PublicKey)
 var verifyKeyText string
 
-const signingKeyText = `{"use":"sig","kty":"EC","kid":"b7cee60f-204e-438b-a88f-021d28af6991","crv":"P-256","alg":"ES256","x":"wLez6TfqNReD3FUUyVP4Q7HAGdokmAfE6LwfcM28DlQ","y":"CIxURqWtiFIu9TaatRa85NkNsw1LZHw_ZQ9A45GW_MU","d":"xNx9MxONcuLk8Ai6s2isqXMZaDi3HNGLkFX-qiNyyeo"}`
+const signingKeyFile = "testdata/private.jwk"
 
 func init() {
-	if err := json.Unmarshal([]byte(signingKeyText), privateKey); err != nil {
+	data, err := ioutil.ReadFile(signingKeyFile)
+	if err != nil {
+		panic(err)
+	}
+	if err := json.Unmarshal(data, privateKey); err != nil {
 		panic(err)
 	}
 	publicKey = privateKey.Public()
