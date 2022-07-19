@@ -20,7 +20,7 @@ func signedDoc(t *testing.T) []byte {
 		t.Fatal(err)
 	}
 	defer in.Close() //nolint:errcheck
-	env, err := Build(context.Background(), &BuildOptions{
+	env, err := Sign(context.Background(), &BuildOptions{
 		Data: in,
 		SetFile: map[string]string{
 			"doc": "testdata/invoice-es-es.yaml",
@@ -70,7 +70,7 @@ func TestVerify(t *testing.T) {
 		}
 		t.Cleanup(func() { _ = f.Close() })
 
-		var wrongKey = new(dsig.PublicKey)
+		wrongKey := new(dsig.PublicKey)
 		if err := json.Unmarshal([]byte(`{"use":"sig","kty":"EC","kid":"0f8726f9-5e1c-43e2-a0c8-55e696550800","crv":"P-256","alg":"ES256","x":"rmBvuoO4LJCnuo0htUaAhSgF7OdCEO6GAuI_o1dUP8s","y":"7qXu5-LHoQM52C_HJJ4eYoGlQnesFLcT76hIlDs-ZfU"}`), wrongKey); err != nil {
 			panic(err)
 		}
