@@ -121,26 +121,6 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			return res
 		}
 		res.Payload, _ = marshal(env)
-	case "envelop":
-		bld := &BuildRequest{}
-		if err := json.Unmarshal(req.Payload, bld); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
-			return res
-		}
-		opts := &BuildOptions{
-			DocType:    bld.DocType,
-			Data:       bytes.NewReader(bld.Data),
-			PrivateKey: bld.PrivateKey,
-		}
-		if len(bld.Template) > 0 {
-			opts.Template = bytes.NewReader(bld.Template)
-		}
-		env, err := Envelop(ctx, opts)
-		if err != nil {
-			res.Error = err.Error()
-			return res
-		}
-		res.Payload, _ = marshal(env)
 	case "keygen":
 		key := dsig.NewES256Key()
 

@@ -75,26 +75,6 @@ func Build(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
 	return env, nil
 }
 
-// Envelop assumes the incoming BuildOptions define the contents of a document
-// payload and we need to prepare the envelope around it.
-func Envelop(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
-	encoded, err := prepareIntermediate(ctx, opts, docSchemaData)
-	if err != nil {
-		return nil, err
-	}
-
-	// Prepare a new envelope as the intention is to insert the encoded data
-	env := gobl.NewEnvelope()
-	if err = json.Unmarshal(encoded, env.Document); err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	if err := finalizeEnvelope(ctx, env, opts); err != nil {
-		return nil, err
-	}
-	return env, nil
-}
-
 type schemaDataCB func(schema.ID) map[string]interface{}
 
 func prepareIntermediate(ctx context.Context, opts *BuildOptions, schemaDataFunc schemaDataCB) ([]byte, error) {
@@ -127,24 +107,6 @@ func prepareIntermediate(ctx context.Context, opts *BuildOptions, schemaDataFunc
 	}
 
 	return json.Marshal(intermediate)
-}
-
-func finalizeEnvelope(ctx context.Context, env *gobl.Envelope, opts *BuildOptions) error {
-	if len(env.Signatures) > 0 {
-		return echo.NewHTTPError(http.StatusConflict, "document has already been signed")
-	}
-	if err := env.Calculate(); err != nil {
-		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
-	}
-	if opts.PrivateKey == nil {
-		return echo.NewHTTPError(http.StatusUnprocessableEntity, "signing key required")
-	}
-	if !env.Head.Draft {
-		if err := env.Sign(opts.PrivateKey); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func docInEnvelopeSchemaData(schema schema.ID) map[string]interface{} {

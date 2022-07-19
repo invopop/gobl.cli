@@ -337,33 +337,3 @@ func TestBuildWithPartialEnvelope(t *testing.T) {
 		}
 	})
 }
-
-func TestEnvelop(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		opts := &BuildOptions{
-			Data:       openBuildTestFile(t, "testdata/message.yaml"),
-			DocType:    "note.Message",
-			PrivateKey: privateKey,
-		}
-		got, err := Envelop(context.Background(), opts)
-		require.NoError(t, err)
-		assert.NotEmpty(t, got.Head.UUID.String())
-		assert.NotEmpty(t, got.Signatures)
-
-		msg, ok := got.Extract().(*note.Message)
-		assert.True(t, ok)
-		assert.Equal(t, "https://gobl.org/draft-0/note/message", got.Document.Schema().String())
-		assert.Equal(t, "Test Message", msg.Title)
-		assert.Equal(t, "We hope you like this test message!", msg.Content)
-	})
-	t.Run("missing doc type", func(t *testing.T) {
-		opts := &BuildOptions{
-			Data:       openBuildTestFile(t, "testdata/message.yaml"),
-			PrivateKey: privateKey,
-		}
-		_, err := Envelop(context.Background(), opts)
-		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "unregistered or invalid schema")
-		}
-	})
-}

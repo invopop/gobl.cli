@@ -29,7 +29,6 @@ func (o *rootOpts) cmd() *cobra.Command {
 	o.setFlags(cmd)
 
 	cmd.AddCommand(verify().cmd())
-	cmd.AddCommand(envelop(o).cmd()) // see build
 	cmd.AddCommand(build(o).cmd())
 	cmd.AddCommand(versionCmd())
 	cmd.AddCommand(serve().cmd())

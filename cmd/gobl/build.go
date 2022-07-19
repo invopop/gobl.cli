@@ -8,14 +8,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/invopop/gobl"
 	"github.com/invopop/gobl.cli/internal"
 	"github.com/invopop/gobl/dsig"
 )
 
 type buildOpts struct {
 	*rootOpts
-	envelop        bool // when true, assumes source is a document
 	draft          bool // when true, adds draft property to head, skips signatures
 	set            map[string]string
 	setFiles       map[string]string
@@ -34,15 +32,6 @@ func build(root *rootOpts) *buildOpts {
 		rootOpts: root,
 		use:      "build [infile] [outfile]",
 		short:    "Combine and complete envelope data",
-	}
-}
-
-func envelop(root *rootOpts) *buildOpts {
-	return &buildOpts{
-		rootOpts: root,
-		envelop:  true,
-		use:      "envelop [infile] [outfile]",
-		short:    "Prepare a document and insert into a new envelope",
 	}
 }
 
@@ -122,14 +111,8 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		PrivateKey: key,
 		DocType:    b.docType,
 	}
-	var env *gobl.Envelope
 
-	// We're performing the envelop check here to save extra code
-	if b.envelop {
-		env, err = internal.Envelop(ctx, opts)
-	} else {
-		env, err = internal.Build(ctx, opts)
-	}
+	env, err := internal.Build(ctx, opts)
 	if err != nil {
 		return err
 	}
