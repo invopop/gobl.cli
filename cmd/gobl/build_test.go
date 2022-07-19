@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -118,13 +117,12 @@ func Test_build(t *testing.T) {
 	})
 
 	tests := []struct {
-		name    string
-		opts    *buildOpts
-		in      io.Reader
-		args    []string
-		err     string
-		target  string
-		replace []testy.Replacement
+		name   string
+		opts   *buildOpts
+		in     io.Reader
+		args   []string
+		err    string
+		target string
 	}{
 		{
 			name: "missing file",
@@ -159,20 +157,6 @@ func Test_build(t *testing.T) {
 			in:   noTotals(t),
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
-			},
-		},
-		{
-			name: "envelop success",
-			in:   readTestFile(t, "testdata/envelop.nototals.json"),
-			opts: &buildOpts{
-				envelop:        true,
-				privateKeyFile: "testdata/id_es256",
-			},
-			replace: []testy.Replacement{
-				{
-					Regexp:      regexp.MustCompile(`"uuid":.?".*"`),
-					Replacement: `"uuid": "00000000-0000-0000-0000-000000000000"`,
-				},
 			},
 		},
 		{
@@ -333,16 +317,12 @@ func Test_build(t *testing.T) {
 			} else if err != nil {
 				t.Errorf("Unexpected error: %q", err)
 			}
-			tt.replace = append(tt.replace, testy.Replacement{
-				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
-				Replacement: `"sigs": ["sig data"]`,
-			})
 
-			if d := testy.DiffText(testy.Snapshot(t), buf.String(), tt.replace...); d != nil {
+			if d := testy.DiffText(testy.Snapshot(t), buf.String()); d != nil {
 				t.Error(d)
 			}
 			if tt.target != "" {
-				if d := testy.DiffText(testy.Snapshot(t, "outfile"), &testy.File{Path: tt.target}, tt.replace...); d != nil {
+				if d := testy.DiffText(testy.Snapshot(t, "outfile"), &testy.File{Path: tt.target}); d != nil {
 					t.Errorf("outfile:\n%s", d)
 				}
 			}

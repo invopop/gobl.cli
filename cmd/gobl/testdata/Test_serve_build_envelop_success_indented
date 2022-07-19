@@ -15,6 +15,5 @@ Content-Type: application/json; charset=UTF-8
 		"$schema": "https://gobl.org/draft-0/note/message",
 		"title": "Message Title",
 		"content": "Hope you like this meaningful content!"
-	},
-	"sigs": ["sig data"]
+	}
 }
