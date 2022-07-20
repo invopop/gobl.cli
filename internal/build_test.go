@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"io/ioutil"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -288,11 +287,7 @@ func TestBuild(t *testing.T) {
 		if err != nil {
 			return
 		}
-		re := testy.Replacement{
-			Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
-			Replacement: `"sigs": ["signature data"]`,
-		}
-		if d := testy.DiffAsJSON(testy.Snapshot(t), got, re); d != nil {
+		if d := testy.DiffAsJSON(testy.Snapshot(t), got); d != nil {
 			t.Error(d)
 		}
 	})

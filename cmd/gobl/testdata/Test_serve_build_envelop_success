@@ -1,5 +1,0 @@
-HTTP/1.1 200 OK
-Connection: close
-Content-Type: application/json; charset=UTF-8
-
-{"$schema":"https://gobl.org/draft-0/envelope","head":{"uuid":"00000000-0000-0000-0000-000000000000","dig":{"alg":"sha256","val":"612e0956b79d5640ff94f56b9bfdc755853a4602755393b87ebcdc59f3e38996"}},"doc":{"$schema":"https://gobl.org/draft-0/note/message","title":"Message Title","content":"Hope you like this meaningful content!"},"sigs": ["sig data"]}
