@@ -2,29 +2,12 @@ package internal
 
 import (
 	"context"
-	"io"
-	"os"
 	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"gitlab.com/flimzy/testy"
 )
-
-func openSignTestFile(t *testing.T, filename string) io.Reader {
-	t.Helper()
-
-	f, err := os.Open(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	t.Cleanup(func() {
-		_ = f.Close()
-	})
-
-	return f
-}
 
 func TestSign(t *testing.T) {
 	type tt struct {
@@ -36,14 +19,14 @@ func TestSign(t *testing.T) {
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data: openSignTestFile(t, "testdata/nototals.json"),
+				Data: testFileReader(t, "testdata/nototals.json"),
 			},
 		}
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data: openSignTestFile(t, "testdata/signed.json"),
+				Data: testFileReader(t, "testdata/signed.json"),
 			},
 			err: "code=409, message=document has already been signed",
 		}
@@ -51,7 +34,7 @@ func TestSign(t *testing.T) {
 	tests.Add("draft envelope", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data: openSignTestFile(t, "testdata/draft.json"),
+				Data: testFileReader(t, "testdata/draft.json"),
 			},
 			err: "code=422, message=cannot sign draft envelope",
 		}

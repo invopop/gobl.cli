@@ -3,9 +3,7 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"io/ioutil"
-	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -40,18 +38,6 @@ func init() {
 		panic(err)
 	}
 	verifyKeyText = string(pub)
-}
-
-func openBuildTestFile(t *testing.T, filename string) io.Reader {
-	t.Helper()
-	f, err := os.Open(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		_ = f.Close()
-	})
-	return f
 }
 
 func Test_parseSets(t *testing.T) {
@@ -211,14 +197,14 @@ func TestBuild(t *testing.T) {
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data: openBuildTestFile(t, "testdata/nototals.json"),
+				Data: testFileReader(t, "testdata/nototals.json"),
 			},
 		}
 	})
 	tests.Add("merge YAML", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data: openBuildTestFile(t, "testdata/nototals.json"),
+				Data: testFileReader(t, "testdata/nototals.json"),
 				SetYAML: map[string]string{
 					"doc.supplier.name": "Other Company",
 				},
@@ -250,14 +236,14 @@ func TestBuild(t *testing.T) {
 		return tt{
 			opts: BuildOptions{
 				Template: strings.NewReader(`{"doc":{"supplier":{"name": "Other Company"}}}`),
-				Data:     openBuildTestFile(t, "testdata/noname.json"),
+				Data:     testFileReader(t, "testdata/noname.json"),
 			},
 		}
 	})
 	tests.Add("template with empty input", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Template: openBuildTestFile(t, "testdata/nosig.json"),
+				Template: testFileReader(t, "testdata/nosig.json"),
 				Data:     strings.NewReader("{}"),
 			},
 		}
@@ -265,7 +251,7 @@ func TestBuild(t *testing.T) {
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Template: openBuildTestFile(t, "testdata/signed.json"),
+				Template: testFileReader(t, "testdata/signed.json"),
 				Data:     strings.NewReader("{}"),
 			},
 			err: `code=409, message=document has already been signed`,
@@ -274,21 +260,15 @@ func TestBuild(t *testing.T) {
 	tests.Add("explicit type", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data:    openBuildTestFile(t, "testdata/notype.json"),
+				Data:    testFileReader(t, "testdata/notype.json"),
 				DocType: "bill.Invoice",
 			},
 		}
 	})
 	tests.Add("draft", func(t *testing.T) interface{} {
-		f, err := os.Open("testdata/draft.json")
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() { _ = f.Close() })
-
 		return tt{
 			opts: BuildOptions{
-				Data: f,
+				Data: testFileReader(t, "testdata/draft.json"),
 			},
 		}
 	})
@@ -321,7 +301,7 @@ func TestBuild(t *testing.T) {
 func TestBuildWithPartialEnvelope(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		opts := &BuildOptions{
-			Data:       openBuildTestFile(t, "testdata/message.env.yaml"),
+			Data:       testFileReader(t, "testdata/message.env.yaml"),
 			PrivateKey: privateKey,
 		}
 		got, err := Build(context.Background(), opts)
