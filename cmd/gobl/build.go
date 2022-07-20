@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"os"
@@ -53,15 +52,8 @@ func (b *buildOpts) cmd() *cobra.Command {
 	return cmd
 }
 
-func cmdContext(cmd *cobra.Command) context.Context {
-	if ctx := cmd.Context(); ctx != nil {
-		return ctx
-	}
-	return context.Background()
-}
-
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
-	ctx := cmdContext(cmd)
+	ctx := commandContext(cmd)
 
 	var template io.Reader
 	if b.template != "" {
