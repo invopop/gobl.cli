@@ -4,7 +4,6 @@
     overwriteOutputFile: (bool) false,
     inPlace: (bool) false
   }),
-  draft: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) (len=1) {
     (string) (len=3) "foo": (string) (len=8) "foo.json"

@@ -14,7 +14,6 @@ import (
 
 type buildOpts struct {
 	*rootOpts
-	draft          bool // when true, adds draft property to head, skips signatures
 	set            map[string]string
 	setFiles       map[string]string
 	setStrings     map[string]string
@@ -50,7 +49,6 @@ func (b *buildOpts) cmd() *cobra.Command {
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
-	f.BoolVarP(&b.draft, "draft", "d", false, "Set draft property in headers, skip sigs and validation")
 
 	return cmd
 }

@@ -4,7 +4,6 @@
     overwriteOutputFile: (bool) true,
     inPlace: (bool) false
   }),
-  draft: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
