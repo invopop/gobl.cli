@@ -28,7 +28,6 @@ func TestSign(t *testing.T) {
 			opts: BuildOptions{
 				Data: testFileReader(t, "testdata/signed.json"),
 			},
-			err: "code=409, message=document has already been signed",
 		}
 	})
 	tests.Add("draft envelope", func(t *testing.T) interface{} {
