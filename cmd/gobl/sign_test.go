@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -13,7 +14,7 @@ import (
 	"gitlab.com/flimzy/testy"
 )
 
-func Test_build_args(t *testing.T) {
+func Test_sign_args(t *testing.T) {
 	tests := []struct {
 		name string
 		args []string
@@ -74,7 +75,7 @@ func Test_build_args(t *testing.T) {
 			rootCmd := &cobra.Command{}
 			root.setFlags(rootCmd)
 
-			opts := build(root)
+			opts := sign(root)
 
 			cmd := opts.cmd()
 			rootCmd.AddCommand(cmd)
@@ -94,7 +95,7 @@ func Test_build_args(t *testing.T) {
 	}
 }
 
-func Test_build(t *testing.T) {
+func Test_sign(t *testing.T) {
 	noTotals := func(t *testing.T) io.Reader {
 		return testFileReader(t, "testdata/nototals.json")
 	}
@@ -106,7 +107,7 @@ func Test_build(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		opts   *buildOpts
+		opts   *signOpts
 		in     io.Reader
 		args   []string
 		err    string
@@ -114,7 +115,7 @@ func Test_build(t *testing.T) {
 	}{
 		{
 			name: "missing file",
-			opts: &buildOpts{
+			opts: &signOpts{
 				setFiles: map[string]string{
 					"foo": "missing.yaml",
 				},
@@ -125,7 +126,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "valid file",
 			in:   noTotals(t),
-			opts: &buildOpts{
+			opts: &signOpts{
 				setFiles: map[string]string{
 					"doc.supplier": "testdata/supplier.yaml",
 				},
@@ -135,7 +136,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
@@ -143,7 +144,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "success",
 			in:   noTotals(t),
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 		},
@@ -160,7 +161,7 @@ func Test_build(t *testing.T) {
 					}
 				},
 			}`),
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 			err: "code=422, message=no-document",
@@ -177,7 +178,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 			err: "code=400, message=unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
@@ -194,7 +195,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 			err: "code=400, message=marshal: unregistered or invalid schema",
@@ -202,21 +203,21 @@ func Test_build(t *testing.T) {
 		{
 			name: "input file",
 			args: []string{"testdata/success.json"},
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 		},
 		{
 			name: "recalculate",
 			args: []string{"testdata/nototals.json"},
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 		},
 		{
 			name: "output file",
 			args: []string{"testdata/success.json", filepath.Join(tmpdir, "output-file.json")},
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 			target: filepath.Join(tmpdir, "output-file.json"),
@@ -224,7 +225,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "explicit stdout",
 			args: []string{"testdata/success.json", "-"},
-			opts: &buildOpts{
+			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
 		},
@@ -235,7 +236,7 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "overwrite output file",
-			opts: &buildOpts{
+			opts: &signOpts{
 				rootOpts: &rootOpts{
 					overwriteOutputFile: true,
 				},
@@ -246,7 +247,7 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "overwrite input file",
-			opts: &buildOpts{
+			opts: &signOpts{
 				rootOpts: &rootOpts{
 					inPlace: true,
 				},
@@ -257,7 +258,7 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "overwrite stdin",
-			opts: &buildOpts{
+			opts: &signOpts{
 				rootOpts: &rootOpts{
 					inPlace: true,
 				},
@@ -266,7 +267,7 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "merge values",
-			opts: &buildOpts{
+			opts: &signOpts{
 				set:            map[string]string{"doc.currency": "MXN"},
 				privateKeyFile: "testdata/id_es256",
 			},
@@ -274,7 +275,7 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "template missing",
-			opts: &buildOpts{
+			opts: &signOpts{
 				template: "missing.yaml",
 			},
 			err: "open missing.yaml: no such file or directory",
@@ -293,7 +294,7 @@ func Test_build(t *testing.T) {
 			c.SetOut(buf)
 			opts := tt.opts
 			if opts == nil {
-				opts = &buildOpts{}
+				opts = &signOpts{}
 			}
 			if opts.rootOpts == nil {
 				opts.rootOpts = &rootOpts{}
@@ -306,11 +307,16 @@ func Test_build(t *testing.T) {
 				t.Errorf("Unexpected error: %q", err)
 			}
 
-			if d := testy.DiffText(testy.Snapshot(t), buf.String()); d != nil {
+			re := testy.Replacement{
+				Regexp:      regexp.MustCompile(`(?s)"sigs": \[.+\]`),
+				Replacement: `"sigs": ["signature data"]`,
+			}
+
+			if d := testy.DiffText(testy.Snapshot(t), buf.String(), re); d != nil {
 				t.Error(d)
 			}
 			if tt.target != "" {
-				if d := testy.DiffText(testy.Snapshot(t, "outfile"), &testy.File{Path: tt.target}); d != nil {
+				if d := testy.DiffText(testy.Snapshot(t, "outfile"), &testy.File{Path: tt.target}, re); d != nil {
 					t.Errorf("outfile:\n%s", d)
 				}
 			}
