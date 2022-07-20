@@ -29,7 +29,13 @@ func Sign(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
 	// Check early if the envelope is a draft, to prevent possible unnecessary
 	// calculation.
 	if env.Head != nil && env.Head.Draft {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, "cannot sign draft envelope")
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, "cannot sign draft envelope")
+	}
+
+	// Signed documents should be regarded as immutable.
+	// Attempting to sign an already signed document returns an error.
+	if len(env.Signatures) > 0 {
+		return nil, echo.NewHTTPError(http.StatusConflict, "document has already been signed")
 	}
 
 	if err := env.Calculate(); err != nil {
