@@ -1,3 +1,4 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
 currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-001"
