@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/invopop/gobl"
@@ -16,14 +15,9 @@ func Sign(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
 	// TODO: `BuildOptions` should probably be renamed to `ParseOptions`,
 	// as parsing a GOBL data seems to be the only (shared) purpose across
 	// the principal CLI commands in this package.
-	encoded, err := prepareIntermediate(ctx, opts, docInEnvelopeSchemaData)
+	env, err := parseBuildData(ctx, opts)
 	if err != nil {
 		return nil, err
-	}
-
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(encoded, env); err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	// Check early if the envelope is a draft, to prevent possible unnecessary

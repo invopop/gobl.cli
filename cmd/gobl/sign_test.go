@@ -151,6 +151,7 @@ func Test_sign(t *testing.T) {
 		{
 			name: "no document",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"typ": "duck",
@@ -169,6 +170,7 @@ func Test_sign(t *testing.T) {
 		{
 			name: "invalid doc",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"dig": {
@@ -181,11 +183,12 @@ func Test_sign(t *testing.T) {
 			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
+			err: "code=400, message=unmarshal: unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
 		},
 		{
 			name: "incomplete",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"dig": {
@@ -198,7 +201,7 @@ func Test_sign(t *testing.T) {
 			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=marshal: unregistered or invalid schema",
+			err: "code=400, message=unmarshal: marshal: unregistered or invalid schema",
 		},
 		{
 			name: "input file",

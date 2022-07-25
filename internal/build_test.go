@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -229,7 +231,7 @@ func TestBuild(t *testing.T) {
 				}
 			}`),
 		},
-		err: `code=400, message=marshal: unregistered or invalid schema`,
+		err: `code=400, message=unmarshal: marshal: unregistered or invalid schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{
@@ -271,6 +273,19 @@ func TestBuild(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("without envelope", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/invoice.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Data: f,
+			},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
@@ -287,7 +302,17 @@ func TestBuild(t *testing.T) {
 		if err != nil {
 			return
 		}
-		if d := testy.DiffAsJSON(testy.Snapshot(t), got); d != nil {
+		replacements := []testy.Replacement{
+			{
+				Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
+				Replacement: `"sigs": ["signature data"]`,
+			},
+			{
+				Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
+				Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
+			},
+		}
+		if d := testy.DiffAsJSON(testy.Snapshot(t), got, replacements...); d != nil {
 			t.Error(d)
 		}
 	})

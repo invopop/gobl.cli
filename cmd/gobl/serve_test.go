@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -53,7 +55,14 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "missing doc",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"e30K"}`))
+				body, err := json.Marshal(map[string]interface{}{
+					"data":       base64.StdEncoding.EncodeToString([]byte(`{"$schema":"https://gobl.org/draft-0/envelope"}`)),
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+				if err != nil {
+					t.Fatal(err)
+				}
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -83,6 +92,54 @@ func Test_serve_build(t *testing.T) {
 				return req
 			}(),
 			err: "code=400, message=illegal base64 data at input byte 3, internal=illegal base64 data at input byte 3",
+		},
+		{
+			name: "envelop success",
+			req: func() *http.Request {
+				data, err := ioutil.ReadFile("testdata/message.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, _ := json.Marshal(map[string]interface{}{
+					"data":       base64.StdEncoding.EncodeToString(data),
+					"type":       "note.Message",
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			replace: []testy.Replacement{
+				{
+					Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
+					Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
+				},
+			},
+		},
+		{
+			name: "envelop success indented",
+			req: func() *http.Request {
+				data, err := ioutil.ReadFile("testdata/message.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, _ := json.Marshal(map[string]interface{}{
+					"data":       base64.StdEncoding.EncodeToString(data),
+					"type":       "note.Message",
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+
+				req, _ := http.NewRequest(http.MethodPost, "/build?indent=true", bytes.NewReader(body))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			replace: []testy.Replacement{
+				{
+					Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
+					Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
+				},
+			},
 		},
 	}
 

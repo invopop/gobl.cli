@@ -29,7 +29,7 @@ func build(root *rootOpts) *buildOpts {
 	return &buildOpts{
 		rootOpts: root,
 		use:      "build [infile] [outfile]",
-		short:    "Combine and complete envelope data",
+		short:    "Calculate and validate a document, wrapping it in envelope if needed",
 	}
 }
 

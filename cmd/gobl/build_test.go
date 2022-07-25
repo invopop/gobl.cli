@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -105,12 +106,13 @@ func Test_build(t *testing.T) {
 	})
 
 	tests := []struct {
-		name   string
-		opts   *buildOpts
-		in     io.Reader
-		args   []string
-		err    string
-		target string
+		name    string
+		opts    *buildOpts
+		in      io.Reader
+		args    []string
+		replace []testy.Replacement
+		err     string
+		target  string
 	}{
 		{
 			name: "missing file",
@@ -148,8 +150,22 @@ func Test_build(t *testing.T) {
 			},
 		},
 		{
+			name: "envelop success",
+			in:   testFileReader(t, "testdata/envelop.nototals.json"),
+			opts: &buildOpts{
+				privateKeyFile: "testdata/id_es256",
+			},
+			replace: []testy.Replacement{
+				{
+					Regexp:      regexp.MustCompile(`"uuid":.?".*"`),
+					Replacement: `"uuid": "00000000-0000-0000-0000-000000000000"`,
+				},
+			},
+		},
+		{
 			name: "no document",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"typ": "duck",
@@ -168,6 +184,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "invalid doc",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"dig": {
@@ -180,11 +197,12 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
+			err: "code=400, message=unmarshal: unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
 		},
 		{
 			name: "incomplete",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"dig": {
@@ -197,7 +215,7 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=marshal: unregistered or invalid schema",
+			err: "code=400, message=unmarshal: marshal: unregistered or invalid schema",
 		},
 		{
 			name: "input file",
@@ -306,11 +324,11 @@ func Test_build(t *testing.T) {
 				t.Errorf("Unexpected error: %q", err)
 			}
 
-			if d := testy.DiffText(testy.Snapshot(t), buf.String()); d != nil {
+			if d := testy.DiffText(testy.Snapshot(t), buf.String(), tt.replace...); d != nil {
 				t.Error(d)
 			}
 			if tt.target != "" {
-				if d := testy.DiffText(testy.Snapshot(t, "outfile"), &testy.File{Path: tt.target}); d != nil {
+				if d := testy.DiffText(testy.Snapshot(t, "outfile"), &testy.File{Path: tt.target}, tt.replace...); d != nil {
 					t.Errorf("outfile:\n%s", d)
 				}
 			}

@@ -56,7 +56,7 @@ func TestCalculate(t *testing.T) {
 				}
 			}`),
 		},
-		err: `code=400, message=marshal: unregistered or invalid schema`,
+		err: `code=400, message=unmarshal: marshal: unregistered or invalid schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{

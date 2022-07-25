@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/invopop/gobl"
@@ -12,15 +11,9 @@ import (
 // Calculate parses a GOBL document and performs calculations, including invoice
 // totals and envelope header digest.
 func Calculate(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
-	encoded, err := prepareIntermediate(ctx, opts, docInEnvelopeSchemaData)
+	env, err := parseBuildData(ctx, opts)
 	if err != nil {
 		return nil, err
-	}
-
-	// Prepare an empty envelope as we assume the consumer is providing one already.
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(encoded, env); err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	// Signed documents should be regarded as immutable.
