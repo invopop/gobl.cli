@@ -33,6 +33,8 @@ func (v *verifyOpts) cmd() *cobra.Command {
 }
 
 func (v *verifyOpts) runE(cmd *cobra.Command, args []string) error {
+	ctx := commandContext(cmd)
+
 	input, err := openInput(cmd, args)
 	if err != nil {
 		return err
@@ -54,5 +56,5 @@ func (v *verifyOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return internal.Verify(cmdContext(cmd), input, key)
+	return internal.Verify(ctx, input, key)
 }

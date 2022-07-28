@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -18,9 +17,11 @@ import (
 	"github.com/invopop/gobl/note"
 )
 
-var privateKey = new(dsig.PrivateKey)
-var publicKey = new(dsig.PublicKey)
-var verifyKeyText string
+var (
+	privateKey    = new(dsig.PrivateKey)
+	publicKey     = new(dsig.PublicKey)
+	verifyKeyText string
+)
 
 const signingKeyFile = "testdata/private.jwk"
 
@@ -38,18 +39,6 @@ func init() {
 		panic(err)
 	}
 	verifyKeyText = string(pub)
-}
-
-func openBuildTestFile(t *testing.T, filename string) io.Reader {
-	t.Helper()
-	f, err := os.Open(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		_ = f.Close()
-	})
-	return f
 }
 
 func Test_parseSets(t *testing.T) {
@@ -209,14 +198,14 @@ func TestBuild(t *testing.T) {
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data: openBuildTestFile(t, "testdata/nototals.json"),
+				Data: testFileReader(t, "testdata/nototals.json"),
 			},
 		}
 	})
 	tests.Add("merge YAML", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data: openBuildTestFile(t, "testdata/nototals.json"),
+				Data: testFileReader(t, "testdata/nototals.json"),
 				SetYAML: map[string]string{
 					"doc.supplier.name": "Other Company",
 				},
@@ -242,20 +231,20 @@ func TestBuild(t *testing.T) {
 				}
 			}`),
 		},
-		err: `code=400, message=marshal: unregistered or invalid schema`,
+		err: `code=400, message=unmarshal: marshal: unregistered or invalid schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
 				Template: strings.NewReader(`{"doc":{"supplier":{"name": "Other Company"}}}`),
-				Data:     openBuildTestFile(t, "testdata/noname.json"),
+				Data:     testFileReader(t, "testdata/noname.json"),
 			},
 		}
 	})
 	tests.Add("template with empty input", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Template: openBuildTestFile(t, "testdata/nosig.json"),
+				Template: testFileReader(t, "testdata/nosig.json"),
 				Data:     strings.NewReader("{}"),
 			},
 		}
@@ -263,7 +252,7 @@ func TestBuild(t *testing.T) {
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Template: openBuildTestFile(t, "testdata/signed.json"),
+				Template: testFileReader(t, "testdata/signed.json"),
 				Data:     strings.NewReader("{}"),
 			},
 			err: `code=409, message=document has already been signed`,
@@ -272,13 +261,20 @@ func TestBuild(t *testing.T) {
 	tests.Add("explicit type", func(t *testing.T) interface{} {
 		return tt{
 			opts: BuildOptions{
-				Data:    openBuildTestFile(t, "testdata/notype.json"),
+				Data:    testFileReader(t, "testdata/notype.json"),
 				DocType: "bill.Invoice",
 			},
 		}
 	})
 	tests.Add("draft", func(t *testing.T) interface{} {
-		f, err := os.Open("testdata/draft.json")
+		return tt{
+			opts: BuildOptions{
+				Data: testFileReader(t, "testdata/draft.json"),
+			},
+		}
+	})
+	tests.Add("without envelope", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/invoice.json")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -306,11 +302,17 @@ func TestBuild(t *testing.T) {
 		if err != nil {
 			return
 		}
-		re := testy.Replacement{
-			Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
-			Replacement: `"sigs": ["signature data"]`,
+		replacements := []testy.Replacement{
+			{
+				Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
+				Replacement: `"sigs": ["signature data"]`,
+			},
+			{
+				Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
+				Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
+			},
 		}
-		if d := testy.DiffAsJSON(testy.Snapshot(t), got, re); d != nil {
+		if d := testy.DiffAsJSON(testy.Snapshot(t), got, replacements...); d != nil {
 			t.Error(d)
 		}
 	})
@@ -319,49 +321,19 @@ func TestBuild(t *testing.T) {
 func TestBuildWithPartialEnvelope(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		opts := &BuildOptions{
-			Data:       openBuildTestFile(t, "testdata/message.env.yaml"),
+			Data:       testFileReader(t, "testdata/message.env.yaml"),
 			PrivateKey: privateKey,
 		}
 		got, err := Build(context.Background(), opts)
 		require.NoError(t, err)
 		assert.NotEmpty(t, got.Head.UUID.String())
-		assert.NotEmpty(t, got.Signatures)
+		assert.Empty(t, got.Signatures)
 
 		msg, ok := got.Extract().(*note.Message)
 		if assert.True(t, ok) {
 			assert.Equal(t, "https://gobl.org/draft-0/note/message", got.Document.Schema().String())
 			assert.Equal(t, "Test Message", msg.Title)
 			assert.Equal(t, "We hope you like this test message!", msg.Content)
-		}
-	})
-}
-
-func TestEnvelop(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		opts := &BuildOptions{
-			Data:       openBuildTestFile(t, "testdata/message.yaml"),
-			DocType:    "note.Message",
-			PrivateKey: privateKey,
-		}
-		got, err := Envelop(context.Background(), opts)
-		require.NoError(t, err)
-		assert.NotEmpty(t, got.Head.UUID.String())
-		assert.NotEmpty(t, got.Signatures)
-
-		msg, ok := got.Extract().(*note.Message)
-		assert.True(t, ok)
-		assert.Equal(t, "https://gobl.org/draft-0/note/message", got.Document.Schema().String())
-		assert.Equal(t, "Test Message", msg.Title)
-		assert.Equal(t, "We hope you like this test message!", msg.Content)
-	})
-	t.Run("missing doc type", func(t *testing.T) {
-		opts := &BuildOptions{
-			Data:       openBuildTestFile(t, "testdata/message.yaml"),
-			PrivateKey: privateKey,
-		}
-		_, err := Envelop(context.Background(), opts)
-		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "unregistered or invalid schema")
 		}
 	})
 }

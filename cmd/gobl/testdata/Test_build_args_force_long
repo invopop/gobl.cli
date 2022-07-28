@@ -4,8 +4,6 @@
     overwriteOutputFile: (bool) true,
     inPlace: (bool) false
   }),
-  envelop: (bool) false,
-  draft: (bool) false,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
@@ -13,5 +11,5 @@
   privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
   docType: (string) "",
   use: (string) (len=24) "build [infile] [outfile]",
-  short: (string) (len=34) "Combine and complete envelope data"
+  short: (string) (len=68) "Calculate and validate a document, wrapping it in envelope if needed"
 })

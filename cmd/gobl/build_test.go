@@ -95,21 +95,9 @@ func Test_build_args(t *testing.T) {
 	}
 }
 
-func readTestFile(t *testing.T, filename string) io.Reader {
-	t.Helper()
-	f, err := os.Open(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		_ = f.Close()
-	})
-	return f
-}
-
 func Test_build(t *testing.T) {
 	noTotals := func(t *testing.T) io.Reader {
-		return readTestFile(t, "testdata/nototals.json")
+		return testFileReader(t, "testdata/nototals.json")
 	}
 
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
@@ -122,9 +110,9 @@ func Test_build(t *testing.T) {
 		opts    *buildOpts
 		in      io.Reader
 		args    []string
+		replace []testy.Replacement
 		err     string
 		target  string
-		replace []testy.Replacement
 	}{
 		{
 			name: "missing file",
@@ -163,9 +151,8 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "envelop success",
-			in:   readTestFile(t, "testdata/envelop.nototals.json"),
+			in:   testFileReader(t, "testdata/envelop.nototals.json"),
 			opts: &buildOpts{
-				envelop:        true,
 				privateKeyFile: "testdata/id_es256",
 			},
 			replace: []testy.Replacement{
@@ -178,6 +165,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "no document",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"typ": "duck",
@@ -196,6 +184,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "invalid doc",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"dig": {
@@ -208,11 +197,12 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
+			err: "code=400, message=unmarshal: unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
 		},
 		{
 			name: "incomplete",
 			in: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 					"dig": {
@@ -225,7 +215,7 @@ func Test_build(t *testing.T) {
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=marshal: unregistered or invalid schema",
+			err: "code=400, message=unmarshal: marshal: unregistered or invalid schema",
 		},
 		{
 			name: "input file",
@@ -333,10 +323,6 @@ func Test_build(t *testing.T) {
 			} else if err != nil {
 				t.Errorf("Unexpected error: %q", err)
 			}
-			tt.replace = append(tt.replace, testy.Replacement{
-				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
-				Replacement: `"sigs": ["sig data"]`,
-			})
 
 			if d := testy.DiffText(testy.Snapshot(t), buf.String(), tt.replace...); d != nil {
 				t.Error(d)

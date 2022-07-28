@@ -4,13 +4,12 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "6a96a2500448fd575b36403f97f768d5bd5f60a39eedbbaeab88731fa5e5f15b"
+			"val": "1125d5d9adf430705e54e15f22d70c4b998dc5103817cdbfb98b2d909c5d773f"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
-		"region": "ES",
 		"code": "INV2021-001",
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
@@ -19,7 +18,7 @@
 				"country": "ES",
 				"code": "B91983379"
 			},
-			"name": "123",
+			"name": "A Different Company S.L.",
 			"people": [
 				{
 					"name": {
@@ -85,11 +84,13 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "STD"
+						"rate": "standard",
+						"percent": "21.0%"
 					},
 					{
 						"cat": "IRPF",
-						"code": "STD"
+						"rate": "pro",
+						"percent": "15.0%"
 					}
 				],
 				"total": "4000.00"
@@ -105,7 +106,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "STD"
+						"rate": "standard",
+						"percent": "21.0%"
 					}
 				],
 				"total": "1000.00"
@@ -121,7 +123,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"code": "RED"
+						"rate": "zero",
+						"percent": "0.0%"
 					}
 				],
 				"total": "172.50"
@@ -144,6 +147,20 @@
 				"amount": "0"
 			}
 		],
+		"payment": {
+			"terms": {
+				"key": "instant"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "ES06 0128 0011 3901 0008 1391",
+						"name": "Bankinter"
+					}
+				]
+			}
+		},
 		"totals": {
 			"sum": "5187.50",
 			"total": "5187.50",
@@ -153,27 +170,27 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"code": "STD",
+								"key": "standard",
 								"base": "5000.00",
 								"percent": "21.0%",
 								"amount": "1050.00"
 							},
 							{
-								"code": "RED",
+								"key": "zero",
 								"base": "172.50",
-								"percent": "10.0%",
-								"amount": "17.25"
+								"percent": "0.0%",
+								"amount": "0.00"
 							}
 						],
 						"base": "5172.50",
-						"amount": "1067.25"
+						"amount": "1050.00"
 					},
 					{
 						"code": "IRPF",
 						"retained": true,
 						"rates": [
 							{
-								"code": "STD",
+								"key": "pro",
 								"base": "4000.00",
 								"percent": "15.0%",
 								"amount": "600.00"
@@ -183,26 +200,12 @@
 						"amount": "600.00"
 					}
 				],
-				"sum": "467.25"
+				"sum": "450.00"
 			},
-			"total_with_tax": "5654.75",
+			"tax": "450.00",
+			"total_with_tax": "5637.50",
 			"outlays": "0.00",
-			"payable": "5654.75"
-		},
-		"payment": {
-			"terms": {
-				"code": "instant"
-			},
-			"instructions": {
-				"code": "credit_transfer",
-				"credit_transfer": [
-					{
-						"iban": "ES06 0128 0011 3901 0008 1391",
-						"name": "Bankinter"
-					}
-				]
-			}
+			"payable": "5637.50"
 		}
-	},
-	"sigs": ["sig data"]
+	}
 }

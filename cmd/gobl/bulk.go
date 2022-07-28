@@ -13,7 +13,7 @@ type bulkOpts struct {
 }
 
 func (o *bulkOpts) runE(cmd *cobra.Command, args []string) error {
-	ctx := cmd.Context()
+	ctx := commandContext(cmd)
 
 	in, err := openInput(cmd, args)
 	if err != nil {

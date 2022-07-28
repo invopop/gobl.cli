@@ -1,22 +1,18 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"os"
 
 	"github.com/spf13/cobra"
 
-	"github.com/invopop/gobl"
 	"github.com/invopop/gobl.cli/internal"
 	"github.com/invopop/gobl/dsig"
 )
 
 type buildOpts struct {
 	*rootOpts
-	envelop        bool // when true, assumes source is a document
-	draft          bool // when true, adds draft property to head, skips signatures
 	set            map[string]string
 	setFiles       map[string]string
 	setStrings     map[string]string
@@ -33,16 +29,7 @@ func build(root *rootOpts) *buildOpts {
 	return &buildOpts{
 		rootOpts: root,
 		use:      "build [infile] [outfile]",
-		short:    "Combine and complete envelope data",
-	}
-}
-
-func envelop(root *rootOpts) *buildOpts {
-	return &buildOpts{
-		rootOpts: root,
-		envelop:  true,
-		use:      "envelop [infile] [outfile]",
-		short:    "Prepare a document and insert into a new envelope",
+		short:    "Calculate and validate a document, wrapping it in envelope if needed",
 	}
 }
 
@@ -61,20 +48,12 @@ func (b *buildOpts) cmd() *cobra.Command {
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
-	f.BoolVarP(&b.draft, "draft", "d", false, "Set draft property in headers, skip sigs and validation")
 
 	return cmd
 }
 
-func cmdContext(cmd *cobra.Command) context.Context {
-	if ctx := cmd.Context(); ctx != nil {
-		return ctx
-	}
-	return context.Background()
-}
-
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
-	ctx := cmdContext(cmd)
+	ctx := commandContext(cmd)
 
 	var template io.Reader
 	if b.template != "" {
@@ -121,16 +100,9 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		SetString:  b.setStrings,
 		PrivateKey: key,
 		DocType:    b.docType,
-		Draft:      b.draft,
 	}
-	var env *gobl.Envelope
 
-	// We're performing the envelop check here to save extra code
-	if b.envelop {
-		env, err = internal.Envelop(ctx, opts)
-	} else {
-		env, err = internal.Build(ctx, opts)
-	}
+	env, err := internal.Build(ctx, opts)
 	if err != nil {
 		return err
 	}

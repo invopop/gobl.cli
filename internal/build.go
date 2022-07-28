@@ -29,7 +29,6 @@ type BuildOptions struct {
 	SetString  map[string]string
 	SetFile    map[string]string
 	PrivateKey *dsig.PrivateKey
-	Draft      bool
 }
 
 // decodeInto unmarshals in as YAML, then merges it into dest.
@@ -45,58 +44,45 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 	return nil
 }
 
-// Build builds and validates a GOBL envelope from the opts.
+// Build builds and validates GOBL data from build options, and transparently
+// wraps a document in an envelope if needed.
 func Build(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
-	encoded, err := prepareIntermediate(ctx, opts, docInEnvelopeSchemaData)
+	env, err := parseBuildData(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
 
-	// Prepare an empty envelope as we assume the consumer is providing one already.
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(encoded, env); err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	// Signed documents should be regarded as immutable.
+	// Attempting to build an already signed document returns an error.
+	if len(env.Signatures) > 0 {
+		return nil, echo.NewHTTPError(http.StatusConflict, "document has already been signed")
 	}
-	if err := finalizeEnvelope(ctx, env, opts); err != nil {
-		return nil, err
+
+	if err := env.Calculate(); err != nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
+
+	if err := env.Validate(); err != nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+
 	return env, nil
 }
 
-// Envelop assumes the incoming BuildOptions define the contents of a document
-// payload and we need to prepare the envelope around it.
-func Envelop(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
-	encoded, err := prepareIntermediate(ctx, opts, docSchemaData)
-	if err != nil {
-		return nil, err
-	}
+func parseBuildData(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
+	var intermediate map[string]interface{}
 
-	// Prepare a new envelope as the intention is to insert the encoded data
-	env := gobl.NewEnvelope()
-	if err = json.Unmarshal(encoded, env.Document); err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	if err := finalizeEnvelope(ctx, env, opts); err != nil {
-		return nil, err
-	}
-	return env, nil
-}
-
-type schemaDataCB func(schema.ID) map[string]interface{}
-
-func prepareIntermediate(ctx context.Context, opts *BuildOptions, schemaDataFunc schemaDataCB) ([]byte, error) {
 	values, err := parseSets(opts)
 	if err != nil {
 		return nil, err
 	}
-	var intermediate map[string]interface{}
 
 	if opts.Template != nil {
 		if err = decodeInto(ctx, &intermediate, opts.Template); err != nil {
 			return nil, err
 		}
 	}
+
 	if err = decodeInto(ctx, &intermediate, opts.Data); err != nil {
 		return nil, err
 	}
@@ -104,7 +90,16 @@ func prepareIntermediate(ctx context.Context, opts *BuildOptions, schemaDataFunc
 	if err = mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
+
 	if opts.DocType != "" {
+		// We want to infer if the incoming data is an envelope, but don't want
+		// to call `gobl.Parse` just yet (because we want to first merge based
+		// on `opts.DocType`. Thus, we (somewhat hacky) infer based on the
+		// intermediate map ourselves.
+		schemaDataFunc := docSchemaData
+		if schema, ok := intermediate["$schema"].(string); ok && schema == string(gobl.EnvelopeSchema) {
+			schemaDataFunc = docInEnvelopeSchemaData
+		}
 		schema := FindType(opts.DocType)
 		if schema == "" {
 			return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("unrecognized doc type: %q", opts.DocType))
@@ -114,28 +109,42 @@ func prepareIntermediate(ctx context.Context, opts *BuildOptions, schemaDataFunc
 		}
 	}
 
-	return json.Marshal(intermediate)
-}
+	// Encode intermediate to JSON for usage with `gobl.Parse`.
+	intermediateJSON, err := json.Marshal(intermediate)
+	if err != nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
 
-func finalizeEnvelope(ctx context.Context, env *gobl.Envelope, opts *BuildOptions) error {
-	if opts.Draft {
-		env.Head.Draft = true
+	// Parse the JSON encoded intermediate, so we can figure out if the incoming data
+	// is already an envelope.
+	doc, err := gobl.Parse(intermediateJSON)
+	if err != nil {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if len(env.Signatures) > 0 {
-		return echo.NewHTTPError(http.StatusConflict, "document has already been signed")
+
+	// If the incoming data was parsed as an envelope, we can simply return
+	// without the need for wrapping.
+	env, isEnvelope := doc.(*gobl.Envelope)
+	if isEnvelope {
+		return env, nil
 	}
-	if err := env.Calculate(); err != nil {
-		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+
+	// Incoming data is non-enveloped, so we create an envelope and
+	// add the incoming data as its document.
+	//
+	// Note: `envelope.Insert` transparently calculates the document, which is
+	// called when we finalize the envelope upstream. But it's an idempotent
+	// operation, so this should be fine.
+	env, err = gobl.Envelop(doc)
+	if err != nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
-	if opts.PrivateKey == nil {
-		return echo.NewHTTPError(http.StatusUnprocessableEntity, "signing key required")
-	}
-	if !env.Head.Draft {
-		if err := env.Sign(opts.PrivateKey); err != nil {
-			return err
-		}
-	}
-	return nil
+
+	// Set envelope as draft, so it can be rebuilt over time, and eventually
+	// signed using the separate `sign` command.
+	env.Head.Draft = true
+
+	return env, nil
 }
 
 func docInEnvelopeSchemaData(schema schema.ID) map[string]interface{} {
@@ -148,7 +157,6 @@ func docSchemaData(schema schema.ID) map[string]interface{} {
 	return map[string]interface{}{
 		"$schema": schema,
 	}
-
 }
 
 func parseSets(opts *BuildOptions) (map[string]interface{}, error) {

@@ -54,7 +54,6 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 
 	e.GET("/", s.version)
 	e.POST("/build", s.build)
-	e.POST("/envelop", s.envelop)
 	e.POST("/verify", s.verify)
 	e.POST("/key", s.keygen)
 	e.POST("/bulk", s.bulk)
@@ -96,26 +95,6 @@ func (s *serveOpts) build(c echo.Context) error {
 
 	ctx := c.Request().Context()
 	env, err := internal.Build(ctx, opts)
-	if err != nil {
-		return err
-	}
-
-	blob, err := marshal(c)(env)
-	if err != nil {
-		return err
-	}
-
-	return c.JSONBlob(http.StatusOK, blob)
-}
-
-func (s *serveOpts) envelop(c echo.Context) error {
-	opts, err := prepareBuildOpts(c)
-	if err != nil {
-		return err
-	}
-
-	ctx := c.Request().Context()
-	env, err := internal.Envelop(ctx, opts)
 	if err != nil {
 		return err
 	}

@@ -74,13 +74,4 @@ const verify = async function (opts) {
   });
 };
 
-const envelop = async function (opts) {
-  const indent = delete opts.indent;
-  return sendMessage({
-    action: "envelop",
-    payload: opts,
-    indent: indent,
-  });
-};
-
-export { keygen, build, verify, envelop };
+export { keygen, build, verify };

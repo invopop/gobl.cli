@@ -21,7 +21,6 @@ const signingKeyText = `{"use":"sig","kty":"EC","kid":"b7cee60f-204e-438b-a88f-0
 func Test_serve_build(t *testing.T) {
 	tests := []struct {
 		name    string
-		envelop bool
 		req     *http.Request
 		err     string
 		replace []testy.Replacement
@@ -56,7 +55,14 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "missing doc",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"e30K"}`))
+				body, err := json.Marshal(map[string]interface{}{
+					"data":       base64.StdEncoding.EncodeToString([]byte(`{"$schema":"https://gobl.org/draft-0/envelope"}`)),
+					"privatekey": json.RawMessage(signingKeyText),
+				})
+				if err != nil {
+					t.Fatal(err)
+				}
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -88,8 +94,7 @@ func Test_serve_build(t *testing.T) {
 			err: "code=400, message=illegal base64 data at input byte 3, internal=illegal base64 data at input byte 3",
 		},
 		{
-			name:    "envelop success",
-			envelop: true,
+			name: "envelop success",
 			req: func() *http.Request {
 				data, err := ioutil.ReadFile("testdata/message.json")
 				if err != nil {
@@ -101,7 +106,7 @@ func Test_serve_build(t *testing.T) {
 					"privatekey": json.RawMessage(signingKeyText),
 				})
 
-				req, _ := http.NewRequest(http.MethodPost, "/envelop", bytes.NewReader(body))
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -113,8 +118,7 @@ func Test_serve_build(t *testing.T) {
 			},
 		},
 		{
-			name:    "envelop success indented",
-			envelop: true,
+			name: "envelop success indented",
 			req: func() *http.Request {
 				data, err := ioutil.ReadFile("testdata/message.json")
 				if err != nil {
@@ -126,7 +130,7 @@ func Test_serve_build(t *testing.T) {
 					"privatekey": json.RawMessage(signingKeyText),
 				})
 
-				req, _ := http.NewRequest(http.MethodPost, "/envelop?indent=true", bytes.NewReader(body))
+				req, _ := http.NewRequest(http.MethodPost, "/build?indent=true", bytes.NewReader(body))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -148,12 +152,7 @@ func Test_serve_build(t *testing.T) {
 			rec := httptest.NewRecorder()
 			c := e.NewContext(tt.req, rec)
 
-			var err error
-			if tt.envelop {
-				err = serve().envelop(c)
-			} else {
-				err = serve().build(c)
-			}
+			err := serve().build(c)
 			if tt.err == "" {
 				assert.Nil(t, err)
 			} else {
@@ -165,10 +164,6 @@ func Test_serve_build(t *testing.T) {
 			if tt.replace == nil {
 				tt.replace = make([]testy.Replacement, 0)
 			}
-			tt.replace = append(tt.replace, testy.Replacement{
-				Regexp:      regexp.MustCompile(`(?sm)"sigs":.?\[.*\]`),
-				Replacement: `"sigs": ["sig data"]`,
-			})
 			if d := testy.DiffHTTPResponse(testy.Snapshot(t), rec.Result(), tt.replace...); d != nil {
 				t.Error(d)
 			}
