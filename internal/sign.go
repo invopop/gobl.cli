@@ -20,10 +20,11 @@ func Sign(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
 		return nil, err
 	}
 
-	// Check early if the envelope is a draft, to prevent possible unnecessary
-	// calculation.
+	// A draft automatically becomes a non-draft (i.e. "final") document, This
+	// way it's possible to sign a document in draft state with a single
+	// command.
 	if env.Head != nil && env.Head.Draft {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, "cannot sign draft envelope")
+		env.Head.Draft = false
 	}
 
 	if err := env.Calculate(); err != nil {

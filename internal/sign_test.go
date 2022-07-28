@@ -35,7 +35,6 @@ func TestSign(t *testing.T) {
 			opts: BuildOptions{
 				Data: testFileReader(t, "testdata/draft.json"),
 			},
-			err: "code=422, message=cannot sign draft envelope",
 		}
 	})
 	tests.Add("invalid document", func(t *testing.T) interface{} {
