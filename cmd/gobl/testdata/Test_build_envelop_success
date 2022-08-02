@@ -4,7 +4,7 @@
 		"uuid": "00000000-0000-0000-0000-000000000000",
 		"dig": {
 			"alg": "sha256",
-			"val": "e8d3696b5532c4d1ce7415280fec02281128381ac0d8cec154663dc41417e97f"
+			"val": "6483b4e486bfafa53017b4c5551294c242f513efc7a394c6583fb0d6fc7be798"
 		},
 		"draft": true
 	},
@@ -54,7 +54,7 @@
 		"customer": {
 			"tax_id": {
 				"country": "ES",
-				"code": "B-85905495"
+				"code": "B85905495"
 			},
 			"name": "Autofiscal S.L.",
 			"addresses": [

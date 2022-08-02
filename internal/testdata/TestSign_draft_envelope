@@ -22,7 +22,7 @@
             ],
             "name": "Autofiscal S.L.",
             "tax_id": {
-                "code": "B-85905495",
+                "code": "B85905495",
                 "country": "ES"
             }
         },
@@ -204,11 +204,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "8f0e6964592fb7b163e9067b518d7c28e6d9b64b15b84343f8da0ae43eca18d4"
+            "val": "9b59472997e53909858bb57bbabad1cf4e50a895f3ef5e72b120084d914d457d"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjhmMGU2OTY0NTkyZmI3YjE2M2U5MDY3YjUxOGQ3YzI4ZTZkOWI2NGIxNWI4NDM0M2Y4ZGEwYWU0M2VjYTE4ZDQifX0.LgL968dXp6fajvHCWL6rNtCPyEfP6NdFjNEadHaoXi6QzzXXWItUyvo0Ar3aK5b6BtPNIHOwDs48Qq-46Y5tdA"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjliNTk0NzI5OTdlNTM5MDk4NThiYjU3YmJhYmFkMWNmNGU1MGE4OTVmM2VmNWU3MmIxMjAwODRkOTE0ZDQ1N2QifX0.O0eEzdVMLl7jaVzAUFyEyF7gnb5UCFjCBJAZJNEVZAVvjyg3Pm938xDn451txL59Ko4E9XD6mhqUSZNK_ytBjw"
     ]
 }

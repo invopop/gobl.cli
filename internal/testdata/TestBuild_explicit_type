@@ -22,7 +22,7 @@
             ],
             "name": "Autofiscal S.L.",
             "tax_id": {
-                "code": "B-85905495",
+                "code": "B85905495",
                 "country": "ES"
             }
         },
@@ -204,7 +204,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "1cacb0f76848b33482907f87db4ae5a68f86c236677b6243224bda3d7ee15b17"
+            "val": "fbeb0e0a00df29857d1b88d61d79c0be772b5b593bb78a87de5c42bd81a10d09"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }
