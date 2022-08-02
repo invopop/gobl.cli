@@ -2,11 +2,12 @@ $schema: "https://gobl.org/draft-0/bill/invoice"
 currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-001"
+type_key: "simplified"
 
 supplier:
   tax_id:
     country: "ES"
-    code: "B98602642" # random
+    code: "B-986 02 642" # random
   name: "Provider One S.L."
   emails:
     - addr: "billing@example.com"
@@ -21,7 +22,7 @@ supplier:
 customer:
   tax_id:
     country: "ES"
-    code: "54387763P"
+    # code: "54387763-P"
   name: "Sample Consumer"
 
 lines:

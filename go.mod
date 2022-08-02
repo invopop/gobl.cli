@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/google/go-cmp v0.5.8
 	github.com/imdario/mergo v0.3.12
-	github.com/invopop/gobl v0.28.1
+	github.com/invopop/gobl v0.29.1
 	github.com/invopop/yaml v0.2.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/magefile/mage v1.13.0
@@ -41,3 +41,5 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 )
+
+// replace github.com/invopop/gobl => ../gobl
