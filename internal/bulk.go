@@ -101,16 +101,34 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			return res
 		}
 		res.Payload, _ = marshal(VerifyResponse{OK: true})
+	case "validate":
+		bld := &BuildRequest{}
+		if err := json.Unmarshal(req.Payload, bld); err != nil {
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			return res
+		}
+		opts := ParseOptions{
+			DocType: bld.DocType,
+			Data:    bytes.NewReader(bld.Data),
+		}
+		if len(bld.Template) > 0 {
+			opts.Template = bytes.NewReader(bld.Template)
+		}
+		env, err := Validate(ctx, opts)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload, _ = marshal(env)
 	case "build":
 		bld := &BuildRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := &BuildOptions{
-			DocType:    bld.DocType,
-			Data:       bytes.NewReader(bld.Data),
-			PrivateKey: bld.PrivateKey,
+		opts := ParseOptions{
+			DocType: bld.DocType,
+			Data:    bytes.NewReader(bld.Data),
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
@@ -127,10 +145,9 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := &BuildOptions{
-			DocType:    bld.DocType,
-			Data:       bytes.NewReader(bld.Data),
-			PrivateKey: bld.PrivateKey,
+		opts := ParseOptions{
+			DocType: bld.DocType,
+			Data:    bytes.NewReader(bld.Data),
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
@@ -147,9 +164,11 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := &BuildOptions{
-			DocType:    bld.DocType,
-			Data:       bytes.NewReader(bld.Data),
+		opts := SignOptions{
+			ParseOptions: ParseOptions{
+				DocType: bld.DocType,
+				Data:    bytes.NewReader(bld.Data),
+			},
 			PrivateKey: bld.PrivateKey,
 		}
 		if len(bld.Template) > 0 {

@@ -88,13 +88,13 @@ func (s *serveOpts) version(c echo.Context) error {
 }
 
 func (s *serveOpts) build(c echo.Context) error {
-	opts, err := prepareBuildOpts(c)
+	opts, err := prepareParseOpts(c)
 	if err != nil {
 		return err
 	}
 
 	ctx := c.Request().Context()
-	env, err := internal.Build(ctx, opts)
+	env, err := internal.Build(ctx, *opts)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (s *serveOpts) build(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, blob)
 }
 
-func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
+func prepareParseOpts(c echo.Context) (*internal.ParseOptions, error) {
 	ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
 	if ct != "application/json" {
 		return nil, echo.NewHTTPError(http.StatusUnsupportedMediaType)
@@ -119,10 +119,9 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 	if len(req.Data) == 0 {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "no payload")
 	}
-	opts := &internal.BuildOptions{
-		Data:       bytes.NewReader(req.Data),
-		PrivateKey: req.PrivateKey,
-		DocType:    req.DocType,
+	opts := &internal.ParseOptions{
+		Data:    bytes.NewReader(req.Data),
+		DocType: req.DocType,
 	}
 	if len(req.Template) != 0 {
 		opts.Template = bytes.NewReader(req.Template)

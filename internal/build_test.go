@@ -44,12 +44,12 @@ func init() {
 func Test_parseSets(t *testing.T) {
 	tests := []struct {
 		name string
-		opts BuildOptions
+		opts ParseOptions
 		err  string
 	}{
 		{
 			name: "invalid yaml",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetYAML: map[string]string{
 					"foo": "[bar",
 				},
@@ -58,7 +58,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "valid yaml",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetYAML: map[string]string{
 					"sring":  "bar",
 					"number": "1234",
@@ -70,7 +70,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "root key",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetYAML: map[string]string{
 					".": `{"foo":"bar"}`,
 				},
@@ -78,7 +78,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "literal period",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetYAML: map[string]string{
 					"\\.": `foo`,
 				},
@@ -86,7 +86,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "period",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetYAML: map[string]string{
 					"foo.bar": "baz",
 				},
@@ -94,7 +94,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "anchored at root",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetYAML: map[string]string{
 					".foo": "bar",
 				},
@@ -102,7 +102,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "unmergable",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetYAML: map[string]string{
 					".": "foo",
 				},
@@ -111,7 +111,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "explicit string",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetString: map[string]string{
 					"foo": "1234",
 				},
@@ -119,7 +119,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "root string",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetString: map[string]string{
 					".": "1234",
 				},
@@ -128,7 +128,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "missing file",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetFile: map[string]string{
 					"foo": "notfound.yaml",
 				},
@@ -137,7 +137,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "invalid file",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetFile: map[string]string{
 					"foo": "testdata/invalid.yaml",
 				},
@@ -146,7 +146,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "unmergable",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetFile: map[string]string{
 					".": "testdata/unmergable.yaml",
 				},
@@ -155,7 +155,7 @@ func Test_parseSets(t *testing.T) {
 		},
 		{
 			name: "valid file",
-			opts: BuildOptions{
+			opts: ParseOptions{
 				SetFile: map[string]string{
 					"foo": "testdata/valid.yaml",
 				},
@@ -169,10 +169,7 @@ func Test_parseSets(t *testing.T) {
 			t.Parallel()
 
 			opts := tt.opts
-			if opts.PrivateKey == nil {
-				opts.PrivateKey = privateKey
-			}
-			got, err := parseSets(&opts)
+			got, err := parseSets(opts)
 			if tt.err == "" {
 				assert.Nil(t, err)
 			} else {
@@ -190,21 +187,21 @@ func Test_parseSets(t *testing.T) {
 
 func TestBuild(t *testing.T) {
 	type tt struct {
-		opts BuildOptions
+		opts ParseOptions
 		err  string
 	}
 
 	tests := testy.NewTable()
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data: testFileReader(t, "testdata/nototals.json"),
 			},
 		}
 	})
 	tests.Add("merge YAML", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data: testFileReader(t, "testdata/nototals.json"),
 				SetYAML: map[string]string{
 					"doc.supplier.name": "Other Company",
@@ -213,7 +210,7 @@ func TestBuild(t *testing.T) {
 		}
 	})
 	tests.Add("invalid type", tt{
-		opts: BuildOptions{
+		opts: ParseOptions{
 			Data: strings.NewReader(`{
 				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
@@ -235,7 +232,7 @@ func TestBuild(t *testing.T) {
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Template: strings.NewReader(`{"doc":{"supplier":{"name": "Other Company"}}}`),
 				Data:     testFileReader(t, "testdata/noname.json"),
 			},
@@ -243,7 +240,7 @@ func TestBuild(t *testing.T) {
 	})
 	tests.Add("template with empty input", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Template: testFileReader(t, "testdata/nosig.json"),
 				Data:     strings.NewReader("{}"),
 			},
@@ -251,7 +248,7 @@ func TestBuild(t *testing.T) {
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Template: testFileReader(t, "testdata/signed.json"),
 				Data:     strings.NewReader("{}"),
 			},
@@ -260,7 +257,7 @@ func TestBuild(t *testing.T) {
 	})
 	tests.Add("explicit type", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data:    testFileReader(t, "testdata/notype.json"),
 				DocType: "bill.Invoice",
 			},
@@ -268,7 +265,7 @@ func TestBuild(t *testing.T) {
 	})
 	tests.Add("draft", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data: testFileReader(t, "testdata/draft.json"),
 			},
 		}
@@ -281,7 +278,7 @@ func TestBuild(t *testing.T) {
 		t.Cleanup(func() { _ = f.Close() })
 
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data: f,
 			},
 		}
@@ -290,10 +287,7 @@ func TestBuild(t *testing.T) {
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
 		opts := tt.opts
-		if opts.PrivateKey == nil {
-			opts.PrivateKey = privateKey
-		}
-		got, err := Build(context.Background(), &opts)
+		got, err := Build(context.Background(), opts)
 		if tt.err == "" {
 			assert.Nil(t, err)
 		} else {
@@ -320,9 +314,8 @@ func TestBuild(t *testing.T) {
 
 func TestBuildWithPartialEnvelope(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		opts := &BuildOptions{
-			Data:       testFileReader(t, "testdata/message.env.yaml"),
-			PrivateKey: privateKey,
+		opts := ParseOptions{
+			Data: testFileReader(t, "testdata/message.env.yaml"),
 		}
 		got, err := Build(context.Background(), opts)
 		require.NoError(t, err)

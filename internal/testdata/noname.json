@@ -1,5 +1,5 @@
 {
-	"$schema": "https://gobl.org/draft-0/envelope",
+  "$schema": "https://gobl.org/draft-0/envelope",
   "head": {
     "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
   },
@@ -13,7 +13,7 @@
     "supplier": {
       "tax_id": {
         "country": "ES",
-        "code": "B91983379"
+        "code": "B-986 02 642"
       },
       "people": [
         {

@@ -15,21 +15,21 @@ import (
 
 func TestCalculate(t *testing.T) {
 	type tt struct {
-		opts BuildOptions
+		opts ParseOptions
 		err  string
 	}
 
 	tests := testy.NewTable()
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data: testFileReader(t, "testdata/nototals.json"),
 			},
 		}
 	})
 	tests.Add("merge YAML", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data: testFileReader(t, "testdata/nototals.json"),
 				SetYAML: map[string]string{
 					"doc.supplier.name": "Other Company",
@@ -38,7 +38,7 @@ func TestCalculate(t *testing.T) {
 		}
 	})
 	tests.Add("invalid type", tt{
-		opts: BuildOptions{
+		opts: ParseOptions{
 			Data: strings.NewReader(`{
 				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
@@ -60,7 +60,7 @@ func TestCalculate(t *testing.T) {
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Template: strings.NewReader(`{"doc":{"supplier":{"name": "Other Company"}}}`),
 				Data:     testFileReader(t, "testdata/noname.json"),
 			},
@@ -68,7 +68,7 @@ func TestCalculate(t *testing.T) {
 	})
 	tests.Add("template with empty input", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Template: testFileReader(t, "testdata/nosig.json"),
 				Data:     strings.NewReader("{}"),
 			},
@@ -76,7 +76,7 @@ func TestCalculate(t *testing.T) {
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Template: testFileReader(t, "testdata/signed.json"),
 				Data:     strings.NewReader("{}"),
 			},
@@ -85,7 +85,7 @@ func TestCalculate(t *testing.T) {
 	})
 	tests.Add("explicit type", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data:    testFileReader(t, "testdata/notype.json"),
 				DocType: "bill.Invoice",
 			},
@@ -93,7 +93,7 @@ func TestCalculate(t *testing.T) {
 	})
 	tests.Add("draft", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
+			opts: ParseOptions{
 				Data: testFileReader(t, "testdata/draft.json"),
 			},
 		}
@@ -105,10 +105,7 @@ func TestCalculate(t *testing.T) {
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
 		opts := tt.opts
-		if opts.PrivateKey == nil {
-			opts.PrivateKey = privateKey
-		}
-		got, err := Calculate(context.Background(), &opts)
+		got, err := Calculate(context.Background(), opts)
 		if tt.err == "" {
 			assert.Nil(t, err)
 		} else {
@@ -129,9 +126,8 @@ func TestCalculate(t *testing.T) {
 
 func TestCalculateWithPartialEnvelope(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		opts := &BuildOptions{
-			Data:       testFileReader(t, "testdata/message.env.yaml"),
-			PrivateKey: privateKey,
+		opts := ParseOptions{
+			Data: testFileReader(t, "testdata/message.env.yaml"),
 		}
 		got, err := Calculate(context.Background(), opts)
 		require.NoError(t, err)

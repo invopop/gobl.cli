@@ -10,8 +10,8 @@ import (
 
 // Calculate parses a GOBL document and performs calculations, including invoice
 // totals and envelope header digest.
-func Calculate(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
-	env, err := parseBuildData(ctx, opts)
+func Calculate(ctx context.Context, opts ParseOptions) (*gobl.Envelope, error) {
+	env, err := parseGOBLData(ctx, opts)
 	if err != nil {
 		return nil, err
 	}

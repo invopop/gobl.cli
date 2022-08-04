@@ -46,7 +46,6 @@ func (b *buildOpts) cmd() *cobra.Command {
 	f.StringToStringVar(&b.setFiles, "set-file", nil, "Set value from the specified YAML or JSON file")
 	f.StringToStringVar(&b.setStrings, "set-string", nil, "Set STRING value from the command line")
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
-	f.StringVarP(&b.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
 
 	return cmd
@@ -92,17 +91,16 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	opts := &internal.BuildOptions{
-		Template:   template,
-		Data:       input,
-		SetFile:    b.setFiles,
-		SetYAML:    b.set,
-		SetString:  b.setStrings,
-		PrivateKey: key,
-		DocType:    b.docType,
+	parseOpts := internal.ParseOptions{
+		Template:  template,
+		Data:      input,
+		SetFile:   b.setFiles,
+		SetYAML:   b.set,
+		SetString: b.setStrings,
+		DocType:   b.docType,
 	}
 
-	env, err := internal.Build(ctx, opts)
+	env, err := internal.Build(ctx, parseOpts)
 	if err != nil {
 		return err
 	}
