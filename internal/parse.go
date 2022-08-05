@@ -104,12 +104,18 @@ func parseGOBLData(ctx context.Context, opts ParseOptions) (*gobl.Envelope, erro
 	// Incoming data is non-enveloped, so we create an envelope and
 	// add the incoming data as its document.
 	//
-	// Note: `envelope.Insert` transparently calculates the document, which is
-	// called when we finalize the envelope upstream. But it's an idempotent
-	// operation, so this should be fine.
-	env, err = gobl.Envelop(doc)
-	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	// Note: We don't use `gobl.Envelop()`, because it (indirectly) calculates
+	// the document, which we don't want to do here. Any calculations should
+	// be incurred from the call site of this function.
+	env = gobl.NewEnvelope()
+	if d, ok := doc.(*gobl.Document); ok {
+		env.Document = d
+	} else {
+		var err error
+		env.Document, err = gobl.NewDocument(doc)
+		if err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
 	}
 
 	// Set envelope as draft, so it can be rebuilt over time, and eventually

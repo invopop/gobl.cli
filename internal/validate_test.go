@@ -54,7 +54,8 @@ func TestValidate(t *testing.T) {
 	})
 	tests.Add("without envelope", func(t *testing.T) interface{} {
 		return tt{
-			in: testFileReader(t, "testdata/invoice.json"),
+			in:  testFileReader(t, "testdata/invoice.json"),
+			err: "code=422, message=head: (dig: cannot be blank.).",
 		}
 	})
 	tests.Add("without totals", func(t *testing.T) interface{} {
