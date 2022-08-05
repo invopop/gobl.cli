@@ -45,7 +45,7 @@
   "customer": {
     "tax_id": {
       "country": "ES",
-      "code": "B-85905495"
+      "code": "B85905495"
     },
     "name": "Autofiscal S.L.",
     "addresses": [

@@ -54,7 +54,7 @@
     "customer": {
       "tax_id": {
         "country": "ES",
-        "code": "54387763-P"
+        "code": "54387763P"
       },
       "name": "Autofiscal S.L.",
       "addresses": [

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl.cli/internal"
@@ -50,15 +48,5 @@ func (opts *validateOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	env, err := internal.Validate(ctx, input)
-	if err != nil {
-		return err
-	}
-
-	enc := json.NewEncoder(out)
-	if opts.indent {
-		enc.SetIndent("", "\t")
-	}
-
-	return enc.Encode(env)
+	return internal.Validate(ctx, input)
 }

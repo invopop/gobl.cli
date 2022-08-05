@@ -26,6 +26,9 @@ type ParseOptions struct {
 	SetYAML   map[string]string
 	SetString map[string]string
 	SetFile   map[string]string
+
+	// When set to `true`, the parsed data is wrapped in an envelope (if needed).
+	Envelop bool
 }
 
 // decodeInto unmarshals in as YAML, then merges it into dest.
@@ -41,7 +44,7 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 	return nil
 }
 
-func parseGOBLData(ctx context.Context, opts ParseOptions) (*gobl.Envelope, error) {
+func parseGOBLData(ctx context.Context, opts ParseOptions) (interface{}, error) {
 	var intermediate map[string]interface{}
 
 	values, err := parseSets(opts)
@@ -89,35 +92,39 @@ func parseGOBLData(ctx context.Context, opts ParseOptions) (*gobl.Envelope, erro
 
 	// Parse the JSON encoded intermediate, so we can figure out if the incoming data
 	// is already an envelope.
-	doc, err := gobl.Parse(intermediateJSON)
+	obj, err := gobl.Parse(intermediateJSON)
 	if err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	// If the incoming data was parsed as an envelope, we can simply return
 	// without the need for wrapping.
-	env, isEnvelope := doc.(*gobl.Envelope)
+	env, isEnvelope := obj.(*gobl.Envelope)
 	if isEnvelope {
 		return env, nil
 	}
 
-	// Incoming data is non-enveloped, so we create an envelope and
-	// add the incoming data as its document.
-	//
-	// Note: We don't use `gobl.Envelop()`, because it (indirectly) calculates
-	// the document, which we don't want to do here. Any calculations should
-	// be incurred from the call site of this function.
-	env = gobl.NewEnvelope()
-	if d, ok := doc.(*gobl.Document); ok {
-		env.Document = d
+	var doc *gobl.Document
+	if d, ok := obj.(*gobl.Document); ok {
+		doc = d
 	} else {
 		var err error
-		env.Document, err = gobl.NewDocument(doc)
+		doc, err = gobl.NewDocument(obj)
 		if err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 	}
 
+	if !opts.Envelop {
+		return doc, nil
+	}
+
+	// Wrap the parsed document in an envelope.
+	// Note: We don't use `gobl.Envelop()`, because it (indirectly) calculates
+	// the document, which we don't want to do here. Any calculations should
+	// be incurred from the call site of this function.
+	env = gobl.NewEnvelope()
+	env.Document = doc
 	// Set envelope as draft, so it can be rebuilt over time, and eventually
 	// signed using the separate `sign` command.
 	env.Head.Draft = true

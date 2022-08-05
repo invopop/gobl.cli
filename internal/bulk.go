@@ -108,45 +108,29 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			return res
 		}
 		data := bytes.NewReader(valReq.Data)
-		env, err := Validate(ctx, data)
+		err := Validate(ctx, data)
 		if err != nil {
 			res.Error = err.Error()
 			return res
 		}
-		res.Payload, _ = marshal(env)
+		res.Payload, _ = marshal(ValidateResponse{OK: true})
 	case "build":
 		bld := &BuildRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := ParseOptions{
-			DocType: bld.DocType,
-			Data:    bytes.NewReader(bld.Data),
+		opts := BuildOptions{
+			ParseOptions: ParseOptions{
+				DocType: bld.DocType,
+				Data:    bytes.NewReader(bld.Data),
+			},
+			Draft: bld.Draft,
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
 		}
 		env, err := Build(ctx, opts)
-		if err != nil {
-			res.Error = err.Error()
-			return res
-		}
-		res.Payload, _ = marshal(env)
-	case "calculate":
-		bld := &BuildRequest{}
-		if err := json.Unmarshal(req.Payload, bld); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
-			return res
-		}
-		opts := ParseOptions{
-			DocType: bld.DocType,
-			Data:    bytes.NewReader(bld.Data),
-		}
-		if len(bld.Template) > 0 {
-			opts.Template = bytes.NewReader(bld.Template)
-		}
-		env, err := Calculate(ctx, opts)
 		if err != nil {
 			res.Error = err.Error()
 			return res
@@ -218,12 +202,18 @@ type VerifyResponse struct {
 	OK bool `json:"ok"`
 }
 
+// ValidateResponse is the response to a validate request.
+type ValidateResponse struct {
+	OK bool `json:"ok"`
+}
+
 // BuildRequest is the payload for a build reqeuest.
 type BuildRequest struct {
 	Template   []byte           `json:"template"`
 	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
+	Draft      *bool            `json:"draft"`
 }
 
 type ValidateRequest struct {

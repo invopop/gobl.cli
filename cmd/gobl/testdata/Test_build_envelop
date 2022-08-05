@@ -1,15 +1,16 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+		"uuid": "00000000-0000-0000-0000-000000000000",
 		"dig": {
 			"alg": "sha256",
-			"val": "206155d353fa7870965af769b0928acbda902ef8348a1c877addd0e5705d116d"
-		}
+			"val": "6483b4e486bfafa53017b4c5551294c242f513efc7a394c6583fb0d6fc7be798"
+		},
+		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
+		"uuid": "00000000-0000-0000-0000-000000000000",
 		"code": "INV2021-001",
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
@@ -18,7 +19,7 @@
 				"country": "ES",
 				"code": "B91983379"
 			},
-			"name": "A Different Company S.L.",
+			"name": "A Company Name S.L.",
 			"people": [
 				{
 					"name": {
@@ -53,7 +54,7 @@
 		"customer": {
 			"tax_id": {
 				"country": "ES",
-				"code": "54387763P"
+				"code": "B85905495"
 			},
 			"name": "Autofiscal S.L.",
 			"addresses": [
@@ -207,6 +208,5 @@
 			"outlays": "0.00",
 			"payable": "5637.50"
 		}
-	},
-	"sigs": ["signature data"]
+	}
 }

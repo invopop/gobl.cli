@@ -19,12 +19,17 @@ type SignOptions struct {
 // validates it, and finally signs its headers. The parsed envelope *must* be a
 // draft, or else an error is returned.
 func Sign(ctx context.Context, opts SignOptions) (*gobl.Envelope, error) {
-	// TODO: `BuildOptions` should probably be renamed to `ParseOptions`,
-	// as parsing a GOBL data seems to be the only (shared) purpose across
-	// the principal CLI commands in this package.
-	env, err := parseGOBLData(ctx, opts.ParseOptions)
+	// Always envelop incoming data.
+	opts.Envelop = true
+
+	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
 		return nil, err
+	}
+
+	env, ok := obj.(*gobl.Envelope)
+	if !ok {
+		panic("parsed sign data must be an envelope")
 	}
 
 	// A draft automatically becomes a non-draft (i.e. "final") document, This

@@ -88,7 +88,7 @@ func (s *serveOpts) version(c echo.Context) error {
 }
 
 func (s *serveOpts) build(c echo.Context) error {
-	opts, err := prepareParseOpts(c)
+	opts, err := prepareBuildOpts(c)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (s *serveOpts) build(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, blob)
 }
 
-func prepareParseOpts(c echo.Context) (*internal.ParseOptions, error) {
+func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 	ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
 	if ct != "application/json" {
 		return nil, echo.NewHTTPError(http.StatusUnsupportedMediaType)
@@ -119,9 +119,12 @@ func prepareParseOpts(c echo.Context) (*internal.ParseOptions, error) {
 	if len(req.Data) == 0 {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "no payload")
 	}
-	opts := &internal.ParseOptions{
-		Data:    bytes.NewReader(req.Data),
-		DocType: req.DocType,
+	opts := &internal.BuildOptions{
+		ParseOptions: internal.ParseOptions{
+			Data:    bytes.NewReader(req.Data),
+			DocType: req.DocType,
+		},
+		Draft: req.Draft,
 	}
 	if len(req.Template) != 0 {
 		opts.Template = bytes.NewReader(req.Template)

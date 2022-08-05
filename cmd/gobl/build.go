@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 
@@ -9,6 +10,11 @@ import (
 
 	"github.com/invopop/gobl.cli/internal"
 	"github.com/invopop/gobl/dsig"
+)
+
+var (
+	boolTrue  = true
+	boolFalse = false
 )
 
 type buildOpts struct {
@@ -19,6 +25,9 @@ type buildOpts struct {
 	template       string
 	privateKeyFile string
 	docType        string
+	envelop        bool
+	draft          bool
+	notDraft       bool
 
 	// Command options
 	use   string
@@ -47,6 +56,9 @@ func (b *buildOpts) cmd() *cobra.Command {
 	f.StringToStringVar(&b.setStrings, "set-string", nil, "Set STRING value from the command line")
 	f.StringVarP(&b.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
 	f.StringVarP(&b.docType, "type", "t", "", "Specify the document type")
+	f.BoolVarP(&b.envelop, "envelop", "e", false, "format JSON output with indentation")
+	f.BoolVarP(&b.draft, "draft", "d", false, "Set envelope as draft")
+	f.BoolVarP(&b.notDraft, "not-draft", "n", false, "Set envelope as non-draft")
 
 	return cmd
 }
@@ -91,16 +103,28 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	parseOpts := internal.ParseOptions{
-		Template:  template,
-		Data:      input,
-		SetFile:   b.setFiles,
-		SetYAML:   b.set,
-		SetString: b.setStrings,
-		DocType:   b.docType,
+	buildOpts := internal.BuildOptions{
+		ParseOptions: internal.ParseOptions{
+			Template:  template,
+			Data:      input,
+			SetFile:   b.setFiles,
+			SetYAML:   b.set,
+			SetString: b.setStrings,
+			DocType:   b.docType,
+			Envelop:   b.envelop,
+		},
 	}
 
-	env, err := internal.Build(ctx, parseOpts)
+	switch {
+	case b.draft && b.notDraft:
+		return errors.New("draft and not-draft cannot both be set")
+	case b.draft:
+		buildOpts.Draft = &boolTrue
+	case b.notDraft:
+		buildOpts.Draft = &boolFalse
+	}
+
+	env, err := internal.Build(ctx, buildOpts)
 	if err != nil {
 		return err
 	}

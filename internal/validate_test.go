@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"io"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -54,8 +53,7 @@ func TestValidate(t *testing.T) {
 	})
 	tests.Add("without envelope", func(t *testing.T) interface{} {
 		return tt{
-			in:  testFileReader(t, "testdata/invoice.json"),
-			err: "code=422, message=head: (dig: cannot be blank.).",
+			in: testFileReader(t, "testdata/invoice.json"),
 		}
 	})
 	tests.Add("without totals", func(t *testing.T) interface{} {
@@ -67,27 +65,11 @@ func TestValidate(t *testing.T) {
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
-		got, err := Validate(context.Background(), tt.in)
+		err := Validate(context.Background(), tt.in)
 		if tt.err == "" {
 			assert.Nil(t, err)
 		} else {
 			assert.EqualError(t, err, tt.err)
-		}
-		if err != nil {
-			return
-		}
-		replacements := []testy.Replacement{
-			{
-				Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
-				Replacement: `"sigs": ["signature data"]`,
-			},
-			{
-				Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
-				Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
-			},
-		}
-		if d := testy.DiffAsJSON(testy.Snapshot(t), got, replacements...); d != nil {
-			t.Error(d)
 		}
 	})
 }

@@ -4,32 +4,59 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
-
 	"github.com/invopop/gobl"
+	"github.com/labstack/echo/v4"
 )
 
-// Build builds and validates GOBL data from build options, and transparently
-// wraps a document in an envelope if needed.
-func Build(ctx context.Context, opts ParseOptions) (*gobl.Envelope, error) {
-	env, err := parseGOBLData(ctx, opts)
+type BuildOptions struct {
+	ParseOptions
+	// When set to a non-nil value, the returned data is wrapped in an envelope (if needed)
+	// with its `draft` property set to true or false.
+	Draft *bool
+}
+
+// Build builds and validates GOBL data.
+func Build(ctx context.Context, opts BuildOptions) (interface{}, error) {
+	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	// Signed documents should be regarded as immutable.
-	// Attempting to build an already signed document returns an error.
-	if len(env.Signatures) > 0 {
-		return nil, echo.NewHTTPError(http.StatusConflict, "document has already been signed")
+	if env, ok := obj.(*gobl.Envelope); ok {
+		// Signed documents should be regarded as immutable.
+		// Attempting to build an already signed document returns an error.
+		if len(env.Signatures) > 0 {
+			return nil, echo.NewHTTPError(http.StatusConflict, "document has already been signed")
+		}
+
+		if opts.Draft != nil {
+			env.Head.Draft = *opts.Draft
+		}
+
+		if err := env.Calculate(); err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+
+		if err := env.Validate(); err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+
+		return env, nil
 	}
 
-	if err := env.Calculate(); err != nil {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	if doc, ok := obj.(*gobl.Document); ok {
+		if c, ok := doc.Instance().(gobl.Calculable); ok {
+			if err := c.Calculate(); err != nil {
+				return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			}
+		}
+
+		if err := doc.Validate(); err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+
+		return doc, nil
 	}
 
-	if err := env.Validate(); err != nil {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
-	}
-
-	return env, nil
+	panic("parsed data must be either an envelope or a document")
 }
