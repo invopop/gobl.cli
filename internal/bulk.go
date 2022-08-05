@@ -102,19 +102,13 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 		}
 		res.Payload, _ = marshal(VerifyResponse{OK: true})
 	case "validate":
-		bld := &BuildRequest{}
-		if err := json.Unmarshal(req.Payload, bld); err != nil {
+		valReq := &ValidateRequest{}
+		if err := json.Unmarshal(req.Payload, valReq); err != nil {
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := ParseOptions{
-			DocType: bld.DocType,
-			Data:    bytes.NewReader(bld.Data),
-		}
-		if len(bld.Template) > 0 {
-			opts.Template = bytes.NewReader(bld.Template)
-		}
-		env, err := Validate(ctx, opts)
+		data := bytes.NewReader(valReq.Data)
+		env, err := Validate(ctx, data)
 		if err != nil {
 			res.Error = err.Error()
 			return res
@@ -230,6 +224,10 @@ type BuildRequest struct {
 	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
+}
+
+type ValidateRequest struct {
+	Data []byte `json:"data"`
 }
 
 // KeygenResponse is the payload for a key generation response.

@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"io"
 	"net/http"
 
 	"github.com/invopop/gobl"
@@ -9,7 +10,10 @@ import (
 )
 
 // Validate asserts the contents of the envelope and document are correct.
-func Validate(ctx context.Context, opts ParseOptions) (*gobl.Envelope, error) {
+func Validate(ctx context.Context, r io.Reader) (*gobl.Envelope, error) {
+	opts := ParseOptions{
+		Data: r,
+	}
 	env, err := parseGOBLData(ctx, opts)
 	if err != nil {
 		return nil, err

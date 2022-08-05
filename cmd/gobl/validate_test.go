@@ -43,26 +43,6 @@ func Test_validate_args(t *testing.T) {
 			name: "in-place short",
 			args: []string{"-w"},
 		},
-		{
-			name: "set values",
-			args: []string{"--set", "foo=bar", "--set", "bar=baz", "--set", "foo=qux"},
-		},
-		{
-			name: "set files",
-			args: []string{"--set-file", "foo=foo.json"},
-		},
-		{
-			name: "set string values",
-			args: []string{"--set-string", "foo=foo", "--set-string", "bar=1234"},
-		},
-		{
-			name: "template",
-			args: []string{"--template", "foo.yaml"},
-		},
-		{
-			name: "type",
-			args: []string{"--type", "bill.Invoice"},
-		},
 	}
 
 	for _, tt := range tests {
@@ -95,10 +75,6 @@ func Test_validate_args(t *testing.T) {
 }
 
 func Test_validate(t *testing.T) {
-	noTotals := func(t *testing.T) io.Reader {
-		return testFileReader(t, "testdata/nototals.json")
-	}
-
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
 	t.Cleanup(func() {
 		_ = os.RemoveAll(tmpdir)
@@ -113,31 +89,9 @@ func Test_validate(t *testing.T) {
 		target string
 	}{
 		{
-			name: "missing file",
-			opts: &validateOpts{
-				setFiles: map[string]string{
-					"foo": "missing.yaml",
-				},
-			},
-			err: `open missing.yaml: no such file or directory`,
-		},
-		{
-			name: "valid file",
-			in:   noTotals(t),
-			opts: &validateOpts{
-				setFiles: map[string]string{
-					"doc.supplier": "testdata/supplier.yaml",
-				},
-			},
-		},
-		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
 			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
-		},
-		{
-			name: "success",
-			in:   noTotals(t),
 		},
 		{
 			name: "no document",
@@ -190,8 +144,9 @@ func Test_validate(t *testing.T) {
 			args: []string{"testdata/success.json"},
 		},
 		{
-			name: "recalculate",
+			name: "without totals",
 			args: []string{"testdata/nototals.json"},
+			err:  "code=422, message=doc: (totals: cannot be blank.).",
 		},
 		{
 			name:   "output file",
@@ -224,8 +179,8 @@ func Test_validate(t *testing.T) {
 					inPlace: true,
 				},
 			},
-			args:   []string{filepath.Join(tmpdir, "input.json")},
-			target: filepath.Join(tmpdir, "input.json"),
+			args:   []string{filepath.Join(tmpdir, "success.json")},
+			target: filepath.Join(tmpdir, "success.json"),
 		},
 		{
 			name: "overwrite stdin",
@@ -235,20 +190,6 @@ func Test_validate(t *testing.T) {
 				},
 			},
 			err: "cannot overwrite STDIN",
-		},
-		{
-			name: "merge values",
-			opts: &validateOpts{
-				set: map[string]string{"doc.currency": "MXN"},
-			},
-			args: []string{"testdata/success.json"},
-		},
-		{
-			name: "template missing",
-			opts: &validateOpts{
-				template: "missing.yaml",
-			},
-			err: "open missing.yaml: no such file or directory",
 		},
 	}
 
