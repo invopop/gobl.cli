@@ -11,14 +11,14 @@ import (
 
 // SignOptions are the options used for signing a GOBL document.
 type SignOptions struct {
-	ParseOptions
+	*ParseOptions
 	PrivateKey *dsig.PrivateKey
 }
 
 // Sign parses a GOBL document into an envelope, performs calculations,
 // validates it, and finally signs its headers. The parsed envelope *must* be a
 // draft, or else an error is returned.
-func Sign(ctx context.Context, opts SignOptions) (*gobl.Envelope, error) {
+func Sign(ctx context.Context, opts *SignOptions) (*gobl.Envelope, error) {
 	// Always envelop incoming data.
 	opts.Envelop = true
 

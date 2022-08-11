@@ -11,15 +11,15 @@ import (
 
 func TestSign(t *testing.T) {
 	type tt struct {
-		opts SignOptions
+		opts *SignOptions
 		err  string
 	}
 
 	tests := testy.NewTable()
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
-			opts: SignOptions{
-				ParseOptions: ParseOptions{
+			opts: &SignOptions{
+				ParseOptions: &ParseOptions{
 					Data: testFileReader(t, "testdata/nototals.json"),
 				},
 			},
@@ -27,8 +27,8 @@ func TestSign(t *testing.T) {
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
-			opts: SignOptions{
-				ParseOptions: ParseOptions{
+			opts: &SignOptions{
+				ParseOptions: &ParseOptions{
 					Data: testFileReader(t, "testdata/signed.json"),
 				},
 			},
@@ -36,8 +36,8 @@ func TestSign(t *testing.T) {
 	})
 	tests.Add("draft envelope", func(t *testing.T) interface{} {
 		return tt{
-			opts: SignOptions{
-				ParseOptions: ParseOptions{
+			opts: &SignOptions{
+				ParseOptions: &ParseOptions{
 					Data: testFileReader(t, "testdata/draft.json"),
 				},
 			},
@@ -45,8 +45,8 @@ func TestSign(t *testing.T) {
 	})
 	tests.Add("invalid document", func(t *testing.T) interface{} {
 		return tt{
-			opts: SignOptions{
-				ParseOptions: ParseOptions{
+			opts: &SignOptions{
+				ParseOptions: &ParseOptions{
 					SetFile: map[string]string{
 						"foo": "testdata/invalid.yaml",
 					},

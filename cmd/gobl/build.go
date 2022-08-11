@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl.cli/internal"
-	"github.com/invopop/gobl/dsig"
 )
 
 var (
@@ -88,23 +87,8 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	pkFilename, err := expandHome(b.privateKeyFile)
-	if err != nil {
-		return err
-	}
-	keyFile, err := os.Open(pkFilename)
-	if err != nil {
-		return err
-	}
-	defer keyFile.Close() // nolint:errcheck
-
-	key := new(dsig.PrivateKey)
-	if err = json.NewDecoder(keyFile).Decode(key); err != nil {
-		return err
-	}
-
-	buildOpts := internal.BuildOptions{
-		ParseOptions: internal.ParseOptions{
+	buildOpts := &internal.BuildOptions{
+		ParseOptions: &internal.ParseOptions{
 			Template:  template,
 			Data:      input,
 			SetFile:   b.setFiles,

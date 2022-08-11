@@ -44,7 +44,7 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 	return nil
 }
 
-func parseGOBLData(ctx context.Context, opts ParseOptions) (interface{}, error) {
+func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error) {
 	var intermediate map[string]interface{}
 
 	values, err := parseSets(opts)
@@ -144,7 +144,7 @@ func docSchemaData(schema schema.ID) map[string]interface{} {
 	}
 }
 
-func parseSets(opts ParseOptions) (map[string]interface{}, error) {
+func parseSets(opts *ParseOptions) (map[string]interface{}, error) {
 	values := map[string]interface{}{}
 	keys := make([]string, 0, len(opts.SetYAML))
 	for k := range opts.SetYAML {

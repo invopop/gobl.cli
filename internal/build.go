@@ -9,14 +9,14 @@ import (
 )
 
 type BuildOptions struct {
-	ParseOptions
+	*ParseOptions
 	// When set to a non-nil value, the returned data is wrapped in an envelope (if needed)
 	// with its `draft` property set to true or false.
 	Draft *bool
 }
 
 // Build builds and validates GOBL data.
-func Build(ctx context.Context, opts BuildOptions) (interface{}, error) {
+func Build(ctx context.Context, opts *BuildOptions) (interface{}, error) {
 	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
 		return nil, err
