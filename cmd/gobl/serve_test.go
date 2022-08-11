@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -96,7 +96,7 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "envelop success",
 			req: func() *http.Request {
-				data, err := ioutil.ReadFile("testdata/message.json")
+				data, err := os.ReadFile("testdata/message.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -120,7 +120,7 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "envelop success indented",
 			req: func() *http.Request {
-				data, err := ioutil.ReadFile("testdata/message.json")
+				data, err := os.ReadFile("testdata/message.json")
 				if err != nil {
 					t.Fatal(err)
 				}

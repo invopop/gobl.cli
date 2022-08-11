@@ -2,7 +2,6 @@ package main
 
 import (
 	"io"
-	"io/ioutil"
 	"strings"
 	"testing"
 
@@ -61,10 +60,10 @@ func Test_version(t *testing.T) {
 	})
 	wantOut := string(gobl.VERSION) // just check it's there somewhere!
 	wantErr := ""
-	if sout, _ := ioutil.ReadAll(stdout); !strings.Contains(string(sout), wantOut) {
+	if sout, _ := io.ReadAll(stdout); !strings.Contains(string(sout), wantOut) {
 		t.Errorf("Unexpected STDOUT: %s", sout)
 	}
-	if serr, _ := ioutil.ReadAll(stderr); !strings.Contains(string(serr), wantErr) {
+	if serr, _ := io.ReadAll(stderr); !strings.Contains(string(serr), wantErr) {
 		t.Errorf("Unexpected STDERR: %s", serr)
 	}
 }

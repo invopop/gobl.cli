@@ -18,15 +18,14 @@ var (
 
 type buildOpts struct {
 	*rootOpts
-	set            map[string]string
-	setFiles       map[string]string
-	setStrings     map[string]string
-	template       string
-	privateKeyFile string
-	docType        string
-	envelop        bool
-	draft          bool
-	notDraft       bool
+	set        map[string]string
+	setFiles   map[string]string
+	setStrings map[string]string
+	template   string
+	docType    string
+	envelop    bool
+	draft      bool
+	notDraft   bool
 
 	// Command options
 	use   string
