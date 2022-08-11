@@ -101,21 +101,58 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			return res
 		}
 		res.Payload, _ = marshal(VerifyResponse{OK: true})
+	case "validate":
+		valReq := &ValidateRequest{}
+		if err := json.Unmarshal(req.Payload, valReq); err != nil {
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			return res
+		}
+		data := bytes.NewReader(valReq.Data)
+		err := Validate(ctx, data)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload, _ = marshal(ValidateResponse{OK: true})
 	case "build":
 		bld := &BuildRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := &BuildOptions{
-			DocType:    bld.DocType,
-			Data:       bytes.NewReader(bld.Data),
-			PrivateKey: bld.PrivateKey,
+		opts := BuildOptions{
+			ParseOptions: ParseOptions{
+				DocType: bld.DocType,
+				Data:    bytes.NewReader(bld.Data),
+			},
+			Draft: bld.Draft,
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
 		}
 		env, err := Build(ctx, opts)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload, _ = marshal(env)
+	case "sign":
+		bld := &BuildRequest{}
+		if err := json.Unmarshal(req.Payload, bld); err != nil {
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			return res
+		}
+		opts := SignOptions{
+			ParseOptions: ParseOptions{
+				DocType: bld.DocType,
+				Data:    bytes.NewReader(bld.Data),
+			},
+			PrivateKey: bld.PrivateKey,
+		}
+		if len(bld.Template) > 0 {
+			opts.Template = bytes.NewReader(bld.Template)
+		}
+		env, err := Sign(ctx, opts)
 		if err != nil {
 			res.Error = err.Error()
 			return res
@@ -165,12 +202,22 @@ type VerifyResponse struct {
 	OK bool `json:"ok"`
 }
 
+// ValidateResponse is the response to a validate request.
+type ValidateResponse struct {
+	OK bool `json:"ok"`
+}
+
 // BuildRequest is the payload for a build reqeuest.
 type BuildRequest struct {
 	Template   []byte           `json:"template"`
 	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
+	Draft      *bool            `json:"draft"`
+}
+
+type ValidateRequest struct {
+	Data []byte `json:"data"`
 }
 
 // KeygenResponse is the payload for a key generation response.

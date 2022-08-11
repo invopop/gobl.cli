@@ -11,37 +11,45 @@ import (
 
 func TestSign(t *testing.T) {
 	type tt struct {
-		opts BuildOptions
+		opts SignOptions
 		err  string
 	}
 
 	tests := testy.NewTable()
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
-				Data: testFileReader(t, "testdata/nototals.json"),
+			opts: SignOptions{
+				ParseOptions: ParseOptions{
+					Data: testFileReader(t, "testdata/nototals.json"),
+				},
 			},
 		}
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
-				Data: testFileReader(t, "testdata/signed.json"),
+			opts: SignOptions{
+				ParseOptions: ParseOptions{
+					Data: testFileReader(t, "testdata/signed.json"),
+				},
 			},
 		}
 	})
 	tests.Add("draft envelope", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
-				Data: testFileReader(t, "testdata/draft.json"),
+			opts: SignOptions{
+				ParseOptions: ParseOptions{
+					Data: testFileReader(t, "testdata/draft.json"),
+				},
 			},
 		}
 	})
 	tests.Add("invalid document", func(t *testing.T) interface{} {
 		return tt{
-			opts: BuildOptions{
-				SetFile: map[string]string{
-					"foo": "testdata/invalid.yaml",
+			opts: SignOptions{
+				ParseOptions: ParseOptions{
+					SetFile: map[string]string{
+						"foo": "testdata/invalid.yaml",
+					},
 				},
 			},
 			err: "yaml: line 2: found unexpected end of stream",
@@ -59,7 +67,7 @@ func TestSign(t *testing.T) {
 			opts.PrivateKey = privateKey
 		}
 
-		got, err := Sign(context.Background(), &opts)
+		got, err := Sign(context.Background(), opts)
 
 		if tt.err == "" {
 			require.Nil(t, err)

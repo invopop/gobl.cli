@@ -14,10 +14,12 @@ import (
 
 func signedDoc(t *testing.T) []byte {
 	t.Helper()
-	env, err := Sign(context.Background(), &BuildOptions{
-		Data: testFileReader(t, "testdata/invoice-es-es.env.yaml"),
-		SetFile: map[string]string{
-			"doc": "testdata/invoice-es-es.yaml",
+	env, err := Sign(context.Background(), SignOptions{
+		ParseOptions: ParseOptions{
+			Data: testFileReader(t, "testdata/invoice-es-es.env.yaml"),
+			SetFile: map[string]string{
+				"doc": "testdata/invoice-es-es.yaml",
+			},
 		},
 		PrivateKey: privateKey,
 	})

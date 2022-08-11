@@ -150,7 +150,21 @@ func Test_build(t *testing.T) {
 			},
 		},
 		{
-			name: "envelop success",
+			name: "envelop",
+			in:   testFileReader(t, "testdata/envelop.nototals.json"),
+			opts: &buildOpts{
+				privateKeyFile: "testdata/id_es256",
+				envelop:        true,
+			},
+			replace: []testy.Replacement{
+				{
+					Regexp:      regexp.MustCompile(`"uuid":.?".*"`),
+					Replacement: `"uuid": "00000000-0000-0000-0000-000000000000"`,
+				},
+			},
+		},
+		{
+			name: "do not envelop",
 			in:   testFileReader(t, "testdata/envelop.nototals.json"),
 			opts: &buildOpts{
 				privateKeyFile: "testdata/id_es256",
@@ -160,6 +174,22 @@ func Test_build(t *testing.T) {
 					Regexp:      regexp.MustCompile(`"uuid":.?".*"`),
 					Replacement: `"uuid": "00000000-0000-0000-0000-000000000000"`,
 				},
+			},
+		},
+		{
+			name: "set to draft",
+			args: []string{"testdata/success.json"},
+			opts: &buildOpts{
+				draft:          true,
+				privateKeyFile: "testdata/id_es256",
+			},
+		},
+		{
+			name: "set to non-draft",
+			args: []string{"testdata/success.json"},
+			opts: &buildOpts{
+				draft:          false,
+				privateKeyFile: "testdata/id_es256",
 			},
 		},
 		{

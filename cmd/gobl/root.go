@@ -29,9 +29,9 @@ func (o *rootOpts) cmd() *cobra.Command {
 	o.setFlags(cmd)
 
 	cmd.AddCommand(verify().cmd())
+	cmd.AddCommand(validate(o).cmd())
 	cmd.AddCommand(build(o).cmd())
 	cmd.AddCommand(sign(o).cmd())
-	cmd.AddCommand(calculate(o).cmd())
 	cmd.AddCommand(versionCmd())
 	cmd.AddCommand(serve().cmd())
 	cmd.AddCommand(keygen(o).cmd())

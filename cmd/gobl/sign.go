@@ -92,17 +92,19 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	buildOpts := &internal.BuildOptions{
-		Template:   template,
-		Data:       input,
-		SetFile:    opts.setFiles,
-		SetYAML:    opts.set,
-		SetString:  opts.setStrings,
+	signOpts := internal.SignOptions{
+		ParseOptions: internal.ParseOptions{
+			Template:  template,
+			Data:      input,
+			SetFile:   opts.setFiles,
+			SetYAML:   opts.set,
+			SetString: opts.setStrings,
+			DocType:   opts.docType,
+		},
 		PrivateKey: key,
-		DocType:    opts.docType,
 	}
 
-	env, err := internal.Sign(ctx, buildOpts)
+	env, err := internal.Sign(ctx, signOpts)
 	if err != nil {
 		return err
 	}

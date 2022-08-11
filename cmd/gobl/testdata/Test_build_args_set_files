@@ -10,8 +10,11 @@
   },
   setStrings: (map[string]string) <nil>,
   template: (string) "",
-  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
+  privateKeyFile: (string) "",
   docType: (string) "",
+  envelop: (bool) false,
+  draft: (bool) false,
+  notDraft: (bool) false,
   use: (string) (len=24) "build [infile] [outfile]",
   short: (string) (len=68) "Calculate and validate a document, wrapping it in envelope if needed"
 })

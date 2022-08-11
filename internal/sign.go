@@ -5,19 +5,31 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/dsig"
 	"github.com/labstack/echo/v4"
 )
+
+// SignOptions are the options used for signing a GOBL document.
+type SignOptions struct {
+	ParseOptions
+	PrivateKey *dsig.PrivateKey
+}
 
 // Sign parses a GOBL document into an envelope, performs calculations,
 // validates it, and finally signs its headers. The parsed envelope *must* be a
 // draft, or else an error is returned.
-func Sign(ctx context.Context, opts *BuildOptions) (*gobl.Envelope, error) {
-	// TODO: `BuildOptions` should probably be renamed to `ParseOptions`,
-	// as parsing a GOBL data seems to be the only (shared) purpose across
-	// the principal CLI commands in this package.
-	env, err := parseBuildData(ctx, opts)
+func Sign(ctx context.Context, opts SignOptions) (*gobl.Envelope, error) {
+	// Always envelop incoming data.
+	opts.Envelop = true
+
+	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
 		return nil, err
+	}
+
+	env, ok := obj.(*gobl.Envelope)
+	if !ok {
+		panic("parsed sign data must be an envelope")
 	}
 
 	// A draft automatically becomes a non-draft (i.e. "final") document, This

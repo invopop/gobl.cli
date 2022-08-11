@@ -1,7 +1,11 @@
 {
-	"$schema": "https://gobl.org/draft-0/envelope",
+  "$schema": "https://gobl.org/draft-0/envelope",
   "head": {
-    "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
+    "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+    "dig": {
+      "alg": "sha256",
+      "val": "invalid-dig"
+    }
   },
   "doc": {
     "$schema": "https://gobl.org/draft-0/bill/invoice",
@@ -13,7 +17,7 @@
     "supplier": {
       "tax_id": {
         "country": "ES",
-        "code": "B91983379"
+        "code": "93471790C"
       },
       "people": [
         {
@@ -49,7 +53,7 @@
     "customer": {
       "tax_id": {
         "country": "ES",
-        "code": "B-85905495"
+        "code": "43596386R"
       },
       "name": "Autofiscal S.L.",
       "addresses": [
@@ -156,6 +160,52 @@
           }
         ]
       }
+    },
+    "totals": {
+      "outlays": "0.00",
+      "payable": "5637.50",
+      "sum": "5187.50",
+      "tax": "450.00",
+      "taxes": {
+        "categories": [
+          {
+            "amount": "1050.00",
+            "base": "5172.50",
+            "code": "VAT",
+            "rates": [
+              {
+                "amount": "1050.00",
+                "base": "5000.00",
+                "key": "standard",
+                "percent": "21.0%"
+              },
+              {
+                "amount": "0.00",
+                "base": "172.50",
+                "key": "zero",
+                "percent": "0.0%"
+              }
+            ]
+          },
+          {
+            "amount": "600.00",
+            "base": "4000.00",
+            "code": "IRPF",
+            "rates": [
+              {
+                "amount": "600.00",
+                "base": "4000.00",
+                "key": "pro",
+                "percent": "15.0%"
+              }
+            ],
+            "retained": true
+          }
+        ],
+        "sum": "450.00"
+      },
+      "total": "5187.50",
+      "total_with_tax": "5637.50"
     }
   }
 }

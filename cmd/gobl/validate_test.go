@@ -13,7 +13,7 @@ import (
 	"gitlab.com/flimzy/testy"
 )
 
-func Test_calculate_args(t *testing.T) {
+func Test_validate_args(t *testing.T) {
 	tests := []struct {
 		name string
 		args []string
@@ -43,26 +43,6 @@ func Test_calculate_args(t *testing.T) {
 			name: "in-place short",
 			args: []string{"-w"},
 		},
-		{
-			name: "set values",
-			args: []string{"--set", "foo=bar", "--set", "bar=baz", "--set", "foo=qux"},
-		},
-		{
-			name: "set files",
-			args: []string{"--set-file", "foo=foo.json"},
-		},
-		{
-			name: "set string values",
-			args: []string{"--set-string", "foo=foo", "--set-string", "bar=1234"},
-		},
-		{
-			name: "template",
-			args: []string{"--template", "foo.yaml"},
-		},
-		{
-			name: "type",
-			args: []string{"--type", "bill.Invoice"},
-		},
 	}
 
 	for _, tt := range tests {
@@ -74,7 +54,7 @@ func Test_calculate_args(t *testing.T) {
 			rootCmd := &cobra.Command{}
 			root.setFlags(rootCmd)
 
-			opts := calculate(root)
+			opts := validate(root)
 
 			cmd := opts.cmd()
 			rootCmd.AddCommand(cmd)
@@ -94,11 +74,7 @@ func Test_calculate_args(t *testing.T) {
 	}
 }
 
-func Test_calculate(t *testing.T) {
-	noTotals := func(t *testing.T) io.Reader {
-		return testFileReader(t, "testdata/nototals.json")
-	}
-
+func Test_validate(t *testing.T) {
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
 	t.Cleanup(func() {
 		_ = os.RemoveAll(tmpdir)
@@ -106,46 +82,16 @@ func Test_calculate(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		opts   *calculateOpts
+		opts   *validateOpts
 		in     io.Reader
 		args   []string
 		err    string
 		target string
 	}{
 		{
-			name: "missing file",
-			opts: &calculateOpts{
-				setFiles: map[string]string{
-					"foo": "missing.yaml",
-				},
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: `open missing.yaml: no such file or directory`,
-		},
-		{
-			name: "valid file",
-			in:   noTotals(t),
-			opts: &calculateOpts{
-				setFiles: map[string]string{
-					"doc.supplier": "testdata/supplier.yaml",
-				},
-				privateKeyFile: "testdata/id_es256",
-			},
-		},
-		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
-		},
-		{
-			name: "success",
-			in:   noTotals(t),
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "no document",
@@ -161,10 +107,7 @@ func Test_calculate(t *testing.T) {
 					}
 				},
 			}`),
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: "code=422, message=no-document",
+			err: "code=422, message=doc: cannot be blank.",
 		},
 		{
 			name: "invalid doc",
@@ -179,9 +122,6 @@ func Test_calculate(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
 			err: "code=400, message=unmarshal: unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
 		},
 		{
@@ -197,39 +137,25 @@ func Test_calculate(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
 			err: "code=400, message=unmarshal: marshal: unregistered or invalid schema",
 		},
 		{
 			name: "input file",
 			args: []string{"testdata/success.json"},
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
 		},
 		{
-			name: "recalculate",
+			name: "without totals",
 			args: []string{"testdata/nototals.json"},
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			err:  "code=422, message=doc: (totals: cannot be blank.).",
 		},
 		{
-			name: "output file",
-			args: []string{"testdata/success.json", filepath.Join(tmpdir, "output-file.json")},
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			name:   "output file",
+			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "output-file.json")},
 			target: filepath.Join(tmpdir, "output-file.json"),
 		},
 		{
 			name: "explicit stdout",
 			args: []string{"testdata/success.json", "-"},
-			opts: &calculateOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
 		},
 		{
 			name: "output file exists",
@@ -238,49 +164,32 @@ func Test_calculate(t *testing.T) {
 		},
 		{
 			name: "overwrite output file",
-			opts: &calculateOpts{
+			opts: &validateOpts{
 				rootOpts: &rootOpts{
 					overwriteOutputFile: true,
 				},
-				privateKeyFile: "testdata/id_es256",
 			},
 			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "overwrite.json")},
 			target: filepath.Join(tmpdir, "overwrite.json"),
 		},
 		{
 			name: "overwrite input file",
-			opts: &calculateOpts{
+			opts: &validateOpts{
 				rootOpts: &rootOpts{
 					inPlace: true,
 				},
-				privateKeyFile: "testdata/id_es256",
 			},
-			args:   []string{filepath.Join(tmpdir, "input.json")},
-			target: filepath.Join(tmpdir, "input.json"),
+			args:   []string{filepath.Join(tmpdir, "success.json")},
+			target: filepath.Join(tmpdir, "success.json"),
 		},
 		{
 			name: "overwrite stdin",
-			opts: &calculateOpts{
+			opts: &validateOpts{
 				rootOpts: &rootOpts{
 					inPlace: true,
 				},
 			},
 			err: "cannot overwrite STDIN",
-		},
-		{
-			name: "merge values",
-			opts: &calculateOpts{
-				set:            map[string]string{"doc.currency": "MXN"},
-				privateKeyFile: "testdata/id_es256",
-			},
-			args: []string{"testdata/success.json"},
-		},
-		{
-			name: "template missing",
-			opts: &calculateOpts{
-				template: "missing.yaml",
-			},
-			err: "open missing.yaml: no such file or directory",
 		},
 	}
 
@@ -296,7 +205,7 @@ func Test_calculate(t *testing.T) {
 			c.SetOut(buf)
 			opts := tt.opts
 			if opts == nil {
-				opts = &calculateOpts{}
+				opts = &validateOpts{}
 			}
 			if opts.rootOpts == nil {
 				opts.rootOpts = &rootOpts{}

@@ -94,7 +94,7 @@ func (s *serveOpts) build(c echo.Context) error {
 	}
 
 	ctx := c.Request().Context()
-	env, err := internal.Build(ctx, opts)
+	env, err := internal.Build(ctx, *opts)
 	if err != nil {
 		return err
 	}
@@ -120,9 +120,11 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "no payload")
 	}
 	opts := &internal.BuildOptions{
-		Data:       bytes.NewReader(req.Data),
-		PrivateKey: req.PrivateKey,
-		DocType:    req.DocType,
+		ParseOptions: internal.ParseOptions{
+			Data:    bytes.NewReader(req.Data),
+			DocType: req.DocType,
+		},
+		Draft: req.Draft,
 	}
 	if len(req.Template) != 0 {
 		opts.Template = bytes.NewReader(req.Template)
