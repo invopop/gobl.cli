@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -42,7 +42,7 @@ func TestBulk(t *testing.T) {
 		},
 	})
 	tests.Add("one verification", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/success.json")
+		payload, err := os.ReadFile("testdata/success.json")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -107,7 +107,7 @@ func TestBulk(t *testing.T) {
 		}
 	})
 	tests.Add("success then failure", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/success.json")
+		payload, err := os.ReadFile("testdata/success.json")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -193,7 +193,7 @@ func TestBulk(t *testing.T) {
 		}
 	})
 	tests.Add("one build, already signed", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/success.json")
+		payload, err := os.ReadFile("testdata/success.json")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -225,7 +225,7 @@ func TestBulk(t *testing.T) {
 		}
 	})
 	tests.Add("one build, success", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		payload, err := os.ReadFile("testdata/nosig.json")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -261,7 +261,7 @@ func TestBulk(t *testing.T) {
 		}
 	})
 	tests.Add("build, invalid doc type", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		payload, err := os.ReadFile("testdata/nosig.json")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -287,7 +287,7 @@ func TestBulk(t *testing.T) {
 		}
 	})
 	tests.Add("build, invalid template", func(t *testing.T) interface{} {
-		payload, err := ioutil.ReadFile("testdata/nosig.json")
+		payload, err := os.ReadFile("testdata/nosig.json")
 		if err != nil {
 			t.Fatal(err)
 		}

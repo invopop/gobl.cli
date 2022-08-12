@@ -3,7 +3,7 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -29,7 +29,7 @@ var (
 const signingKeyFile = "testdata/private.jwk"
 
 func init() {
-	data, err := ioutil.ReadFile(signingKeyFile)
+	data, err := os.ReadFile(signingKeyFile)
 	if err != nil {
 		panic(err)
 	}
