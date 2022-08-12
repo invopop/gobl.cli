@@ -92,8 +92,8 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	signOpts := internal.SignOptions{
-		ParseOptions: internal.ParseOptions{
+	signOpts := &internal.SignOptions{
+		ParseOptions: &internal.ParseOptions{
 			Template:  template,
 			Data:      input,
 			SetFile:   opts.setFiles,

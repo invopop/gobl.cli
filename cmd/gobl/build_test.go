@@ -120,7 +120,6 @@ func Test_build(t *testing.T) {
 				setFiles: map[string]string{
 					"foo": "missing.yaml",
 				},
-				privateKeyFile: "testdata/id_es256",
 			},
 			err: `open missing.yaml: no such file or directory`,
 		},
@@ -131,30 +130,24 @@ func Test_build(t *testing.T) {
 				setFiles: map[string]string{
 					"doc.supplier": "testdata/supplier.yaml",
 				},
-				privateKeyFile: "testdata/id_es256",
 			},
 		},
 		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
+			opts: &buildOpts{},
+			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "success",
 			in:   noTotals(t),
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			opts: &buildOpts{},
 		},
 		{
 			name: "envelop",
 			in:   testFileReader(t, "testdata/envelop.nototals.json"),
 			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-				envelop:        true,
+				envelop: true,
 			},
 			replace: []testy.Replacement{
 				{
@@ -166,9 +159,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "do not envelop",
 			in:   testFileReader(t, "testdata/envelop.nototals.json"),
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			opts: &buildOpts{},
 			replace: []testy.Replacement{
 				{
 					Regexp:      regexp.MustCompile(`"uuid":.?".*"`),
@@ -180,16 +171,14 @@ func Test_build(t *testing.T) {
 			name: "set to draft",
 			args: []string{"testdata/success.json"},
 			opts: &buildOpts{
-				draft:          true,
-				privateKeyFile: "testdata/id_es256",
+				draft: true,
 			},
 		},
 		{
 			name: "set to non-draft",
 			args: []string{"testdata/success.json"},
 			opts: &buildOpts{
-				draft:          false,
-				privateKeyFile: "testdata/id_es256",
+				draft: false,
 			},
 		},
 		{
@@ -206,10 +195,8 @@ func Test_build(t *testing.T) {
 					}
 				},
 			}`),
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: "code=422, message=no-document",
+			opts: &buildOpts{},
+			err:  "code=422, message=no-document",
 		},
 		{
 			name: "invalid doc",
@@ -224,10 +211,8 @@ func Test_build(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: "code=400, message=unmarshal: unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
+			opts: &buildOpts{},
+			err:  "code=400, message=unmarshal: unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
 		},
 		{
 			name: "incomplete",
@@ -242,39 +227,29 @@ func Test_build(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
-			err: "code=400, message=unmarshal: marshal: unregistered or invalid schema",
+			opts: &buildOpts{},
+			err:  "code=400, message=unmarshal: marshal: unregistered or invalid schema",
 		},
 		{
 			name: "input file",
 			args: []string{"testdata/success.json"},
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			opts: &buildOpts{},
 		},
 		{
 			name: "recalculate",
 			args: []string{"testdata/nototals.json"},
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			opts: &buildOpts{},
 		},
 		{
-			name: "output file",
-			args: []string{"testdata/success.json", filepath.Join(tmpdir, "output-file.json")},
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			name:   "output file",
+			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "output-file.json")},
+			opts:   &buildOpts{},
 			target: filepath.Join(tmpdir, "output-file.json"),
 		},
 		{
 			name: "explicit stdout",
 			args: []string{"testdata/success.json", "-"},
-			opts: &buildOpts{
-				privateKeyFile: "testdata/id_es256",
-			},
+			opts: &buildOpts{},
 		},
 		{
 			name: "output file exists",
@@ -287,7 +262,6 @@ func Test_build(t *testing.T) {
 				rootOpts: &rootOpts{
 					overwriteOutputFile: true,
 				},
-				privateKeyFile: "testdata/id_es256",
 			},
 			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "overwrite.json")},
 			target: filepath.Join(tmpdir, "overwrite.json"),
@@ -298,7 +272,6 @@ func Test_build(t *testing.T) {
 				rootOpts: &rootOpts{
 					inPlace: true,
 				},
-				privateKeyFile: "testdata/id_es256",
 			},
 			args:   []string{filepath.Join(tmpdir, "input.json")},
 			target: filepath.Join(tmpdir, "input.json"),
@@ -315,8 +288,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "merge values",
 			opts: &buildOpts{
-				set:            map[string]string{"doc.currency": "MXN"},
-				privateKeyFile: "testdata/id_es256",
+				set: map[string]string{"doc.currency": "MXN"},
 			},
 			args: []string{"testdata/success.json"},
 		},

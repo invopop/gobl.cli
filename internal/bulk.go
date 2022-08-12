@@ -120,8 +120,8 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := BuildOptions{
-			ParseOptions: ParseOptions{
+		opts := &BuildOptions{
+			ParseOptions: &ParseOptions{
 				DocType: bld.DocType,
 				Data:    bytes.NewReader(bld.Data),
 			},
@@ -142,8 +142,8 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
 		}
-		opts := SignOptions{
-			ParseOptions: ParseOptions{
+		opts := &SignOptions{
+			ParseOptions: &ParseOptions{
 				DocType: bld.DocType,
 				Data:    bytes.NewReader(bld.Data),
 			},

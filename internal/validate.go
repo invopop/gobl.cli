@@ -11,7 +11,7 @@ import (
 
 // Validate asserts the contents of the envelope and document are correct.
 func Validate(ctx context.Context, r io.Reader) error {
-	opts := ParseOptions{
+	opts := &ParseOptions{
 		Data: r,
 	}
 	obj, err := parseGOBLData(ctx, opts)

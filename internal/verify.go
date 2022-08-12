@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	jsonyaml "github.com/invopop/yaml"
@@ -17,7 +16,7 @@ import (
 // Verify reads a GOBL document from in, and returns an error if there are any
 // validation errors.
 func Verify(ctx context.Context, in io.Reader, key *dsig.PublicKey) error {
-	body, err := ioutil.ReadAll(iotools.CancelableReader(ctx, in))
+	body, err := io.ReadAll(iotools.CancelableReader(ctx, in))
 	if err != nil {
 		return err
 	}

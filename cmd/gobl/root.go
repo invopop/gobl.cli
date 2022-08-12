@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -59,7 +58,7 @@ func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
 	if inFile := inputFilename(args); inFile != "" {
 		return os.Open(inFile)
 	}
-	return ioutil.NopCloser(cmd.InOrStdin()), nil
+	return io.NopCloser(cmd.InOrStdin()), nil
 }
 
 func (o *rootOpts) openOutput(cmd *cobra.Command, args []string) (io.WriteCloser, error) {
