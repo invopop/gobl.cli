@@ -8,7 +8,6 @@
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   template: (string) (len=8) "foo.yaml",
-  privateKeyFile: (string) "",
   docType: (string) "",
   envelop: (bool) false,
   draft: (bool) false,

@@ -10,7 +10,6 @@
   },
   setStrings: (map[string]string) <nil>,
   template: (string) "",
-  privateKeyFile: (string) "",
   docType: (string) "",
   envelop: (bool) false,
   draft: (bool) false,

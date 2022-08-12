@@ -8,7 +8,6 @@
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   template: (string) "",
-  privateKeyFile: (string) "",
   docType: (string) (len=12) "bill.Invoice",
   envelop: (bool) false,
   draft: (bool) false,
