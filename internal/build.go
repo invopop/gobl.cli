@@ -45,6 +45,9 @@ func Build(ctx context.Context, opts *BuildOptions) (interface{}, error) {
 	}
 
 	if doc, ok := obj.(*gobl.Document); ok {
+		if opts.Draft != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, "cannot set draft status on non-envelope document")
+		}
 		if c, ok := doc.Instance().(gobl.Calculable); ok {
 			if err := c.Calculate(); err != nil {
 				return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())

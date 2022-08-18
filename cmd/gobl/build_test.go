@@ -182,6 +182,22 @@ func Test_build(t *testing.T) {
 			},
 		},
 		{
+			name: "set to draft on non-envelop",
+			args: []string{"testdata/envelop.nototals.json"},
+			opts: &buildOpts{
+				draft: true,
+			},
+			err: "code=422, message=cannot set draft status on non-envelope document",
+		},
+		{
+			name: "set to non-draft on non-envelop",
+			args: []string{"testdata/envelop.nototals.json"},
+			opts: &buildOpts{
+				notDraft: true,
+			},
+			err: "code=422, message=cannot set draft status on non-envelope document",
+		},
+		{
 			name: "no document",
 			in: strings.NewReader(`{
 				"$schema": "https://gobl.org/draft-0/envelope",

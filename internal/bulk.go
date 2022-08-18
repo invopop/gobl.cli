@@ -124,6 +124,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 			ParseOptions: &ParseOptions{
 				DocType: bld.DocType,
 				Data:    bytes.NewReader(bld.Data),
+				Envelop: bld.Envelop,
 			},
 			Draft: bld.Draft,
 		}
@@ -214,6 +215,7 @@ type BuildRequest struct {
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
 	Draft      *bool            `json:"draft"`
+	Envelop    bool             `json:"envelop"`
 }
 
 type ValidateRequest struct {
