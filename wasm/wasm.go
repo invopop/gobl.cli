@@ -24,7 +24,10 @@ func main() {
 
 	js.Global().Call("postMessage", map[string]interface{}{"ready": true})
 
-	for result := range internal.Bulk(context.TODO(), r) {
+	bulkOpts := &internal.BulkOptions{
+		In: r,
+	}
+	for result := range internal.Bulk(context.TODO(), bulkOpts) {
 		response := js.Global().Get("Object").New()
 		if result.ReqID != "" {
 			response.Set("req_id", result.ReqID)

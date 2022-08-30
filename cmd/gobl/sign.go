@@ -77,18 +77,8 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	pkFilename, err := expandHome(opts.privateKeyFile)
+	key, err := loadPrivateKey(opts.privateKeyFile)
 	if err != nil {
-		return err
-	}
-	keyFile, err := os.Open(pkFilename)
-	if err != nil {
-		return err
-	}
-	defer keyFile.Close() // nolint:errcheck
-
-	key := new(dsig.PrivateKey)
-	if err = json.NewDecoder(keyFile).Decode(key); err != nil {
 		return err
 	}
 
@@ -115,4 +105,23 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 
 	return enc.Encode(env)
+}
+
+func loadPrivateKey(file string) (*dsig.PrivateKey, error) {
+	pkFilename, err := expandHome(file)
+	if err != nil {
+		return nil, err
+	}
+	keyFile, err := os.Open(pkFilename)
+	if err != nil {
+		return nil, err
+	}
+	defer keyFile.Close() // nolint:errcheck
+
+	key := new(dsig.PrivateKey)
+	if err = json.NewDecoder(keyFile).Decode(key); err != nil {
+		return nil, err
+	}
+
+	return key, nil
 }

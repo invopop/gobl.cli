@@ -42,9 +42,17 @@ type BulkResponse struct {
 	IsFinal bool `json:"is_final"`
 }
 
+// BulkOptions are the options used for processing a stream of bulk requests.
+type BulkOptions struct {
+	// In is the input stream of requests
+	In io.Reader
+	// DefaultPrivateKey is the default private key to use with sign requests
+	DefaultPrivateKey *dsig.PrivateKey
+}
+
 // Bulk processes a stream of bulk requests.
-func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
-	dec := json.NewDecoder(in)
+func Bulk(ctx context.Context, opts *BulkOptions) <-chan *BulkResponse {
+	dec := json.NewDecoder(opts.In)
 	resCh := make(chan *BulkResponse, 1)
 	wg := &sync.WaitGroup{}
 	go func() {
@@ -69,7 +77,7 @@ func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 			}
 			wg.Add(1)
 			go func() {
-				resCh <- processRequest(ctx, req, seq)
+				resCh <- processRequest(ctx, req, seq, opts)
 				wg.Done()
 			}()
 		}
@@ -77,7 +85,7 @@ func Bulk(ctx context.Context, in io.Reader) <-chan *BulkResponse {
 	return resCh
 }
 
-func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkResponse {
+func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *BulkOptions) *BulkResponse {
 	marshal := json.Marshal
 	if req.Indent {
 		marshal = func(i interface{}) ([]byte, error) {
@@ -152,6 +160,9 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64) *BulkRespon
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
+		}
+		if opts.PrivateKey == nil {
+			opts.PrivateKey = bulkOpts.DefaultPrivateKey
 		}
 		env, err := Sign(ctx, opts)
 		if err != nil {
