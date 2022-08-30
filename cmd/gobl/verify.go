@@ -27,7 +27,7 @@ func (v *verifyOpts) cmd() *cobra.Command {
 
 	f := cmd.Flags()
 
-	f.StringVarP(&v.publicKeyFile, "key", "k", "~/.gobl/id_es256.pub.jwk", "Public key file for signature validation")
+	f.StringVarP(&v.publicKeyFile, "key", "k", pubfileFromPriv(defaultKeyFilename), "Public key file for signature validation")
 
 	return cmd
 }
