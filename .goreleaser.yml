@@ -29,7 +29,7 @@ archives:
     builds:
       - gobl.wasm
     format: binary
-    name_template: "gobl.{{ .Version }}.wasm"
+    name_template: "gobl.{{ .Version }}"
     files:
       - none*
     wrap_in_directory: false
