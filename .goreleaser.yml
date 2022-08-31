@@ -33,6 +33,15 @@ archives:
     files:
       - none*
     wrap_in_directory: false
+
+# Upload to Google Storage CDN
+blobs:
+  - provider: gs
+    bucket: cdn.gobl.org
+    ids:
+      - wasm
+    folder: "cli/gobl.{{ .Version }}.wasm"
+
 checksum:
   name_template: "checksums.txt"
 snapshot:
