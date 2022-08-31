@@ -28,6 +28,14 @@ archives:
   - id: wasm
     builds:
       - gobl.wasm
+    format: binary
+    name_template: "gobl.{{ .Version }}.wasm"
+    files:
+      - none*
+    wrap_in_directory: false
+  - id: wasm-gz
+    builds:
+      - gobl.wasm
     format: gz
     name_template: "gobl.{{ .Version }}.wasm"
     files:
@@ -40,6 +48,7 @@ blobs:
     bucket: cdn.gobl.org
     ids:
       - wasm
+      - wasm-gz
     folder: "cli"
 
 checksum:
