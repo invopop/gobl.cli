@@ -40,7 +40,7 @@ blobs:
     bucket: cdn.gobl.org
     ids:
       - wasm
-    folder: "cli/gobl.{{ .Version }}.wasm"
+    folder: "cli"
 
 checksum:
   name_template: "checksums.txt"
