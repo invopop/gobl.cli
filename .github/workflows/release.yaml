@@ -22,6 +22,7 @@ jobs:
         uses: "google-github-actions/auth@v0"
         with:
           credentials_json: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"
+          credentials_file_path: "../" # outside of source code!
       - name: Checkout
         uses: actions/checkout@v2
         with:
