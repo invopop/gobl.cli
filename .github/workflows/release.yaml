@@ -38,8 +38,6 @@ jobs:
         uses: "google-github-actions/auth@v0"
         with:
           credentials_json: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"
-          export_environment_variables: true
-          create_credentials_file: true
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
