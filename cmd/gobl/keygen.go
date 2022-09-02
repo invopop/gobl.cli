@@ -13,6 +13,8 @@ import (
 	"github.com/invopop/gobl/dsig"
 )
 
+const defaultKeyFilename = "~/.gobl/id_es256.jwk"
+
 type keygenOpts struct {
 	*rootOpts
 	overwrite bool
@@ -61,13 +63,8 @@ func homedir() (string, error) {
 	return user.HomeDir, nil
 }
 
-func defaultKeyfile() (string, error) {
-	const defaultFilename = ".gobl/id_es256.jwk"
-	home, err := homedir()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Join(home, defaultFilename), nil
+func defaultKeyfile() (string,error) {
+	return expandHome(defaultKeyFilename)
 }
 
 func outputKeyfile(args []string) (string, error) {

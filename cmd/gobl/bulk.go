@@ -31,7 +31,10 @@ func (o *bulkOpts) runE(cmd *cobra.Command, args []string) error {
 	if o.indent {
 		enc.SetIndent("", "\t")
 	}
-	for result := range internal.Bulk(ctx, in) {
+	opts := &internal.BulkOptions{
+		In: in,
+	}
+	for result := range internal.Bulk(ctx, opts) {
 		if err := enc.Encode(result); err != nil {
 			return err
 		}

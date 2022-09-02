@@ -27,6 +27,8 @@ const (
 
 type serveOpts struct {
 	httpPort int
+	privateKeyFile string
+	privateKey *dsig.PrivateKey
 }
 
 func serve() *serveOpts {
@@ -42,11 +44,18 @@ func (s *serveOpts) cmd() *cobra.Command {
 	f := cmd.Flags()
 
 	f.IntVarP(&s.httpPort, "port", "p", defaultHTTPPort, "HTTP port to listen on")
+	f.StringVarP(&s.privateKeyFile, "key", "k", defaultKeyFilename, "Default private key file for signing")
 
 	return cmd
 }
 
 func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
+	pkey, err := loadPrivateKey(s.privateKeyFile)
+	if err != nil {
+		return err
+	}
+	s.privateKey = pkey
+
 	ctx, cancel := context.WithCancel(cmd.Context())
 	defer cancel()
 
@@ -175,7 +184,11 @@ func (s *serveOpts) bulk(c echo.Context) error {
 	if c.QueryParam("indent") == "true" {
 		enc.SetIndent("", "\t")
 	}
-	for result := range internal.Bulk(ctx, c.Request().Body) {
+	opts := &internal.BulkOptions{
+		In: c.Request().Body,
+		DefaultPrivateKey: s.privateKey,
+	}
+	for result := range internal.Bulk(ctx, opts) {
 		if err := enc.Encode(result); err != nil {
 			return err
 		}

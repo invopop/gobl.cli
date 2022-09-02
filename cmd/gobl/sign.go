@@ -46,7 +46,7 @@ func (opts *signOpts) cmd() *cobra.Command {
 	f.StringToStringVar(&opts.setFiles, "set-file", nil, "Set value from the specified YAML or JSON file")
 	f.StringToStringVar(&opts.setStrings, "set-string", nil, "Set STRING value from the command line")
 	f.StringVarP(&opts.template, "template", "T", "", "Template YAML/JSON file into which data is merged")
-	f.StringVarP(&opts.privateKeyFile, "key", "k", "~/.gobl/id_es256.jwk", "Private key file for signing")
+	f.StringVarP(&opts.privateKeyFile, "key", "k", defaultKeyFilename, "Private key file for signing")
 	f.StringVarP(&opts.docType, "type", "t", "", "Specify the document type")
 
 	return cmd
@@ -77,18 +77,8 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	pkFilename, err := expandHome(opts.privateKeyFile)
+	key, err := loadPrivateKey(opts.privateKeyFile)
 	if err != nil {
-		return err
-	}
-	keyFile, err := os.Open(pkFilename)
-	if err != nil {
-		return err
-	}
-	defer keyFile.Close() // nolint:errcheck
-
-	key := new(dsig.PrivateKey)
-	if err = json.NewDecoder(keyFile).Decode(key); err != nil {
 		return err
 	}
 
@@ -115,4 +105,23 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 
 	return enc.Encode(env)
+}
+
+func loadPrivateKey(file string) (*dsig.PrivateKey, error) {
+	pkFilename, err := expandHome(file)
+	if err != nil {
+		return nil, err
+	}
+	keyFile, err := os.Open(pkFilename)
+	if err != nil {
+		return nil, err
+	}
+	defer keyFile.Close() // nolint:errcheck
+
+	key := new(dsig.PrivateKey)
+	if err = json.NewDecoder(keyFile).Decode(key); err != nil {
+		return nil, err
+	}
+
+	return key, nil
 }
