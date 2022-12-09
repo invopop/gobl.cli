@@ -146,7 +146,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		}
 		res.Payload, _ = marshal(env)
 	case "sign":
-		bld := &BuildRequest{}
+		bld := &SignRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
 			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
 			return res
@@ -221,6 +221,15 @@ type ValidateResponse struct {
 
 // BuildRequest is the payload for a build reqeuest.
 type BuildRequest struct {
+	Template []byte `json:"template"`
+	Data     []byte `json:"data"`
+	DocType  string `json:"type"`
+	Draft    *bool  `json:"draft"`
+	Envelop  bool   `json:"envelop"`
+}
+
+// SignRequest is the payload for a sign reqeuest.
+type SignRequest struct {
 	Template   []byte           `json:"template"`
 	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
