@@ -3,6 +3,7 @@
   "doc": {
     "$schema": "https://gobl.org/draft-0/bill/invoice",
     "code": "INV2021-001",
+    "type": "standard",
     "currency": "EUR",
     "customer": {
       "addresses": [

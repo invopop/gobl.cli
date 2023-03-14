@@ -4,13 +4,14 @@
 		"uuid": "4905f174-0384-11ed-9fa6-b24117999d50",
 		"dig": {
 			"alg": "sha256",
-			"val": "005454e011384f8138b83164a3c5cdfae47bdc891da22cc46ca75eb5c40a9b30"
+			"val": "c8dd91613041d10b10e0daf085b6fa577901e9f3ba749d8f4b1fd629724a65cc"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"code": "SAMPLE-001",
+		"type": "standard",
 		"currency": "EUR",
 		"issue_date": "2022-02-01",
 		"supplier": {

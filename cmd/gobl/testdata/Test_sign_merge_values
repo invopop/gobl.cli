@@ -4,12 +4,13 @@
 		"uuid": "4905f174-0384-11ed-9fa6-b24117999d50",
 		"dig": {
 			"alg": "sha256",
-			"val": "58ae6b7f41923f6509621e1faaf27e800bc76647beae5874b293dd67975b4545"
+			"val": "9c3f756f46a274b91eaff75b326480094c49a4928664cf305a127f0d8ac21865"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"code": "SAMPLE-001",
+		"type": "standard",
 		"currency": "MXN",
 		"issue_date": "2022-02-01",
 		"supplier": {

@@ -3,8 +3,8 @@ head:
 
 doc:
   $schema: "https://gobl.org/draft-0/bill/invoice"
-  region: ES
   uuid: "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
+  type: "standard"
   currency: "EUR"
   code: "INV2021-001"
   issue_date: "2021-06-16"
@@ -57,33 +57,27 @@ doc:
           reason: "just because"
       taxes:
         - cat: "VAT"
-          code: "STD"
-        - cat: "VATEQS"
-          code: "STD"
+          rate: "standard+eqs"
         - cat: "IRPF"
-          code: "STD"
+          rate: "pro"
     - quantity: 10
       item:
         name: "Something random"
         price: "100.00"
       taxes:
         - cat: "VAT"
-          code: "RED"
-        - cat: "VATEQS"
-          code: "RED"
+          rate: "reduced+eqs"
         - cat: "IRPF"
-          code: "STD"
+          rate: "pro"
 
   discounts:
     - reason: "Early payment"
       rate: "2.0%"
       taxes:
         - cat: "VAT"
-          code: "STD"
-        - cat: "VATEQS"
-          code: "STD"
+          rate: "standard+eqs"
         - cat: "IRPF"
-          code: "STD"
+          rate: "pro"
 
   charges:
     - reason: "Impuesto local"

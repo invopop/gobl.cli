@@ -199,12 +199,13 @@
             "total": "5187.50",
             "total_with_tax": "5637.50"
         },
+        "type": "standard",
         "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "20c0d08a15aa941dde153886ac865f71485dc21c7c6e775a1c429f704d7188df"
+            "val": "4f4c1c448e3ceaf1778c3c0e98c9552d409fd5495de07a535d8fdbe9857d6c90"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

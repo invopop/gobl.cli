@@ -125,14 +125,15 @@
             },
             "total": "1620.00",
             "total_with_tax": "1717.20"
-        }
+        },
+        "type": "standard"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "005454e011384f8138b83164a3c5cdfae47bdc891da22cc46ca75eb5c40a9b30"
+            "val": "c8dd91613041d10b10e0daf085b6fa577901e9f3ba749d8f4b1fd629724a65cc"
         },
         "draft": true,
-        "uuid": "1ad2ed16-14bb-11ed-80fb-762272768a06"
+        "uuid": "9aefb23b-c25f-11ed-9815-3e7e00ce5635"
     }
 }

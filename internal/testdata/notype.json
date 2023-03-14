@@ -9,6 +9,7 @@
   },
   "doc": {
     "region": "ES",
+    "type": "standard",
     "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
     "code": "INV2021-001",
     "currency": "EUR",
