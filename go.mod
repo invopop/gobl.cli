@@ -5,14 +5,14 @@ go 1.17
 require (
 	github.com/google/go-cmp v0.5.8
 	github.com/imdario/mergo v0.3.12
-	github.com/invopop/gobl v0.37.3
+	github.com/invopop/gobl v0.38.0
 	github.com/invopop/yaml v0.2.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/magefile/mage v1.13.0
 	github.com/spf13/cobra v1.4.0
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.8.1
 	gitlab.com/flimzy/testy v0.10.2
-	gopkg.in/yaml.v3 v3.0.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -20,11 +20,11 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/iancoleman/orderedmap v0.2.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/invopop/jsonschema v0.7.0 // indirect
+	github.com/invopop/validation v0.3.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
