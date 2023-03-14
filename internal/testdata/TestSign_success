@@ -199,16 +199,17 @@
             "total": "5187.50",
             "total_with_tax": "5637.50"
         },
+        "type": "standard",
         "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "b2955499067fc3706b32f17581c7540fa4fa0cc360c059c6303c251ec12ec036"
+            "val": "8c0e6071e7369a05fa52893ff9edf11e73d5436e3f13edc7fad29055e6fdbe0f"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImIyOTU1NDk5MDY3ZmMzNzA2YjMyZjE3NTgxYzc1NDBmYTRmYTBjYzM2MGMwNTljNjMwM2MyNTFlYzEyZWMwMzYifX0.cMwGBP4o_KwihxH6klXZoviPZwCC3bLlTH7s7tafT5RGemv6rx2vHe9z-fQZt5VEWFzJIJHHd48xh1B024t4vA"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjhjMGU2MDcxZTczNjlhMDVmYTUyODkzZmY5ZWRmMTFlNzNkNTQzNmUzZjEzZWRjN2ZhZDI5MDU1ZTZmZGJlMGYifX0.xlf6pvfpIkMFKVVOlaqA9JAMek10C3PN9R5ZsEPvlLrFUhfgkrWmvBTStOO0UmQmRdVMx-9bJySmF6Ct8yNo-g"
     ]
 }

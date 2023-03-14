@@ -4,13 +4,14 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "206155d353fa7870965af769b0928acbda902ef8348a1c877addd0e5705d116d"
+			"val": "e1a3e91541ce2d6ddd3f0432d443c03e258ceefaef3db511d3e63a9f17175dda"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
 		"code": "INV2021-001",
+		"type": "standard",
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
 		"supplier": {

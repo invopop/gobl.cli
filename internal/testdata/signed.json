@@ -4,12 +4,13 @@
 		"uuid": "4905f174-0384-11ed-9fa6-b24117999d50",
 		"dig": {
 			"alg": "sha256",
-			"val": "005454e011384f8138b83164a3c5cdfae47bdc891da22cc46ca75eb5c40a9b30"
+			"val": "c8dd91613041d10b10e0daf085b6fa577901e9f3ba749d8f4b1fd629724a65cc"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"code": "SAMPLE-001",
+		"type": "standard",
 		"currency": "EUR",
 		"issue_date": "2022-02-01",
 		"supplier": {
@@ -135,6 +136,6 @@
 		}
 	},
 	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6Ijg0MWI2NjgwLTA1M2UtNGQyZC1iZDJiLTVmMTM5NDkyY2U2MyJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAwNTQ1NGUwMTEzODRmODEzOGI4MzE2NGEzYzVjZGZhZTQ3YmRjODkxZGEyMmNjNDZjYTc1ZWI1YzQwYTliMzAifX0.3Ol3AY1-V9ph20eHCxWhW0lxnEjhg704fpRg7RR979SwqTeiyz68EvZ4e-J4bpwpWZAkMaBsebGLoQdcQjSYIw"
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM4ZGQ5MTYxMzA0MWQxMGIxMGUwZGFmMDg1YjZmYTU3NzkwMWU5ZjNiYTc0OWQ4ZjRiMWZkNjI5NzI0YTY1Y2MifX0.N5qrGWNWBf31CKyXmhAqSdZrMdITsZ14h4NtJGtFvED6Dp2M8rc2eRF5SyxRp_qsayO0BePO9l9FwI3MBZgVBQ"
 	]
 }
