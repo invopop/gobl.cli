@@ -89,11 +89,11 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "standard"
+            "percent": "21%"
           },
           {
             "cat": "IRPF",
-            "rate": "pro"
+            "percent": "15%"
           }
         ],
         "total": "3800.00"
@@ -109,7 +109,7 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "standard"
+            "percent": "21%"
           }
         ],
         "total": "1000.00"
@@ -125,7 +125,8 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "zero"
+            "rate": "zero",
+            "percent": "0%"
           }
         ],
         "total": "172.50"

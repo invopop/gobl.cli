@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
 
@@ -98,13 +99,13 @@ func TestBulk(t *testing.T) {
 				{
 					ReqID:   "abc",
 					SeqID:   1,
-					Payload: []byte(`{"ok":true}`),
+					Payload: []byte(`{"sleep":"done"}`),
 					IsFinal: false,
 				},
 				{
 					ReqID:   "def",
 					SeqID:   2,
-					Payload: []byte(`{"ok":true}`),
+					Payload: []byte(`{"sleep":"done"}`),
 					IsFinal: false,
 				},
 				{
@@ -265,9 +266,7 @@ func TestBulk(t *testing.T) {
 					ReqID: "asdf",
 					SeqID: 1,
 					Payload: json.RawMessage(`{
-	"$schema": "https://gobl.org/draft-0/envelope",
-	"head": {},
-	"doc": {}
+						"$schema": "https://gobl.org/draft-0/envelope"
 					}`),
 					IsFinal: false,
 				},
@@ -391,6 +390,41 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("correct, success", func(t *testing.T) interface{} {
+		payload, err := os.ReadFile("testdata/success.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "correct",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data": base64.StdEncoding.EncodeToString(payload),
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			opts: &BulkOptions{
+				In: bytes.NewReader(req),
+			},
+			want: []*BulkResponse{
+				{
+					ReqID: "asdf",
+					SeqID: 1,
+					Payload: json.RawMessage(`{
+						"$schema": "https://gobl.org/draft-0/envelope"
+					}`),
+					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
 	tests.Add("unknown action", func(t *testing.T) interface{} {
 		req, err := json.Marshal(map[string]interface{}{
 			"action": "frobnicate",
@@ -492,8 +526,8 @@ func TestBulk(t *testing.T) {
 			},
 			want: []*BulkResponse{
 				{
-					ReqID: "asdf",
-					SeqID: 1,
+					ReqID:   "asdf",
+					SeqID:   1,
 					IsFinal: false,
 				},
 				{
@@ -520,13 +554,13 @@ func TestBulk(t *testing.T) {
 		}
 		return tt{
 			opts: &BulkOptions{
-				In: bytes.NewReader(req),
+				In:                bytes.NewReader(req),
 				DefaultPrivateKey: privateKey,
 			},
 			want: []*BulkResponse{
 				{
-					ReqID: "asdf",
-					SeqID: 1,
+					ReqID:   "asdf",
+					SeqID:   1,
 					IsFinal: false,
 				},
 				{
@@ -545,6 +579,22 @@ func TestBulk(t *testing.T) {
 		}
 		if d := cmp.Diff(tt.want, results, cmpopts.IgnoreFields(BulkResponse{}, "Payload")); d != "" {
 			t.Error(d)
+		}
+		for i, row := range results {
+			if tt.want[i].Payload == nil {
+				continue
+			}
+			var got map[string]interface{}
+			if err := json.Unmarshal(row.Payload, &got); err != nil {
+				t.Errorf("row %d: %v", i, err)
+				continue
+			}
+			var want map[string]interface{}
+			if err := json.Unmarshal(tt.want[i].Payload, &want); err != nil {
+				t.Errorf("row %d: %v", i, err)
+				continue
+			}
+			assert.Subset(t, got, want)
 		}
 	})
 }

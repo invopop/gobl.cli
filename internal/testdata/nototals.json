@@ -4,14 +4,14 @@
     "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
     "dig": {
       "alg": "sha256",
-      "val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+      "val": "8c0e6071e7369a05fa52893ff9edf11e73d5436e3f13edc7fad29055e6fdbe0f"
     }
   },
   "doc": {
     "$schema": "https://gobl.org/draft-0/bill/invoice",
-    "type": "standard",
     "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
     "code": "INV2021-001",
+    "type": "standard",
     "currency": "EUR",
     "issue_date": "2021-06-16",
     "supplier": {
@@ -82,21 +82,19 @@
           "price": "200.00"
         },
         "sum": "4000.00",
-        "discount": {
-          "value": "200.00",
-          "reason": "just because"
-        },
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "standard"
+            "rate": "standard",
+            "percent": "21.0%"
           },
           {
             "cat": "IRPF",
-            "rate": "pro"
+            "rate": "pro",
+            "percent": "15.0%"
           }
         ],
-        "total": "3800.00"
+        "total": "4000.00"
       },
       {
         "i": 2,
@@ -109,7 +107,8 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "standard"
+            "rate": "standard",
+            "percent": "21.0%"
           }
         ],
         "total": "1000.00"
@@ -125,7 +124,8 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "zero"
+            "rate": "zero",
+            "percent": "0.0%"
           }
         ],
         "total": "172.50"
@@ -145,7 +145,7 @@
       {
         "i": 1,
         "desc": "Something paid for by us",
-        "paid": "200.00"
+        "amount": "0"
       }
     ],
     "payment": {
