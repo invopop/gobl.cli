@@ -16,7 +16,7 @@ WebAssembly.instantiateStreaming(fetch("gobl.wasm"), go.importObject).then(
   }
 );
 
-console.log("worker.js");
+// console.log("worker.js");
 // addEventListener('message', async (e) => {
 //     console.log("worker.js handler");
 

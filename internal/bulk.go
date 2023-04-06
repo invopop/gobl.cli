@@ -26,7 +26,7 @@ type BulkRequest struct {
 	Indent bool `json:"indent"`
 }
 
-// BulkResponse represents a singel response in the stream of bulk responses.
+// BulkResponse represents a single response in the stream of bulk responses.
 type BulkResponse struct {
 	// ReqID is an exact copy of the value provided in the request, if any.
 	ReqID string `json:"req_id,omitempty"`
@@ -48,6 +48,58 @@ type BulkOptions struct {
 	In io.Reader
 	// DefaultPrivateKey is the default private key to use with sign requests
 	DefaultPrivateKey *dsig.PrivateKey
+}
+
+// VerifyRequest is the payload for a verification request.
+type VerifyRequest struct {
+	Data      []byte          `json:"data"`
+	PublicKey *dsig.PublicKey `json:"publickey"`
+}
+
+// VerifyResponse is the response to a verification request.
+type VerifyResponse struct {
+	OK bool `json:"ok"`
+}
+
+// ValidateResponse is the response to a validate request.
+type ValidateResponse struct {
+	OK bool `json:"ok"`
+}
+
+// BuildRequest is the payload for a build reqeuest.
+type BuildRequest struct {
+	Template []byte `json:"template"`
+	Data     []byte `json:"data"`
+	DocType  string `json:"type"`
+	Draft    *bool  `json:"draft"`
+	Envelop  bool   `json:"envelop"`
+}
+
+// SignRequest is the payload for a sign reqeuest.
+type SignRequest struct {
+	Template   []byte           `json:"template"`
+	Data       []byte           `json:"data"`
+	PrivateKey *dsig.PrivateKey `json:"privatekey"`
+	DocType    string           `json:"type"`
+	Draft      *bool            `json:"draft"`
+	Envelop    bool             `json:"envelop"`
+}
+
+type ValidateRequest struct {
+	Data []byte `json:"data"`
+}
+
+// KeygenResponse is the payload for a key generation response.
+type KeygenResponse struct {
+	Private *dsig.PrivateKey `json:"private"`
+	Public  *dsig.PublicKey  `json:"public"`
+}
+
+// CorrectRequest is the payload used to generate a corrected document.
+type CorrectRequest struct {
+	Data   []byte `json:"data"`
+	Credit bool   `json:"credit"`
+	Debit  bool   `json:"debit"`
 }
 
 // Bulk processes a stream of bulk requests.
@@ -170,6 +222,25 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 			return res
 		}
 		res.Payload, _ = marshal(env)
+	case "correct":
+		bld := &CorrectRequest{}
+		if err := json.Unmarshal(req.Payload, bld); err != nil {
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			return res
+		}
+		opts := &CorrectOptions{
+			ParseOptions: &ParseOptions{
+				Data: bytes.NewReader(bld.Data),
+			},
+			Credit: bld.Credit,
+			Debit:  bld.Debit,
+		}
+		env, err := Correct(ctx, opts)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload, _ = marshal(env)
 	case "keygen":
 		key := dsig.NewES256Key()
 
@@ -201,49 +272,4 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		res.Error = fmt.Sprintf("Unrecognized action '%s'", req.Action)
 	}
 	return res
-}
-
-// VerifyRequest is the payload for a verification request.
-type VerifyRequest struct {
-	Data      []byte          `json:"data"`
-	PublicKey *dsig.PublicKey `json:"publickey"`
-}
-
-// VerifyResponse is the response to a verification request.
-type VerifyResponse struct {
-	OK bool `json:"ok"`
-}
-
-// ValidateResponse is the response to a validate request.
-type ValidateResponse struct {
-	OK bool `json:"ok"`
-}
-
-// BuildRequest is the payload for a build reqeuest.
-type BuildRequest struct {
-	Template []byte `json:"template"`
-	Data     []byte `json:"data"`
-	DocType  string `json:"type"`
-	Draft    *bool  `json:"draft"`
-	Envelop  bool   `json:"envelop"`
-}
-
-// SignRequest is the payload for a sign reqeuest.
-type SignRequest struct {
-	Template   []byte           `json:"template"`
-	Data       []byte           `json:"data"`
-	PrivateKey *dsig.PrivateKey `json:"privatekey"`
-	DocType    string           `json:"type"`
-	Draft      *bool            `json:"draft"`
-	Envelop    bool             `json:"envelop"`
-}
-
-type ValidateRequest struct {
-	Data []byte `json:"data"`
-}
-
-// KeygenResponse is the payload for a key generation response.
-type KeygenResponse struct {
-	Private *dsig.PrivateKey `json:"private"`
-	Public  *dsig.PublicKey  `json:"public"`
 }
