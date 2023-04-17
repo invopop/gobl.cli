@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
@@ -40,6 +41,7 @@ func TestCorrect(t *testing.T) {
 		if err != nil {
 			return
 		}
+		td := cal.Today() // see also gobl/bill/correct.go
 		replacements := []testy.Replacement{
 			{
 				Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
@@ -48,6 +50,14 @@ func TestCorrect(t *testing.T) {
 			{
 				Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
 				Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
+			},
+			{
+				Regexp:      regexp.MustCompile(`"issue_date":.?"` + td.String() + `"`),
+				Replacement: `"issue_date": "2023-04-06"`,
+			},
+			{
+				Regexp:      regexp.MustCompile(`"val":.?"[\w\d]{64}"`),
+				Replacement: `"val":"74ffc799663823235951b43a1324c70555c0ba7e3b545c1f50af34bbcc57033b"`,
 			},
 		}
 		if d := testy.DiffAsJSON(testy.Snapshot(t), got, replacements...); d != nil {

@@ -11,7 +11,7 @@
                 "country": "ES"
             }
         },
-        "issue_date": "2023-04-06",
+        "issue_date": "2023-04-17",
         "lines": [
             {
                 "discounts": [
@@ -60,7 +60,7 @@
         "preceding": [
             {
                 "code": "SAMPLE-001",
-                "issue_date": "2023-04-06"
+                "issue_date": "2022-02-01"
             }
         ],
         "supplier": {
@@ -137,8 +137,8 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "d81cc652c160638f329141b00577bc0a2c6aac02c5bd6feaf57099a283b8b8da"
+            "val": "74ffc799663823235951b43a1324c70555c0ba7e3b545c1f50af34bbcc57033b"
         },
-        "uuid": "ba52b0e3-d452-11ed-80f4-3e7e00ce5635"
+        "uuid": "814203c4-dd3f-11ed-90f4-3e7e00ce5635"
     }
 }
