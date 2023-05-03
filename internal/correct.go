@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/labstack/echo/v4"
 )
@@ -17,6 +18,7 @@ type CorrectOptions struct {
 	*ParseOptions
 	Credit bool
 	Debit  bool
+	Date   cal.Date
 }
 
 // Correct takes a base document as input and builds a corrective document
@@ -33,6 +35,9 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 	}
 	if opts.Debit {
 		eopts = append(eopts, bill.Debit)
+	}
+	if !opts.Date.IsZero() {
+		eopts = append(eopts, bill.WithDate(opts.Date))
 	}
 
 	if env, ok := obj.(*gobl.Envelope); ok {
