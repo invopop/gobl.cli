@@ -25,6 +25,7 @@ func TestCorrect(t *testing.T) {
 				ParseOptions: &ParseOptions{
 					Data: testFileReader(t, "testdata/success.json"),
 				},
+				Date: cal.MakeDate(2023, 4, 17),
 			},
 		}
 	})
@@ -41,7 +42,6 @@ func TestCorrect(t *testing.T) {
 		if err != nil {
 			return
 		}
-		td := cal.Today() // see also gobl/bill/correct.go
 		replacements := []testy.Replacement{
 			{
 				Regexp:      regexp.MustCompile(`(?s)"sigs": \[.*\]`),
@@ -50,10 +50,6 @@ func TestCorrect(t *testing.T) {
 			{
 				Regexp:      regexp.MustCompile(`"uuid":.?"[^\"]+"`),
 				Replacement: `"uuid":"00000000-0000-0000-0000-000000000000"`,
-			},
-			{
-				Regexp:      regexp.MustCompile(`"issue_date":.?"` + td.String() + `"`),
-				Replacement: `"issue_date": "2023-04-06"`,
 			},
 			{
 				Regexp:      regexp.MustCompile(`"val":.?"[\w\d]{64}"`),
