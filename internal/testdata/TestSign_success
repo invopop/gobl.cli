@@ -162,7 +162,6 @@
                 "categories": [
                     {
                         "amount": "1050.00",
-                        "base": "5172.50",
                         "code": "VAT",
                         "rates": [
                             {
@@ -181,7 +180,6 @@
                     },
                     {
                         "amount": "600.00",
-                        "base": "4000.00",
                         "code": "IRPF",
                         "rates": [
                             {
@@ -205,11 +203,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "8c0e6071e7369a05fa52893ff9edf11e73d5436e3f13edc7fad29055e6fdbe0f"
+            "val": "03a1f2f94974f3216f64b83a417e147d2533d508c80e4193dfec0756fda67329"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjhjMGU2MDcxZTczNjlhMDVmYTUyODkzZmY5ZWRmMTFlNzNkNTQzNmUzZjEzZWRjN2ZhZDI5MDU1ZTZmZGJlMGYifX0.xlf6pvfpIkMFKVVOlaqA9JAMek10C3PN9R5ZsEPvlLrFUhfgkrWmvBTStOO0UmQmRdVMx-9bJySmF6Ct8yNo-g"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAzYTFmMmY5NDk3NGYzMjE2ZjY0YjgzYTQxN2UxNDdkMjUzM2Q1MDhjODBlNDE5M2RmZWMwNzU2ZmRhNjczMjkifX0.NYEH_Lj6vg3deus26aQZQ4M3rHQNKkt9iMPds3MuYNhzT_LnR17efNYCivzhyHkCyKpSMX9_4mcYgrs_S8_zhA"
     ]
 }
