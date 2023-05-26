@@ -162,7 +162,6 @@
                 "categories": [
                     {
                         "amount": "1067.25",
-                        "base": "5172.50",
                         "code": "VAT",
                         "rates": [
                             {
@@ -181,7 +180,6 @@
                     },
                     {
                         "amount": "600.00",
-                        "base": "4000.00",
                         "code": "IRPF",
                         "rates": [
                             {
@@ -205,7 +203,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "d62dc0348b943309f0d090f31c5fe95d600b7d2290402caa4649f71419194ad3"
+            "val": "bb92e46be74b9df1cf3685f080c83eae28fa32c5bb70cc0a616c329b7f279983"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

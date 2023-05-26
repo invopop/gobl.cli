@@ -4,7 +4,7 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "d0d762b640b939e7ae9e67e75aa2994c68a1e95c1ff5c9f09680111fa09adcbe"
+			"val": "07093af20b1e931f839387a88b2c97c209cf00ac9ef778963a4ac12150b1b3a9"
 		},
 		"draft": true
 	},
@@ -184,7 +184,6 @@
 								"amount": "0.00"
 							}
 						],
-						"base": "5172.50",
 						"amount": "1050.00"
 					},
 					{
@@ -198,7 +197,6 @@
 								"amount": "600.00"
 							}
 						],
-						"base": "4000.00",
 						"amount": "600.00"
 					}
 				],

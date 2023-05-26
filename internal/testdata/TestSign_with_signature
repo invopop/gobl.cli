@@ -96,7 +96,6 @@
                 "categories": [
                     {
                         "amount": "340.20",
-                        "base": "1620.00",
                         "code": "VAT",
                         "rates": [
                             {
@@ -109,7 +108,6 @@
                     },
                     {
                         "amount": "243.00",
-                        "base": "1620.00",
                         "code": "IRPF",
                         "rates": [
                             {
@@ -131,12 +129,12 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "c8dd91613041d10b10e0daf085b6fa577901e9f3ba749d8f4b1fd629724a65cc"
+            "val": "f1d54d434ba07ddd90f33d711f6a6725a80228f80cd831f11fcaa21357796571"
         },
         "uuid": "4905f174-0384-11ed-9fa6-b24117999d50"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6Ijg0MWI2NjgwLTA1M2UtNGQyZC1iZDJiLTVmMTM5NDkyY2U2MyJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAwNTQ1NGUwMTEzODRmODEzOGI4MzE2NGEzYzVjZGZhZTQ3YmRjODkxZGEyMmNjNDZjYTc1ZWI1YzQwYTliMzAifX0.3Ol3AY1-V9ph20eHCxWhW0lxnEjhg704fpRg7RR979SwqTeiyz68EvZ4e-J4bpwpWZAkMaBsebGLoQdcQjSYIw",
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM4ZGQ5MTYxMzA0MWQxMGIxMGUwZGFmMDg1YjZmYTU3NzkwMWU5ZjNiYTc0OWQ4ZjRiMWZkNjI5NzI0YTY1Y2MifX0.GEATgMZ0OYi1dq1ibWEnyhOLof5eb01fgqA0ZVn636gZKUyNZ_nymEL-50vuoYn_ZBAHnooT2esQZmzb3awLqw"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM4ZGQ5MTYxMzA0MWQxMGIxMGUwZGFmMDg1YjZmYTU3NzkwMWU5ZjNiYTc0OWQ4ZjRiMWZkNjI5NzI0YTY1Y2MifX0.N5qrGWNWBf31CKyXmhAqSdZrMdITsZ14h4NtJGtFvED6Dp2M8rc2eRF5SyxRp_qsayO0BePO9l9FwI3MBZgVBQ",
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImYxZDU0ZDQzNGJhMDdkZGQ5MGYzM2Q3MTFmNmE2NzI1YTgwMjI4ZjgwY2Q4MzFmMTFmY2FhMjEzNTc3OTY1NzEifX0.Rv_lbazscZeQ5fW1mtODV5ljw712JCf2NhaCVWk12eaUE6XzboNHbQvo27DGLNj0oI3xXf2mzQHqlSvqYjzCnA"
     ]
 }
