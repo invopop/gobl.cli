@@ -183,7 +183,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		opts := &BuildOptions{
 			ParseOptions: &ParseOptions{
 				DocType: bld.DocType,
-				Data:    bytes.NewReader(bld.Data),
+				Input:   bytes.NewReader(bld.Data),
 				Envelop: bld.Envelop,
 			},
 			Draft: bld.Draft,
@@ -206,7 +206,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		opts := &SignOptions{
 			ParseOptions: &ParseOptions{
 				DocType: bld.DocType,
-				Data:    bytes.NewReader(bld.Data),
+				Input:   bytes.NewReader(bld.Data),
 			},
 			PrivateKey: bld.PrivateKey,
 		}
@@ -230,7 +230,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		}
 		opts := &CorrectOptions{
 			ParseOptions: &ParseOptions{
-				Data: bytes.NewReader(bld.Data),
+				Input: bytes.NewReader(bld.Data),
 			},
 			Credit: bld.Credit,
 			Debit:  bld.Debit,

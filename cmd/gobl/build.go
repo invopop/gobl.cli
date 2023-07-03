@@ -89,7 +89,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	buildOpts := &internal.BuildOptions{
 		ParseOptions: &internal.ParseOptions{
 			Template:  template,
-			Data:      input,
+			Input:     input,
 			SetFile:   b.setFiles,
 			SetYAML:   b.set,
 			SetString: b.setStrings,

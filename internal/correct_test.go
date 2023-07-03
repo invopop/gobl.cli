@@ -23,9 +23,19 @@ func TestCorrect(t *testing.T) {
 		return tt{
 			opts: &CorrectOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/success.json"),
+					Input: testFileReader(t, "testdata/success.json"),
 				},
 				Date: cal.MakeDate(2023, 4, 17),
+			},
+		}
+	})
+	tests.Add("success with data", func(t *testing.T) interface{} {
+		return tt{
+			opts: &CorrectOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/success.json"),
+				},
+				Data: []byte(`{"issue_date":"2023-04-17","credit":true}`),
 			},
 		}
 	})

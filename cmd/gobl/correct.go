@@ -9,6 +9,7 @@ import (
 
 type correctOpts struct {
 	*rootOpts
+	data   string // JSON Correction Options data
 	credit bool
 	debit  bool
 }
@@ -30,6 +31,7 @@ func (o *correctOpts) cmd() *cobra.Command {
 	f := cmd.Flags()
 	f.BoolVarP(&o.credit, "credit", "", false, "Generate a credit note or negative corrective document.")
 	f.BoolVarP(&o.debit, "debit", "", false, "Generate a debit note.")
+	f.StringVarP(&o.data, "data", "d", "", "JSON data for the correction options.")
 
 	return cmd
 }
@@ -51,10 +53,11 @@ func (o *correctOpts) runE(cmd *cobra.Command, args []string) error {
 
 	cOpts := &internal.CorrectOptions{
 		ParseOptions: &internal.ParseOptions{
-			Data: input,
+			Input: input,
 		},
 		Credit: o.credit,
 		Debit:  o.debit,
+		Data:   []byte(o.data),
 	}
 
 	obj, err := internal.Correct(ctx, cOpts)

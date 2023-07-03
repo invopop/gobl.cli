@@ -26,9 +26,9 @@ const (
 )
 
 type serveOpts struct {
-	httpPort int
+	httpPort       int
 	privateKeyFile string
-	privateKey *dsig.PrivateKey
+	privateKey     *dsig.PrivateKey
 }
 
 func serve() *serveOpts {
@@ -130,7 +130,7 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 	}
 	opts := &internal.BuildOptions{
 		ParseOptions: &internal.ParseOptions{
-			Data:    bytes.NewReader(req.Data),
+			Input:   bytes.NewReader(req.Data),
 			DocType: req.DocType,
 		},
 		Draft: req.Draft,
@@ -185,7 +185,7 @@ func (s *serveOpts) bulk(c echo.Context) error {
 		enc.SetIndent("", "\t")
 	}
 	opts := &internal.BulkOptions{
-		In: c.Request().Body,
+		In:                c.Request().Body,
 		DefaultPrivateKey: s.privateKey,
 	}
 	for result := range internal.Bulk(ctx, opts) {

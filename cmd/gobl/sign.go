@@ -85,7 +85,7 @@ func (opts *signOpts) runE(cmd *cobra.Command, args []string) error {
 	signOpts := &internal.SignOptions{
 		ParseOptions: &internal.ParseOptions{
 			Template:  template,
-			Data:      input,
+			Input:     input,
 			SetFile:   opts.setFiles,
 			SetYAML:   opts.set,
 			SetString: opts.setStrings,

@@ -12,7 +12,7 @@ import (
 // Validate asserts the contents of the envelope and document are correct.
 func Validate(ctx context.Context, r io.Reader) error {
 	opts := &ParseOptions{
-		Data: r,
+		Input: r,
 	}
 	obj, err := parseGOBLData(ctx, opts)
 	if err != nil {

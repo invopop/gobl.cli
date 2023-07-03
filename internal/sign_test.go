@@ -20,7 +20,7 @@ func TestSign(t *testing.T) {
 		return tt{
 			opts: &SignOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/nototals.json"),
+					Input: testFileReader(t, "testdata/nototals.json"),
 				},
 			},
 		}
@@ -29,7 +29,7 @@ func TestSign(t *testing.T) {
 		return tt{
 			opts: &SignOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/signed.json"),
+					Input: testFileReader(t, "testdata/signed.json"),
 				},
 			},
 		}
@@ -38,7 +38,7 @@ func TestSign(t *testing.T) {
 		return tt{
 			opts: &SignOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/draft.json"),
+					Input: testFileReader(t, "testdata/draft.json"),
 				},
 			},
 		}
