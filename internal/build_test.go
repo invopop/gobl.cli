@@ -21,9 +21,6 @@ var (
 	privateKey    = new(dsig.PrivateKey)
 	publicKey     = new(dsig.PublicKey)
 	verifyKeyText string
-
-	boolTrue  = true
-	boolFalse = false
 )
 
 const signingKeyFile = "testdata/private.jwk"

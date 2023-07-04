@@ -10,11 +10,6 @@ import (
 	"github.com/invopop/gobl.cli/internal"
 )
 
-var (
-	boolTrue  = true
-	boolFalse = false
-)
-
 type buildOpts struct {
 	*rootOpts
 	set        map[string]string
