@@ -133,7 +133,6 @@ func prepareBuildOpts(c echo.Context) (*internal.BuildOptions, error) {
 			Input:   bytes.NewReader(req.Data),
 			DocType: req.DocType,
 		},
-		Draft: req.Draft,
 	}
 	if len(req.Template) != 0 {
 		opts.Template = bytes.NewReader(req.Template)

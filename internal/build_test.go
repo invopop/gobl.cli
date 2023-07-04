@@ -204,48 +204,6 @@ func TestBuild(t *testing.T) {
 			},
 		}
 	})
-	tests.Add("set draft", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Input: testFileReader(t, "testdata/nototals.json"),
-				},
-				Draft: &boolTrue,
-			},
-		}
-	})
-	tests.Add("set not-draft", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Input: testFileReader(t, "testdata/draft.json"),
-				},
-				Draft: &boolFalse,
-			},
-		}
-	})
-	tests.Add("set draft on non-envelop", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Input: testFileReader(t, "testdata/invoice.json"),
-				},
-				Draft: &boolTrue,
-			},
-			err: "code=422, message=cannot set draft status on non-envelope document",
-		}
-	})
-	tests.Add("set non-draft on non-envelop", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Input: testFileReader(t, "testdata/invoice.json"),
-				},
-				Draft: &boolFalse,
-			},
-			err: "code=422, message=cannot set draft status on non-envelope document",
-		}
-	})
 	tests.Add("merge YAML", func(t *testing.T) interface{} {
 		return tt{
 			opts: &BuildOptions{

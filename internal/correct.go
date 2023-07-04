@@ -49,12 +49,18 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 		if err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
+		if err = env.Validate(); err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
 		return e2, nil
 	}
 
 	if doc, ok := obj.(*gobl.Document); ok {
 		// Documents are updated in place
 		if err := doc.Correct(eopts...); err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+		if err = doc.Validate(); err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 		return doc, nil

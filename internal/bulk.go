@@ -66,22 +66,20 @@ type ValidateResponse struct {
 	OK bool `json:"ok"`
 }
 
-// BuildRequest is the payload for a build reqeuest.
+// BuildRequest is the payload for a build request.
 type BuildRequest struct {
 	Template []byte `json:"template"`
 	Data     []byte `json:"data"`
 	DocType  string `json:"type"`
-	Draft    *bool  `json:"draft"`
 	Envelop  bool   `json:"envelop"`
 }
 
-// SignRequest is the payload for a sign reqeuest.
+// SignRequest is the payload for a sign request.
 type SignRequest struct {
 	Template   []byte           `json:"template"`
 	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
-	Draft      *bool            `json:"draft"`
 	Envelop    bool             `json:"envelop"`
 }
 
@@ -186,7 +184,6 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 				Input:   bytes.NewReader(bld.Data),
 				Envelop: bld.Envelop,
 			},
-			Draft: bld.Draft,
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
