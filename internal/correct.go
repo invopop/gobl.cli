@@ -49,7 +49,7 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 		if err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
-		if err = env.Validate(); err != nil {
+		if err = e2.Validate(); err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 		return e2, nil

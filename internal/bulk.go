@@ -95,9 +95,8 @@ type KeygenResponse struct {
 
 // CorrectRequest is the payload used to generate a corrected document.
 type CorrectRequest struct {
-	Data   []byte `json:"data"`
-	Credit bool   `json:"credit"`
-	Debit  bool   `json:"debit"`
+	Data    []byte `json:"data"`
+	Options []byte `json:"options"`
 }
 
 // Bulk processes a stream of bulk requests.
@@ -229,8 +228,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 			ParseOptions: &ParseOptions{
 				Input: bytes.NewReader(bld.Data),
 			},
-			Credit: bld.Credit,
-			Debit:  bld.Debit,
+			Data: bld.Options,
 		}
 		env, err := Correct(ctx, opts)
 		if err != nil {

@@ -26,10 +26,11 @@ func TestCorrect(t *testing.T) {
 					Input: testFileReader(t, "testdata/success.json"),
 				},
 				Date: cal.MakeDate(2023, 4, 17),
+				Data: []byte(`{"credit":true,"correction_method":"complete","corrections":["line"]}`),
 			},
 		}
 	})
-	tests.Add("success with data", func(t *testing.T) interface{} {
+	tests.Add("error missing data", func(t *testing.T) interface{} {
 		return tt{
 			opts: &CorrectOptions{
 				ParseOptions: &ParseOptions{
@@ -37,6 +38,30 @@ func TestCorrect(t *testing.T) {
 				},
 				Data: []byte(`{"issue_date":"2023-04-17","credit":true}`),
 			},
+			err: "preceding: (0: (correction_method: cannot be blank; corrections: cannot be blank.).).",
+		}
+	})
+
+	tests.Add("success just invoice", func(t *testing.T) interface{} {
+		return tt{
+			opts: &CorrectOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/invoice.json"),
+				},
+				Date: cal.MakeDate(2023, 4, 17),
+				Data: []byte(`{"credit":true,"correction_method":"complete","corrections":["line"]}`),
+			},
+		}
+	})
+	tests.Add("error just invoice", func(t *testing.T) interface{} {
+		return tt{
+			opts: &CorrectOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/invoice.json"),
+				},
+				Date: cal.MakeDate(2023, 4, 17),
+			},
+			err: "preceding: (0: (correction_method: cannot be blank; corrections: cannot be blank.).).",
 		}
 	})
 
@@ -47,7 +72,9 @@ func TestCorrect(t *testing.T) {
 		if tt.err == "" {
 			assert.Nil(t, err)
 		} else {
-			assert.EqualError(t, err, tt.err)
+			if assert.Error(t, err) {
+				assert.Contains(t, err.Error(), tt.err)
+			}
 		}
 		if err != nil {
 			return
