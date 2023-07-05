@@ -19,6 +19,7 @@ type CorrectOptions struct {
 	Credit bool
 	Debit  bool
 	Date   cal.Date
+	Data   []byte // raw json of correction options
 }
 
 // Correct takes a base document as input and builds a corrective document
@@ -30,6 +31,9 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 	}
 
 	eopts := make([]cbc.Option, 0)
+	if len(opts.Data) > 0 {
+		eopts = append(eopts, bill.WithData(opts.Data))
+	}
 	if opts.Credit {
 		eopts = append(eopts, bill.Credit)
 	}
@@ -37,12 +41,15 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 		eopts = append(eopts, bill.Debit)
 	}
 	if !opts.Date.IsZero() {
-		eopts = append(eopts, bill.WithDate(opts.Date))
+		eopts = append(eopts, bill.WithIssueDate(opts.Date))
 	}
 
 	if env, ok := obj.(*gobl.Envelope); ok {
 		e2, err := env.Correct(eopts...)
 		if err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+		if err = e2.Validate(); err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 		return e2, nil
@@ -53,8 +60,11 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 		if err := doc.Correct(eopts...); err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
+		if err = doc.Validate(); err != nil {
+			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
 		return doc, nil
 	}
 
-	panic("parsed data must be either an envelope or a document")
+	panic("input must be either an envelope or a document")
 }

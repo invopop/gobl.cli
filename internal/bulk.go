@@ -66,22 +66,20 @@ type ValidateResponse struct {
 	OK bool `json:"ok"`
 }
 
-// BuildRequest is the payload for a build reqeuest.
+// BuildRequest is the payload for a build request.
 type BuildRequest struct {
 	Template []byte `json:"template"`
 	Data     []byte `json:"data"`
 	DocType  string `json:"type"`
-	Draft    *bool  `json:"draft"`
 	Envelop  bool   `json:"envelop"`
 }
 
-// SignRequest is the payload for a sign reqeuest.
+// SignRequest is the payload for a sign request.
 type SignRequest struct {
 	Template   []byte           `json:"template"`
 	Data       []byte           `json:"data"`
 	PrivateKey *dsig.PrivateKey `json:"privatekey"`
 	DocType    string           `json:"type"`
-	Draft      *bool            `json:"draft"`
 	Envelop    bool             `json:"envelop"`
 }
 
@@ -97,9 +95,8 @@ type KeygenResponse struct {
 
 // CorrectRequest is the payload used to generate a corrected document.
 type CorrectRequest struct {
-	Data   []byte `json:"data"`
-	Credit bool   `json:"credit"`
-	Debit  bool   `json:"debit"`
+	Data    []byte `json:"data"`
+	Options []byte `json:"options"`
 }
 
 // Bulk processes a stream of bulk requests.
@@ -183,10 +180,9 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		opts := &BuildOptions{
 			ParseOptions: &ParseOptions{
 				DocType: bld.DocType,
-				Data:    bytes.NewReader(bld.Data),
+				Input:   bytes.NewReader(bld.Data),
 				Envelop: bld.Envelop,
 			},
-			Draft: bld.Draft,
 		}
 		if len(bld.Template) > 0 {
 			opts.Template = bytes.NewReader(bld.Template)
@@ -206,7 +202,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		opts := &SignOptions{
 			ParseOptions: &ParseOptions{
 				DocType: bld.DocType,
-				Data:    bytes.NewReader(bld.Data),
+				Input:   bytes.NewReader(bld.Data),
 			},
 			PrivateKey: bld.PrivateKey,
 		}
@@ -230,10 +226,9 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		}
 		opts := &CorrectOptions{
 			ParseOptions: &ParseOptions{
-				Data: bytes.NewReader(bld.Data),
+				Input: bytes.NewReader(bld.Data),
 			},
-			Credit: bld.Credit,
-			Debit:  bld.Debit,
+			Data: bld.Options,
 		}
 		env, err := Correct(ctx, opts)
 		if err != nil {

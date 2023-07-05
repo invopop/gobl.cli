@@ -60,10 +60,6 @@
         "preceding": [
             {
                 "code": "SAMPLE-001",
-                "correction_method": "complete",
-                "corrections": [
-                    "line"
-                ],
                 "issue_date": "2022-02-01"
             }
         ],
@@ -139,9 +135,9 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "b10481852757289928a9e28046e0866cc04fa63f83591f066bf63321a1f35819"
+            "val": "1f751ecd7b4f931a55ba6983789dd19e4fd0bf7f0ad34c23d0515cf91f182b8a"
         },
         "draft": true,
-        "uuid": "e5be59dc-1b17-11ee-9228-3e7e00ce5635"
+        "uuid": "88053501-19e1-11ee-8639-3e7e00ce5635"
     }
 }

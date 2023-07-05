@@ -21,9 +21,6 @@ var (
 	privateKey    = new(dsig.PrivateKey)
 	publicKey     = new(dsig.PublicKey)
 	verifyKeyText string
-
-	boolTrue  = true
-	boolFalse = false
 )
 
 const signingKeyFile = "testdata/private.jwk"
@@ -199,58 +196,16 @@ func TestBuild(t *testing.T) {
 		return tt{
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/nototals.json"),
+					Input: testFileReader(t, "testdata/nototals.json"),
 				},
 			},
-		}
-	})
-	tests.Add("set draft", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/nototals.json"),
-				},
-				Draft: &boolTrue,
-			},
-		}
-	})
-	tests.Add("set not-draft", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/draft.json"),
-				},
-				Draft: &boolFalse,
-			},
-		}
-	})
-	tests.Add("set draft on non-envelop", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/invoice.json"),
-				},
-				Draft: &boolTrue,
-			},
-			err: "code=422, message=cannot set draft status on non-envelope document",
-		}
-	})
-	tests.Add("set non-draft on non-envelop", func(t *testing.T) interface{} {
-		return tt{
-			opts: &BuildOptions{
-				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/invoice.json"),
-				},
-				Draft: &boolFalse,
-			},
-			err: "code=422, message=cannot set draft status on non-envelope document",
 		}
 	})
 	tests.Add("merge YAML", func(t *testing.T) interface{} {
 		return tt{
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/nototals.json"),
+					Input: testFileReader(t, "testdata/nototals.json"),
 					SetYAML: map[string]string{
 						"doc.supplier.name": "Other Company",
 					},
@@ -261,7 +216,7 @@ func TestBuild(t *testing.T) {
 	tests.Add("invalid type", tt{
 		opts: &BuildOptions{
 			ParseOptions: &ParseOptions{
-				Data: strings.NewReader(`{
+				Input: strings.NewReader(`{
 				"$schema": "https://gobl.org/draft-0/envelope",
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
@@ -286,7 +241,7 @@ func TestBuild(t *testing.T) {
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
 					Template: strings.NewReader(`{"doc":{"supplier":{"name": "Other Company"}}}`),
-					Data:     testFileReader(t, "testdata/noname.json"),
+					Input:    testFileReader(t, "testdata/noname.json"),
 				},
 			},
 		}
@@ -296,7 +251,7 @@ func TestBuild(t *testing.T) {
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
 					Template: testFileReader(t, "testdata/nosig.json"),
-					Data:     strings.NewReader("{}"),
+					Input:    strings.NewReader("{}"),
 				},
 			},
 		}
@@ -306,7 +261,7 @@ func TestBuild(t *testing.T) {
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
 					Template: testFileReader(t, "testdata/signed.json"),
-					Data:     strings.NewReader("{}"),
+					Input:    strings.NewReader("{}"),
 				},
 			},
 			err: `code=409, message=document has already been signed`,
@@ -316,7 +271,7 @@ func TestBuild(t *testing.T) {
 		return tt{
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
-					Data:    testFileReader(t, "testdata/notype.json"),
+					Input:   testFileReader(t, "testdata/notype.json"),
 					DocType: "bill.Invoice",
 				},
 			},
@@ -326,7 +281,7 @@ func TestBuild(t *testing.T) {
 		return tt{
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/draft.json"),
+					Input: testFileReader(t, "testdata/draft.json"),
 				},
 			},
 		}
@@ -335,7 +290,7 @@ func TestBuild(t *testing.T) {
 		return tt{
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
-					Data: testFileReader(t, "testdata/invoice.json"),
+					Input: testFileReader(t, "testdata/invoice.json"),
 				},
 			},
 		}
@@ -344,7 +299,7 @@ func TestBuild(t *testing.T) {
 		return tt{
 			opts: &BuildOptions{
 				ParseOptions: &ParseOptions{
-					Data:    testFileReader(t, "testdata/invoice.json"),
+					Input:   testFileReader(t, "testdata/invoice.json"),
 					Envelop: true,
 				},
 			},
@@ -383,7 +338,7 @@ func TestBuildWithPartialEnvelope(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		opts := &BuildOptions{
 			ParseOptions: &ParseOptions{
-				Data: testFileReader(t, "testdata/message.env.yaml"),
+				Input: testFileReader(t, "testdata/message.env.yaml"),
 			},
 		}
 		got, err := Build(context.Background(), opts)

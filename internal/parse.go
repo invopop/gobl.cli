@@ -21,7 +21,7 @@ import (
 // ParseOptions are the options used for parsing incoming GOBL data.
 type ParseOptions struct {
 	Template  io.Reader
-	Data      io.Reader
+	Input     io.Reader
 	DocType   string
 	SetYAML   map[string]string
 	SetString map[string]string
@@ -58,7 +58,7 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 		}
 	}
 
-	if err = decodeInto(ctx, &intermediate, opts.Data); err != nil {
+	if err = decodeInto(ctx, &intermediate, opts.Input); err != nil {
 		return nil, err
 	}
 
