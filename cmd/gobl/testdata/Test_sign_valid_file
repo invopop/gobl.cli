@@ -15,11 +15,11 @@
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
 		"supplier": {
+			"name": "A Different Company S.L.",
 			"tax_id": {
 				"country": "ES",
 				"code": "B91983379"
 			},
-			"name": "A Different Company S.L.",
 			"people": [
 				{
 					"name": {
@@ -52,11 +52,11 @@
 			]
 		},
 		"customer": {
+			"name": "Autofiscal S.L.",
 			"tax_id": {
 				"country": "ES",
 				"code": "54387763P"
 			},
-			"name": "Autofiscal S.L.",
 			"addresses": [
 				{
 					"num": "1629",

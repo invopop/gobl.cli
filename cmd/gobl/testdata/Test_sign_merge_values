@@ -14,11 +14,11 @@
 		"currency": "MXN",
 		"issue_date": "2022-02-01",
 		"supplier": {
+			"name": "MªF. Services",
 			"tax_id": {
 				"country": "ES",
 				"code": "58384285G"
 			},
-			"name": "MªF. Services",
 			"people": [
 				{
 					"name": {
@@ -45,11 +45,11 @@
 			]
 		},
 		"customer": {
+			"name": "Sample Consumer",
 			"tax_id": {
 				"country": "ES",
 				"code": "54387763P"
-			},
-			"name": "Sample Consumer"
+			}
 		},
 		"lines": [
 			{
