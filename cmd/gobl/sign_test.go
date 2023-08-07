@@ -271,7 +271,7 @@ func Test_sign(t *testing.T) {
 		{
 			name: "merge values",
 			opts: &signOpts{
-				set:            map[string]string{"doc.currency": "MXN"},
+				set:            map[string]string{"doc.code": "SAMPLE-006X"},
 				privateKeyFile: "testdata/id_es256",
 			},
 			args: []string{"testdata/success.json"},

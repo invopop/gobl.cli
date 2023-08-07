@@ -4,14 +4,14 @@
 		"uuid": "4905f174-0384-11ed-9fa6-b24117999d50",
 		"dig": {
 			"alg": "sha256",
-			"val": "b3fa54ce22fe097a0da9ad612a3c02b944fc8df32a08634ea9f3f5a51a50375e"
+			"val": "b7351ba99214cf942717a7f628f9ed571771da0cb922c3dfad50501969440f30"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"code": "SAMPLE-001",
+		"code": "SAMPLE-005X",
 		"type": "standard",
-		"currency": "MXN",
+		"currency": "EUR",
 		"issue_date": "2022-02-01",
 		"supplier": {
 			"name": "MªF. Services",

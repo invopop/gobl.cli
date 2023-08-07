@@ -274,7 +274,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "merge values",
 			opts: &buildOpts{
-				set: map[string]string{"doc.currency": "MXN"},
+				set: map[string]string{"doc.code": "SAMPLE-005X"},
 			},
 			args: []string{"testdata/success.json"},
 		},

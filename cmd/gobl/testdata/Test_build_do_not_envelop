@@ -136,7 +136,7 @@
 		{
 			"i": 1,
 			"desc": "Something paid for by us",
-			"amount": "0"
+			"amount": "0.00"
 		}
 	],
 	"payment": {
