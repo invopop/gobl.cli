@@ -4,7 +4,7 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "ebe436a203923a5140103d24561d6fcc09625161768438ce35ea4dd7e665d99a"
+			"val": "05808fcdf244bb9067abe5b7a29cb916d15424009658b07fab77014aef9e5e64"
 		}
 	},
 	"doc": {
@@ -142,7 +142,7 @@
 			{
 				"i": 1,
 				"desc": "Something paid for by us",
-				"amount": "0"
+				"amount": "0.00"
 			}
 		],
 		"payment": {

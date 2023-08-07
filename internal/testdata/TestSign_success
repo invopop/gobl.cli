@@ -97,7 +97,7 @@
         ],
         "outlays": [
             {
-                "amount": "0",
+                "amount": "0.00",
                 "desc": "Something paid for by us",
                 "i": 1
             }
@@ -203,11 +203,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "03a1f2f94974f3216f64b83a417e147d2533d508c80e4193dfec0756fda67329"
+            "val": "9ea70310cbd58c30e059b683ce7225c100e75a5d7320447679737dc702b50ee3"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAzYTFmMmY5NDk3NGYzMjE2ZjY0YjgzYTQxN2UxNDdkMjUzM2Q1MDhjODBlNDE5M2RmZWMwNzU2ZmRhNjczMjkifX0.NYEH_Lj6vg3deus26aQZQ4M3rHQNKkt9iMPds3MuYNhzT_LnR17efNYCivzhyHkCyKpSMX9_4mcYgrs_S8_zhA"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjllYTcwMzEwY2JkNThjMzBlMDU5YjY4M2NlNzIyNWMxMDBlNzVhNWQ3MzIwNDQ3Njc5NzM3ZGM3MDJiNTBlZTMifX0.STsoYdz8DGFTQ8-DNm8rmnWHWD-3SxzFoJHn3J246wK_BbzU3BQ12EvkgVTa1DaBW5RN4Z4rJypZRpm9euJDxA"
     ]
 }
