@@ -74,6 +74,11 @@ jobs:
         working-directory: ./gobl-worker
         run: npm version --no-git-tag-version ${{ steps.bump.outputs.new_tag }}
 
+      - name: Build gobl-worker
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        working-directory: ./gobl-worker
+        run: npm run build
+
       - name: Publish gobl-worker to NPM registry
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
         uses: JS-DevTools/npm-publish@v1
