@@ -62,6 +62,7 @@ jobs:
         with:
           node-version: 16.x
           cache: "npm"
+          cache-dependency-path: "./gobl-worker/package-lock.json"
 
       - name: Run npm install
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
