@@ -72,7 +72,7 @@ jobs:
       - name: Update gobl-worker version
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
         working-directory: ./gobl-worker
-        run: npm version --no-git-tag-version ${{ steps.bump_version.outputs.new_tag }}
+        run: npm version --no-git-tag-version ${{ steps.bump.outputs.new_tag }}
 
       - name: Publish gobl-worker to NPM registry
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
