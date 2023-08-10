@@ -52,3 +52,31 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
           # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+
+      # Following actions are to release a new version of gobl-worker to NPM
+      # using the new wasm version in the CDN.
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        with:
+          node-version: 16.x
+          cache: "npm"
+
+      - name: Run npm install
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        working-directory: ./gobl-worker
+        run: npm install
+
+      - name: Update gobl-worker version
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        working-directory: ./gobl-worker
+        run: npm version --no-git-tag-version ${{ steps.bump_version.outputs.new_tag }}
+
+      - name: Publish gobl-worker to NPM registry
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./gobl-worker/package.json
+          access: public

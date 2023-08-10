@@ -5,7 +5,7 @@
 *.so
 *.dylib
 *.wasm
-wasm_exec.js
+wasm/wasm_exec.js
 
 # Test binary, built with `go test -c`
 *.test
