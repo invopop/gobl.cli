@@ -1,10 +1,10 @@
 {
 	"$schema": "https://gobl.org/draft-0/bill/invoice",
 	"uuid": "00000000-0000-0000-0000-000000000000",
-	"code": "INV2021-001",
 	"type": "standard",
-	"currency": "EUR",
+	"code": "INV2021-001",
 	"issue_date": "2021-06-16",
+	"currency": "EUR",
 	"supplier": {
 		"name": "A Company Name S.L.",
 		"tax_id": {
