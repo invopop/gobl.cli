@@ -234,7 +234,7 @@ func TestBuild(t *testing.T) {
 			}`),
 			},
 		},
-		err: `code=400, message=unmarshal: marshal: unregistered or invalid schema`,
+		err: `code=400, message=unmarshal: unknown-schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{
@@ -351,7 +351,7 @@ func TestBuildWithPartialEnvelope(t *testing.T) {
 
 		msg, ok := env.Extract().(*note.Message)
 		if assert.True(t, ok) {
-			assert.Equal(t, "https://gobl.org/draft-0/note/message", env.Document.Schema().String())
+			assert.Equal(t, "https://gobl.org/draft-0/note/message", env.Document.Schema.String())
 			assert.Equal(t, "Test Message", msg.Title)
 			assert.Equal(t, "We hope you like this test message!", msg.Content)
 		}

@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/schema"
 	"github.com/labstack/echo/v4"
 )
 
@@ -30,7 +30,7 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 		return nil, err
 	}
 
-	eopts := make([]cbc.Option, 0)
+	eopts := make([]schema.Option, 0)
 	if len(opts.Data) > 0 {
 		eopts = append(eopts, bill.WithData(opts.Data))
 	}
@@ -55,7 +55,7 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 		return e2, nil
 	}
 
-	if doc, ok := obj.(*gobl.Document); ok {
+	if doc, ok := obj.(*schema.Object); ok {
 		// Documents are updated in place
 		if err := doc.Correct(eopts...); err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/schema"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,7 +27,7 @@ func Validate(ctx context.Context, r io.Reader) error {
 		return nil
 	}
 
-	if doc, ok := obj.(*gobl.Document); ok {
+	if doc, ok := obj.(*schema.Object); ok {
 		if err := doc.Validate(); err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}

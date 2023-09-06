@@ -198,7 +198,7 @@ func Test_build(t *testing.T) {
 				doc: "foo bar baz"
 			}`),
 			opts: &buildOpts{},
-			err:  "code=400, message=unmarshal: unknown-schema: json: cannot unmarshal string into Go value of type schema.document",
+			err:  "code=400, message=unmarshal: json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
 		},
 		{
 			name: "incomplete",
@@ -214,7 +214,7 @@ func Test_build(t *testing.T) {
 				doc: {}
 			}`),
 			opts: &buildOpts{},
-			err:  "code=400, message=unmarshal: marshal: unregistered or invalid schema",
+			err:  "code=422, message=no-document",
 		},
 		{
 			name: "input file",
