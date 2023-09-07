@@ -12,7 +12,11 @@ type BulkRequest =
   | SignRequest
   | KeygenRequest
   | PingRequest
-  | SleepRequest;
+  | SleepRequest
+  | CorrectRequest
+  | SchemasRequest
+  | SchemaRequest
+  | RegimeRequest;
 
 export type BuildPayload = {
   template?: string;
@@ -31,6 +35,11 @@ export type SignPayload = {
 
 export type ValidatePayload = {
   data: string;
+};
+
+export type CorrectPayload = {
+  data: string;
+  options: string;
 };
 
 export type VerifyRequest = BaseBulkRequest & {
@@ -67,6 +76,29 @@ export type PingRequest = BaseBulkRequest & {
 export type SleepRequest = BaseBulkRequest & {
   action: "sleep";
   payload: string; // Go `time` duration string. See: https://pkg.go.dev/time#ParseDuration
+};
+
+export type CorrectRequest = BaseBulkRequest & {
+  action: "correct";
+  payload: CorrectPayload;
+};
+
+export type SchemasRequest = BaseBulkRequest & {
+  action: "schemas";
+};
+
+export type SchemaRequest = BaseBulkRequest & {
+  action: "schema";
+  payload: {
+    path: string;
+  };
+};
+
+export type RegimeRequest = BaseBulkRequest & {
+  action: "regime";
+  payload: {
+    code: string;
+  };
 };
 
 export type BulkResponse = {
@@ -196,6 +228,18 @@ export async function verify({
   });
 }
 
+export async function correct({
+  payload,
+  indent,
+}: Pick<CorrectRequest, "payload" | "indent">) {
+  // TODO(?): Parse JSON response before returning.
+  return sendMessage({
+    action: "correct",
+    payload,
+    indent,
+  });
+}
+
 export type Keypair = {
   private: JsonWebKey;
   public: Omit<JsonWebKey, "d">;
@@ -230,6 +274,24 @@ export async function sleep({
     action: "sleep",
     payload: duration,
     indent,
+  });
+}
+
+export async function schemas() {
+  return sendMessage({ action: "schemas" });
+}
+
+export async function schema(path: string) {
+  return sendMessage({
+    action: "schema",
+    payload: { path },
+  });
+}
+
+export async function regime(code: string) {
+  return sendMessage({
+    action: "regime",
+    payload: { code },
   });
 }
 

@@ -495,6 +495,88 @@ func TestBulk(t *testing.T) {
 			{SeqID: 2, IsFinal: true},
 		},
 	})
+	tests.Add("schemas", tt{
+		opts: &BulkOptions{
+			In: strings.NewReader(`{"action":"schemas"}`),
+		},
+		want: []*BulkResponse{
+			{
+				SeqID: 1,
+				// Following raw message is copied and pasted! (sorry!)
+				Payload: json.RawMessage(`{
+					"list": [
+						"https://gobl.org/draft-0/schema/object", "https://gobl.org/draft-0/cal/date", "https://gobl.org/draft-0/cal/date-time", "https://gobl.org/draft-0/cal/period", "https://gobl.org/draft-0/cbc/code", "https://gobl.org/draft-0/cbc/code-map", "https://gobl.org/draft-0/cbc/key", "https://gobl.org/draft-0/cbc/meta", "https://gobl.org/draft-0/cbc/note", "https://gobl.org/draft-0/i18n/string", "https://gobl.org/draft-0/l10n/code", "https://gobl.org/draft-0/l10n/country-code", "https://gobl.org/draft-0/note/message", "https://gobl.org/draft-0/num/amount", "https://gobl.org/draft-0/num/percentage", "https://gobl.org/draft-0/currency/code", "https://gobl.org/draft-0/currency/exchange-rate", "https://gobl.org/draft-0/uuid/uuid", "https://gobl.org/draft-0/tax/set", "https://gobl.org/draft-0/tax/total", "https://gobl.org/draft-0/tax/regime", "https://gobl.org/draft-0/tax/identity", "https://gobl.org/draft-0/dsig/digest", "https://gobl.org/draft-0/dsig/signature", "https://gobl.org/draft-0/head/header", "https://gobl.org/draft-0/head/stamp", "https://gobl.org/draft-0/org/address", "https://gobl.org/draft-0/org/coordinates", "https://gobl.org/draft-0/org/email", "https://gobl.org/draft-0/org/identity", "https://gobl.org/draft-0/org/image", "https://gobl.org/draft-0/org/inbox", "https://gobl.org/draft-0/org/item", "https://gobl.org/draft-0/org/name", "https://gobl.org/draft-0/org/party", "https://gobl.org/draft-0/org/person", "https://gobl.org/draft-0/org/registration", "https://gobl.org/draft-0/org/telephone", "https://gobl.org/draft-0/org/unit", "https://gobl.org/draft-0/org/website", "https://gobl.org/draft-0/pay/advance", "https://gobl.org/draft-0/pay/instructions", "https://gobl.org/draft-0/pay/terms", "https://gobl.org/draft-0/bill/invoice", "https://gobl.org/draft-0/bill/correction-options", "https://gobl.org/draft-0/envelope"
+					]
+				}`),
+				IsFinal: false,
+			},
+			{SeqID: 2, IsFinal: true},
+		},
+	})
+	tests.Add("schema", func(t *testing.T) interface{} {
+		return tt{
+			opts: &BulkOptions{
+				In: strings.NewReader(`{"action":"schema","payload":{"path":"head/stamp"}}`),
+			},
+			want: []*BulkResponse{
+				{
+					SeqID: 1,
+					// Following raw message is copied and pasted on failures! (sorry!)
+					Payload: json.RawMessage(`{
+						"$schema": "https://json-schema.org/draft/2020-12/schema",
+						"$id": "https://gobl.org/draft-0/head/stamp",
+						"$ref": "#/$defs/Stamp",
+						"$defs": {
+						  "Stamp": {
+							"properties": {
+							  "prv": {
+								"$ref": "https://gobl.org/draft-0/cbc/key",
+								"title": "Provider",
+								"description": "Identity of the agency used to create the stamp usually defined by each region."
+							  },
+							  "val": {
+								"type": "string",
+								"title": "Value",
+								"description": "The serialized stamp value generated for or by the external agency"
+							  }
+							},
+							"type": "object",
+							"required": [
+							  "prv",
+							  "val"
+							],
+							"description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
+						  }
+						}
+					  }`),
+					IsFinal: false,
+				},
+				{SeqID: 2, IsFinal: true},
+			},
+		}
+	})
+	tests.Add("regime", func(t *testing.T) interface{} {
+		return tt{
+			opts: &BulkOptions{
+				In: strings.NewReader(`{"action":"regime","payload":{"code":"es"}}`),
+			},
+			want: []*BulkResponse{
+				{
+					SeqID: 1,
+					// A small sample from the Spanish regime
+					Payload: json.RawMessage(`{
+						"$schema": "https://gobl.org/draft-0/tax/regime",
+						"name": {
+							"en": "Spain",
+							"es": "España"
+						}
+					  }`),
+					IsFinal: false,
+				},
+				{SeqID: 2, IsFinal: true},
+			},
+		}
+	})
 	tests.Add("out of order", tt{
 		opts: &BulkOptions{
 			In: strings.NewReader(`{"action":"sleep","payload":"100ms","req_id":"sleep"} {"action":"ping","req_id":"ping"}`),

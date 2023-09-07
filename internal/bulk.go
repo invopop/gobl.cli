@@ -6,11 +6,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"path"
+	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	"github.com/invopop/gobl/build"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/schema"
 )
 
 // BulkRequest represents a single request in the stream of bulk requests.
@@ -97,6 +102,15 @@ type KeygenResponse struct {
 type CorrectRequest struct {
 	Data    []byte `json:"data"`
 	Options []byte `json:"options"`
+}
+
+// SchemaRequest defines a body used to request a specific JSON schema
+type SchemaRequest struct {
+	Path string `json:"path"`
+}
+
+type RegimeRequest struct {
+	Code string `json:"code"`
 }
 
 // Bulk processes a stream of bulk requests.
@@ -263,6 +277,42 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 			"sleep": "done",
 		})
 
+	case "schemas":
+		list := schema.List()
+
+		res.Payload, _ = marshal(map[string]interface{}{
+			"list": list,
+		})
+	case "schema":
+		sch := new(SchemaRequest)
+		if err := json.Unmarshal(req.Payload, sch); err != nil {
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			return res
+		}
+		ext := filepath.Ext(sch.Path)
+		if ext == "" {
+			sch.Path = sch.Path + ".json"
+		}
+		sch.Path = path.Join("schemas", sch.Path)
+		data, err := build.Content.ReadFile(sch.Path)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload = data
+	case "regime":
+		reg := new(RegimeRequest)
+		if err := json.Unmarshal(req.Payload, reg); err != nil {
+			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			return res
+		}
+		p := path.Join("regimes", strings.ToLower(reg.Code)+".json")
+		data, err := build.Content.ReadFile(p)
+		if err != nil {
+			res.Error = err.Error()
+			return res
+		}
+		res.Payload = data
 	default:
 		res.Error = fmt.Sprintf("Unrecognized action '%s'", req.Action)
 	}
