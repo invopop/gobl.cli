@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/schema"
 	"github.com/labstack/echo/v4"
 )
 
@@ -37,8 +38,8 @@ func Build(ctx context.Context, opts *BuildOptions) (interface{}, error) {
 		return env, nil
 	}
 
-	if doc, ok := obj.(*gobl.Document); ok {
-		if c, ok := doc.Instance().(gobl.Calculable); ok {
+	if doc, ok := obj.(*schema.Object); ok {
+		if c, ok := doc.Instance().(schema.Calculable); ok {
 			if err := c.Calculate(); err != nil {
 				return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 			}

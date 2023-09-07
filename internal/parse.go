@@ -104,12 +104,12 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 		return env, nil
 	}
 
-	var doc *gobl.Document
-	if d, ok := obj.(*gobl.Document); ok {
+	var doc *schema.Object
+	if d, ok := obj.(*schema.Object); ok {
 		doc = d
 	} else {
 		var err error
-		doc, err = gobl.NewDocument(obj)
+		doc, err = schema.NewObject(obj)
 		if err != nil {
 			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
