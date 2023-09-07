@@ -8,6 +8,7 @@ import (
 	"io"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -279,9 +280,14 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 
 	case "schemas":
 		list := schema.List()
-
+		items := make([]string, len(list))
+		for i, v := range list {
+			items[i] = v.String()
+		}
+		// sorting makes comparisons easier
+		sort.Strings(items)
 		res.Payload, _ = marshal(map[string]interface{}{
-			"list": list,
+			"list": items,
 		})
 	case "schema":
 		sch := new(SchemaRequest)
