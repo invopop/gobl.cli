@@ -5,12 +5,12 @@ go 1.19
 require (
 	github.com/google/go-cmp v0.5.9
 	github.com/imdario/mergo v0.3.15
-	github.com/invopop/gobl v0.56.0
+	github.com/invopop/gobl v0.57.0
 	github.com/invopop/yaml v0.2.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/magefile/mage v1.13.0
 	github.com/spf13/cobra v1.7.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 	gitlab.com/flimzy/testy v0.10.2
 	gopkg.in/yaml.v3 v3.0.1
 )

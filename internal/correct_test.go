@@ -26,7 +26,7 @@ func TestCorrect(t *testing.T) {
 					Input: testFileReader(t, "testdata/success.json"),
 				},
 				Date: cal.MakeDate(2023, 4, 17),
-				Data: []byte(`{"credit":true,"correction_method":"complete","corrections":["line"]}`),
+				Data: []byte(`{"credit":true,"method":"complete","changes":["line"]}`),
 			},
 		}
 	})
@@ -38,7 +38,7 @@ func TestCorrect(t *testing.T) {
 				},
 				Data: []byte(`{"issue_date":"2023-04-17","credit":true}`),
 			},
-			err: "preceding: (0: (correction_method: cannot be blank; corrections: cannot be blank.).).",
+			err: "missing correction method",
 		}
 	})
 
@@ -49,7 +49,7 @@ func TestCorrect(t *testing.T) {
 					Input: testFileReader(t, "testdata/invoice.json"),
 				},
 				Date: cal.MakeDate(2023, 4, 17),
-				Data: []byte(`{"credit":true,"correction_method":"complete","corrections":["line"]}`),
+				Data: []byte(`{"credit":true,"method":"complete","changes":["line"]}`),
 			},
 		}
 	})
@@ -61,7 +61,7 @@ func TestCorrect(t *testing.T) {
 				},
 				Date: cal.MakeDate(2023, 4, 17),
 			},
-			err: "preceding: (0: (correction_method: cannot be blank; corrections: cannot be blank.).).",
+			err: "missing correction method",
 		}
 	})
 
