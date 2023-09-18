@@ -57,11 +57,11 @@
     },
     "preceding": [
         {
-            "code": "SAMPLE-001",
-            "correction_method": "complete",
-            "corrections": [
+            "changes": [
                 "line"
             ],
+            "code": "SAMPLE-001",
+            "correction_method": "complete",
             "issue_date": "2022-02-01"
         }
     ],

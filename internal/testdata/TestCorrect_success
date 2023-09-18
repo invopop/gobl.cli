@@ -59,11 +59,11 @@
         },
         "preceding": [
             {
-                "code": "SAMPLE-001",
-                "correction_method": "complete",
-                "corrections": [
+                "changes": [
                     "line"
                 ],
+                "code": "SAMPLE-001",
+                "correction_method": "complete",
                 "issue_date": "2022-02-01"
             }
         ],
@@ -139,9 +139,9 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "b10481852757289928a9e28046e0866cc04fa63f83591f066bf63321a1f35819"
+            "val": "c6f5ffd51babf0b6f3b49c356b234023b8a0159023c445ed6aa092bf0ee15f29"
         },
         "draft": true,
-        "uuid": "e5be59dc-1b17-11ee-9228-3e7e00ce5635"
+        "uuid": "e89c69e5-561b-11ee-9d12-3e7e00ce5635"
     }
 }

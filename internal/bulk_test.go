@@ -400,7 +400,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":    base64.StdEncoding.EncodeToString(payload),
-				"options": []byte(`{"credit":true,"correction_method":"complete","corrections":["line"]}`),
+				"options": []byte(`{"credit":true,"method":"complete","changes":["line"]}`),
 			},
 		})
 		if err != nil {
