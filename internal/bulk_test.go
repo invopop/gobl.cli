@@ -451,7 +451,7 @@ func TestBulk(t *testing.T) {
 					ReqID: "asdf",
 					SeqID: 1,
 					Payload: json.RawMessage(`{
-						"description":"CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice."
+						"$id":"https://gobl.org/draft-0/bill/correction-options?tax_regime=es"
 					}`),
 					IsFinal: false,
 				},
