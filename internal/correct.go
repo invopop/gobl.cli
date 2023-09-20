@@ -16,18 +16,30 @@ import (
 type CorrectOptions struct {
 	// we don't need all of the parse options
 	*ParseOptions
-	Credit bool
-	Debit  bool
-	Date   cal.Date
-	Data   []byte // raw json of correction options
+	OptionsSchema bool
+	Credit        bool
+	Debit         bool
+	Date          cal.Date
+	Data          []byte // raw json of correction options
 }
 
 // Correct takes a base document as input and builds a corrective document
-// for the output using the base document for input.
+// for the output. If the "ShowOptions" boolean is true, we'll attempt to determine
+// what options are available.
 func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
 		return nil, err
+	}
+
+	if opts.OptionsSchema {
+		if env, ok := obj.(*gobl.Envelope); ok {
+			return env.CorrectionOptionsSchema()
+		}
+		if doc, ok := obj.(*schema.Object); ok {
+			return doc.CorrectionOptionsSchema()
+		}
+		panic("input must be either an envelope or a document")
 	}
 
 	eopts := make([]schema.Option, 0)

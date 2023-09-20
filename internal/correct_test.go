@@ -19,6 +19,16 @@ func TestCorrect(t *testing.T) {
 	}
 
 	tests := testy.NewTable()
+	tests.Add("options schema", func(t *testing.T) interface{} {
+		return tt{
+			opts: &CorrectOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/success.json"),
+				},
+				OptionsSchema: true,
+			},
+		}
+	})
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
 			opts: &CorrectOptions{

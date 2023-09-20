@@ -100,9 +100,11 @@ type KeygenResponse struct {
 }
 
 // CorrectRequest is the payload used to generate a corrected document.
+// If the schema option is true, the options data is ignored.
 type CorrectRequest struct {
 	Data    []byte `json:"data"`
 	Options []byte `json:"options"`
+	Schema  bool   `json:"schema"`
 }
 
 // SchemaRequest defines a body used to request a specific JSON schema
@@ -243,7 +245,8 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 			ParseOptions: &ParseOptions{
 				Input: bytes.NewReader(bld.Data),
 			},
-			Data: bld.Options,
+			OptionsSchema: bld.Schema,
+			Data:          bld.Options,
 		}
 		env, err := Correct(ctx, opts)
 		if err != nil {
