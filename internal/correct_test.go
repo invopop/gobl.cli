@@ -29,6 +29,17 @@ func TestCorrect(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("options schema empty", func(t *testing.T) interface{} {
+		return tt{
+			opts: &CorrectOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/message.env.yaml"),
+				},
+				OptionsSchema: true,
+			},
+		}
+	})
+
 	tests.Add("success", func(t *testing.T) interface{} {
 		return tt{
 			opts: &CorrectOptions{
