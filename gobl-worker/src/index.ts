@@ -39,7 +39,8 @@ export type ValidatePayload = {
 
 export type CorrectPayload = {
   data: string;
-  options: string;
+  options?: string;
+  schema?: boolean;
 };
 
 export type VerifyRequest = BaseBulkRequest & {
