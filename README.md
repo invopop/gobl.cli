@@ -61,7 +61,7 @@ The GOBL CLI makes it easy to use the library and tax regime specific functional
 gobl correct -i ./samples/invoice-es.yaml --credit
 
 # Specify tax regime specific details
-gobl correct -i -d '{"credit":true,"corrections":["line"],"correction_method":"complete"}' \
+gobl correct -i -d '{"credit":true,"changes":["line"],"method":"complete"}' \
     ./samples/invoice-es.yaml
 ```
 
