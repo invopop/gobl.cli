@@ -41,6 +41,11 @@ jobs:
         with:
           go-version: 1.21
 
+      # Ensure we have a wasm_exec.js for the current version of Go
+      - name: Copy Go WASM Exec
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        run: cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" ./gobl-worker/src
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
