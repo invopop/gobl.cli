@@ -1,5 +1,5 @@
 {
-    "$comment": "Generated with GOBL v0.58.2",
+    "$comment": "Generated dynamically for es",
     "$defs": {
         "CorrectionOptions": {
             "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.",
