@@ -13,6 +13,8 @@ import (
 )
 
 func main() {
+	js.Global().Get("console").Call("log", "WASM testing 3")
+
 	r, w := io.Pipe()
 	js.Global().Call("addEventListener", "message", js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		jsonEvent := js.Global().Get("JSON").Call("stringify", args[0].Get("data")).String()
@@ -22,27 +24,36 @@ func main() {
 		return nil
 	}))
 
-	js.Global().Call("postMessage", map[string]interface{}{"ready": true})
+	js.Global().Call("postMessage", map[string]any{"ready": true})
 
+	processMessages(r)
+
+	fmt.Println("exiting")
+}
+
+func processMessages(r io.Reader) {
 	bulkOpts := &internal.BulkOptions{
 		In: r,
 	}
 	for result := range internal.Bulk(context.TODO(), bulkOpts) {
-		response := js.Global().Get("Object").New()
-		if result.ReqID != "" {
-			response.Set("req_id", result.ReqID)
-		}
-		response.Set("seq_id", result.SeqID)
-		if len(result.Payload) > 0 {
-			response.Set("payload", string(result.Payload))
-		}
-		if result.Error != "" {
-			response.Set("error", result.Error)
-		}
-		if result.IsFinal {
-			response.Set("is_final", true)
-		}
-		js.Global().Call("postMessage", response)
+		postMessage(result)
 	}
-	fmt.Println("exiting")
+}
+
+func postMessage(result *internal.BulkResponse) {
+	response := js.Global().Get("Object").New()
+	if result.ReqID != "" {
+		response.Set("req_id", result.ReqID)
+	}
+	response.Set("seq_id", result.SeqID)
+	if len(result.Payload) > 0 {
+		response.Set("payload", string(result.Payload))
+	}
+	if result.Error != "" {
+		response.Set("error", result.Error)
+	}
+	if result.IsFinal {
+		response.Set("is_final", true)
+	}
+	js.Global().Call("postMessage", response)
 }
