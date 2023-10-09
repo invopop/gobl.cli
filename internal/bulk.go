@@ -14,7 +14,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/invopop/gobl/build"
+	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/schema"
 )
@@ -303,7 +303,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 			sch.Path = sch.Path + ".json"
 		}
 		sch.Path = path.Join("schemas", sch.Path)
-		data, err := build.Content.ReadFile(sch.Path)
+		data, err := data.Content.ReadFile(sch.Path)
 		if err != nil {
 			res.Error = err.Error()
 			return res
@@ -316,7 +316,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 			return res
 		}
 		p := path.Join("regimes", strings.ToLower(reg.Code)+".json")
-		data, err := build.Content.ReadFile(p)
+		data, err := data.Content.ReadFile(p)
 		if err != nil {
 			res.Error = err.Error()
 			return res

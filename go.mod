@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/google/go-cmp v0.5.9
 	github.com/imdario/mergo v0.3.15
-	github.com/invopop/gobl v0.59.0
+	github.com/invopop/gobl v0.62.0
 	github.com/invopop/yaml v0.2.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/magefile/mage v1.13.0
@@ -24,7 +24,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/invopop/jsonschema v0.9.0 // indirect
+	github.com/invopop/jsonschema v0.12.0 // indirect
 	github.com/invopop/validation v0.3.0 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
