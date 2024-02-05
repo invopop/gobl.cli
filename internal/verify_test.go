@@ -26,8 +26,8 @@ func signedDoc(t *testing.T) []byte {
 	if err != nil {
 		t.Fatal(err)
 	}
-	out, errj := json.Marshal(env)
-	if errj != nil {
+	out, err := json.Marshal(env)
+	if err != nil {
 		t.Fatal(err)
 	}
 	return out
