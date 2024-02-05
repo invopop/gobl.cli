@@ -157,15 +157,18 @@
                     "oneOf": [
                         {
                             "const": "corrective",
-                            "title": "corrective"
+                            "description": "Corrected invoice that completely replaces the preceding document.",
+                            "title": "Corrective"
                         },
                         {
                             "const": "credit-note",
-                            "title": "credit-note"
+                            "description": "Reflects a refund either partial or complete of the preceding document.",
+                            "title": "Credit Note"
                         },
                         {
                             "const": "debit-note",
-                            "title": "debit-note"
+                            "description": "An additional set of charges to be added to the preceding document.",
+                            "title": "Debit Note"
                         }
                     ],
                     "title": "Type"
