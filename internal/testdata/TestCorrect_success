@@ -16,7 +16,7 @@
             {
                 "discounts": [
                     {
-                        "amount": "-180.00",
+                        "amount": "180.00",
                         "percent": "10%",
                         "reason": "Special discount"
                     }
@@ -27,8 +27,8 @@
                     "price": "90.00",
                     "unit": "h"
                 },
-                "quantity": "-20",
-                "sum": "-1800.00",
+                "quantity": "20",
+                "sum": "1800.00",
                 "taxes": [
                     {
                         "cat": "VAT",
@@ -40,7 +40,7 @@
                         "percent": "15.0%"
                     }
                 ],
-                "total": "-1620.00"
+                "total": "1620.00"
             }
         ],
         "payment": {
@@ -59,12 +59,12 @@
         },
         "preceding": [
             {
-                "changes": [
-                    "line"
-                ],
                 "code": "SAMPLE-001",
-                "correction_method": "complete",
-                "issue_date": "2022-02-01"
+                "ext": {
+                    "es-facturae-correction": "01"
+                },
+                "issue_date": "2022-02-01",
+                "type": "standard"
             }
         ],
         "supplier": {
@@ -99,49 +99,49 @@
             }
         },
         "totals": {
-            "payable": "-1717.20",
-            "sum": "-1620.00",
-            "tax": "-97.20",
+            "payable": "1717.20",
+            "sum": "1620.00",
+            "tax": "97.20",
             "taxes": {
                 "categories": [
                     {
-                        "amount": "-340.20",
+                        "amount": "340.20",
                         "code": "VAT",
                         "rates": [
                             {
-                                "amount": "-340.20",
-                                "base": "-1620.00",
+                                "amount": "340.20",
+                                "base": "1620.00",
                                 "key": "standard",
                                 "percent": "21.0%"
                             }
                         ]
                     },
                     {
-                        "amount": "-243.00",
+                        "amount": "243.00",
                         "code": "IRPF",
                         "rates": [
                             {
-                                "amount": "-243.00",
-                                "base": "-1620.00",
+                                "amount": "243.00",
+                                "base": "1620.00",
                                 "percent": "15.0%"
                             }
                         ],
                         "retained": true
                     }
                 ],
-                "sum": "-97.20"
+                "sum": "97.20"
             },
-            "total": "-1620.00",
-            "total_with_tax": "-1717.20"
+            "total": "1620.00",
+            "total_with_tax": "1717.20"
         },
-        "type": "corrective"
+        "type": "credit-note"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "c6f5ffd51babf0b6f3b49c356b234023b8a0159023c445ed6aa092bf0ee15f29"
+            "val": "b5ef5cfbc315dd7ce5ad1788f694c81e269595cda942192651d34eb689143835"
         },
         "draft": true,
-        "uuid": "e89c69e5-561b-11ee-9d12-3e7e00ce5635"
+        "uuid": "7f453f74-c417-11ee-b772-8e3f6d4fff0a"
     }
 }

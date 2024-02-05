@@ -54,7 +54,7 @@ func Test_parseSets(t *testing.T) {
 					"foo": "[bar",
 				},
 			},
-			err: `yaml: line 1: did not find expected ',' or ']'`,
+			err: `code=422, message=yaml: line 1: did not find expected ',' or ']'`,
 		},
 		{
 			name: "valid yaml",
@@ -107,7 +107,7 @@ func Test_parseSets(t *testing.T) {
 					".": "foo",
 				},
 			},
-			err: "src and dst must be of same type",
+			err: "code=422, message=src and dst must be of same type",
 		},
 		{
 			name: "explicit string",
@@ -234,7 +234,7 @@ func TestBuild(t *testing.T) {
 			}`),
 			},
 		},
-		err: `code=400, message=unmarshal: unknown-schema`,
+		err: `code=400, message=unknown-schema`,
 	})
 	tests.Add("with template", func(t *testing.T) interface{} {
 		return tt{
@@ -350,10 +350,9 @@ func TestBuildWithPartialEnvelope(t *testing.T) {
 		assert.Empty(t, env.Signatures)
 
 		msg, ok := env.Extract().(*note.Message)
-		if assert.True(t, ok) {
-			assert.Equal(t, "https://gobl.org/draft-0/note/message", env.Document.Schema.String())
-			assert.Equal(t, "Test Message", msg.Title)
-			assert.Equal(t, "We hope you like this test message!", msg.Content)
-		}
+		require.True(t, ok)
+		assert.Equal(t, "https://gobl.org/draft-0/note/message", env.Document.Schema.String())
+		assert.Equal(t, "Test Message", msg.Title)
+		assert.Equal(t, "We hope you like this test message!", msg.Content)
 	})
 }

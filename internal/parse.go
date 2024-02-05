@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"sort"
 	"strings"
@@ -14,7 +13,6 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl.cli/internal/iotools"
 	"github.com/invopop/gobl/schema"
-	"github.com/labstack/echo/v4"
 	"gopkg.in/yaml.v3"
 )
 
@@ -36,10 +34,10 @@ func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader)
 	var intermediate map[string]interface{}
 	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, in))
 	if err := dec.Decode(&intermediate); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return wrapError(StatusBadRequest, err)
 	}
 	if err := mergo.Merge(dest, intermediate, mergo.WithOverride); err != nil {
-		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		return wrapError(StatusUnprocessableEntity, err)
 	}
 	return nil
 }
@@ -62,8 +60,8 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 		return nil, err
 	}
 
-	if err = mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	if err := mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
+		return nil, wrapError(StatusUnprocessableEntity, err)
 	}
 
 	if opts.DocType != "" {
@@ -77,24 +75,24 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 		}
 		schema := FindType(opts.DocType)
 		if schema == "" {
-			return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("unrecognized doc type: %q", opts.DocType))
+			return nil, wrapError(StatusBadRequest, fmt.Errorf("unrecognized doc type: %q", opts.DocType))
 		}
-		if err = mergo.Merge(&intermediate, schemaDataFunc(schema)); err != nil {
-			return nil, err
+		if err := mergo.Merge(&intermediate, schemaDataFunc(schema)); err != nil {
+			return nil, wrapError(StatusUnprocessableEntity, err)
 		}
 	}
 
 	// Encode intermediate to JSON for usage with `gobl.Parse`.
 	intermediateJSON, err := json.Marshal(intermediate)
 	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		return nil, wrapError(StatusUnprocessableEntity, err)
 	}
 
 	// Parse the JSON encoded intermediate, so we can figure out if the incoming data
 	// is already an envelope.
 	obj, err := gobl.Parse(intermediateJSON)
 	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return nil, wrapError(StatusBadRequest, err)
 	}
 
 	// If the incoming data was parsed as an envelope, we can simply return
@@ -111,7 +109,7 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 		var err error
 		doc, err = schema.NewObject(obj)
 		if err != nil {
-			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			return nil, wrapError(StatusUnprocessableEntity, err)
 		}
 	}
 
@@ -155,10 +153,10 @@ func parseSets(opts *ParseOptions) (map[string]interface{}, error) {
 		v := opts.SetYAML[k]
 		var parsed interface{}
 		if err := yaml.Unmarshal([]byte(v), &parsed); err != nil {
-			return nil, err
+			return nil, wrapError(StatusUnprocessableEntity, err)
 		}
 		if err := setValue(&values, k, parsed); err != nil {
-			return nil, err
+			return nil, wrapError(StatusUnprocessableEntity, err)
 		}
 	}
 

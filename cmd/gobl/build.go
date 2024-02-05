@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"io"
 	"os"
 
@@ -88,14 +87,9 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		},
 	}
 
-	env, err := internal.Build(ctx, buildOpts)
+	res, err := internal.Build(ctx, buildOpts)
 	if err != nil {
 		return err
 	}
-
-	enc := json.NewEncoder(out)
-	if b.indent {
-		enc.SetIndent("", "\t") // Removing JSON formatting by default
-	}
-	return enc.Encode(env)
+	return encode(res, out, b.indent)
 }

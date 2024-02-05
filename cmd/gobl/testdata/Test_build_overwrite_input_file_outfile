@@ -4,7 +4,7 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "e0c939d64f6d687195b2985e1c0e2bbc42896f3ee65ee7b1916b360f4cfc6351"
+			"val": "90a8e6e180cebb87ed4b8060ba4f07abe7eec44c98f0efda74202ab33f99e282"
 		}
 	},
 	"doc": {
@@ -144,7 +144,7 @@
 		"outlays": [
 			{
 				"i": 1,
-				"desc": "Something paid for by us",
+				"description": "Something paid for by us",
 				"amount": "0.00"
 			}
 		],

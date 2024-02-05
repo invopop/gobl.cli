@@ -121,7 +121,7 @@ func Test_sign(t *testing.T) {
 				},
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: `open missing.yaml: no such file or directory`,
+			err: `code=422, message=open missing.yaml: no such file or directory`,
 		},
 		{
 			name: "valid file",
@@ -183,7 +183,7 @@ func Test_sign(t *testing.T) {
 			opts: &signOpts{
 				privateKeyFile: "testdata/id_es256",
 			},
-			err: "code=400, message=unmarshal: json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
+			err: "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
 		},
 		{
 			name: "incomplete",

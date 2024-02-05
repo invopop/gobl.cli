@@ -2,11 +2,9 @@ package internal
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
-	"github.com/labstack/echo/v4"
 )
 
 // SignOptions are the options used for signing a GOBL document.
@@ -24,7 +22,7 @@ func Sign(ctx context.Context, opts *SignOptions) (*gobl.Envelope, error) {
 
 	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(StatusUnprocessableEntity, err)
 	}
 
 	env, ok := obj.(*gobl.Envelope)
@@ -40,12 +38,12 @@ func Sign(ctx context.Context, opts *SignOptions) (*gobl.Envelope, error) {
 	}
 
 	if err := env.Calculate(); err != nil {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		return nil, wrapError(StatusUnprocessableEntity, err)
 	}
 
 	// Sign envelope headers. Validation is done transparently in `Sign`.
 	if err := env.Sign(opts.PrivateKey); err != nil {
-		return nil, err
+		return nil, wrapError(StatusUnprocessableEntity, err)
 	}
 
 	return env, nil

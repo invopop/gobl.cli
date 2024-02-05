@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/schema"
-	"github.com/labstack/echo/v4"
 )
 
 // CorrectOptions define all the basic options required to build a corrective
@@ -27,6 +26,14 @@ type CorrectOptions struct {
 // for the output. If the "ShowOptions" boolean is true, we'll attempt to determine
 // what options are available.
 func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
+	res, err := correct(ctx, opts)
+	if err != nil {
+		return nil, wrapError(http.StatusUnprocessableEntity, err)
+	}
+	return res, nil
+}
+
+func correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 	obj, err := parseGOBLData(ctx, opts.ParseOptions)
 	if err != nil {
 		return nil, err
@@ -59,10 +66,10 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 	if env, ok := obj.(*gobl.Envelope); ok {
 		e2, err := env.Correct(eopts...)
 		if err != nil {
-			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			return nil, err
 		}
 		if err = e2.Validate(); err != nil {
-			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			return nil, err
 		}
 		return e2, nil
 	}
@@ -70,10 +77,10 @@ func Correct(ctx context.Context, opts *CorrectOptions) (interface{}, error) {
 	if doc, ok := obj.(*schema.Object); ok {
 		// Documents are updated in place
 		if err := doc.Correct(eopts...); err != nil {
-			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			return nil, err
 		}
 		if err = doc.Validate(); err != nil {
-			return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			return nil, err
 		}
 		return doc, nil
 	}

@@ -7,7 +7,6 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/schema"
-	"github.com/labstack/echo/v4"
 )
 
 // Validate asserts the contents of the envelope and document are correct.
@@ -17,22 +16,22 @@ func Validate(ctx context.Context, r io.Reader) error {
 	}
 	obj, err := parseGOBLData(ctx, opts)
 	if err != nil {
-		return err
+		return wrapError(StatusUnprocessableEntity, err)
 	}
 
 	if env, ok := obj.(*gobl.Envelope); ok {
 		if err := env.Validate(); err != nil {
-			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			return wrapError(http.StatusUnprocessableEntity, err)
 		}
 		return nil
 	}
 
 	if doc, ok := obj.(*schema.Object); ok {
 		if err := doc.Validate(); err != nil {
-			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+			return wrapError(http.StatusUnprocessableEntity, err)
 		}
 		return nil
 	}
 
-	return echo.NewHTTPError(http.StatusUnprocessableEntity, "invalid document type")
+	return wrapErrorf(http.StatusUnprocessableEntity, "invalid document type")
 }

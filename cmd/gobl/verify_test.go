@@ -34,7 +34,7 @@ func Test_verify(t *testing.T) {
 				publicKeyFile: "testdata/id_es256.pub.jwk",
 			},
 			in:  testy.ErrorReader(`{"foo":`, errors.New("read error")),
-			err: "read error",
+			err: "code=400, message=read error",
 		},
 		{
 			name: "empty envelope",
