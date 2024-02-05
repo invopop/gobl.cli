@@ -32,10 +32,6 @@ var versionOutput = struct {
 	Date:    date,
 }
 
-type output struct {
-	err error
-}
-
 func main() {
 	if err := run(); err != nil {
 		printError(err)
