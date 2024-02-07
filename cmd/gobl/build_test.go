@@ -121,7 +121,7 @@ func Test_build(t *testing.T) {
 					"foo": "missing.yaml",
 				},
 			},
-			err: `open missing.yaml: no such file or directory`,
+			err: `code=422, message=open missing.yaml: no such file or directory`,
 		},
 		{
 			name: "valid file",
@@ -198,7 +198,7 @@ func Test_build(t *testing.T) {
 				doc: "foo bar baz"
 			}`),
 			opts: &buildOpts{},
-			err:  "code=400, message=unmarshal: json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
+			err:  "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
 		},
 		{
 			name: "incomplete",

@@ -18,7 +18,7 @@ supplier:
   addresses:
     - num: "42"
       street: "Calle Pradillo"
-      locality: "Madrid"
+      # locality: "Madrid"
       region: "Madrid"
       code: "28002"
       country: "ES"

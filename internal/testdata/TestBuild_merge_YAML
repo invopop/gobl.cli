@@ -98,7 +98,7 @@
         "outlays": [
             {
                 "amount": "0.00",
-                "desc": "Something paid for by us",
+                "description": "Something paid for by us",
                 "i": 1
             }
         ],
@@ -203,7 +203,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "a09519cb64a4f522bbe947fc456c65f3b12249ea97b248283e7764ce4cdc6f9e"
+            "val": "988ff05052c2d0ee8492c5edd6e178b903059ce35f9a6dbeb1a4ac3eb7aa7d8b"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

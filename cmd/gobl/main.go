@@ -5,13 +5,12 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl"
@@ -35,20 +34,7 @@ var versionOutput = struct {
 
 func main() {
 	if err := run(); err != nil {
-		echoErr := new(echo.HTTPError)
-		if errors.As(err, &echoErr) {
-			msg := echoErr.Message
-			int := echoErr.Internal
-			switch {
-			case msg != "" && int != nil:
-				err = fmt.Errorf("%v: %w", msg, int)
-			case int != nil:
-				err = int
-			default:
-				err = fmt.Errorf("%v", msg)
-			}
-		}
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		printError(err)
 		os.Exit(1)
 	}
 }
@@ -75,5 +61,21 @@ func versionCmd() *cobra.Command {
 			enc.SetIndent("", "\t") // always indent version
 			return enc.Encode(versionOutput)
 		},
+	}
+}
+
+func encode(in any, out io.WriteCloser, indent bool) error {
+	enc := json.NewEncoder(out)
+	if indent {
+		enc.SetIndent("", "\t")
+	}
+	return enc.Encode(in)
+}
+
+func printError(err error) {
+	enc := json.NewEncoder(os.Stderr)
+	enc.SetIndent("", "\t") // always indent errors
+	if err = enc.Encode(err); err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, err)
 	}
 }

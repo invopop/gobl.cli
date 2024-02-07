@@ -52,7 +52,7 @@ func TestSign(t *testing.T) {
 					},
 				},
 			},
-			err: "yaml: line 2: found unexpected end of stream",
+			err: "code=422, message=yaml: line 2: found unexpected end of stream",
 		}
 	})
 

@@ -122,7 +122,7 @@ func Test_validate(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			err: "code=400, message=unmarshal: json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
+			err: "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type schema.document",
 		},
 		{
 			name: "incomplete",

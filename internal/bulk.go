@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"path"
 	"path/filepath"
@@ -42,7 +41,7 @@ type BulkResponse struct {
 	// Payload is the response payload.
 	Payload json.RawMessage `json:"payload,omitempty"`
 	// Error represents an error processing a request item.
-	Error string `json:"error"`
+	Error *Error `json:"error"`
 	// IsFinal will be true once the end of the request input stream has been
 	// reached, or an unrecoverable error has occurred.
 	IsFinal bool `json:"is_final"`
@@ -136,7 +135,7 @@ func Bulk(ctx context.Context, opts *BulkOptions) <-chan *BulkResponse {
 					IsFinal: true,
 				}
 				if err != io.EOF {
-					res.Error = err.Error()
+					res.Error = wrapError(StatusUnprocessableEntity, err)
 				}
 				resCh <- res
 				return
@@ -166,32 +165,31 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 	case "verify":
 		vrfy := &VerifyRequest{}
 		if err := json.Unmarshal(req.Payload, vrfy); err != nil {
-			res.Error = err.Error()
+			res.Error = wrapError(StatusUnprocessableEntity, err)
 			return res
 		}
 		err := Verify(ctx, bytes.NewReader(vrfy.Data), vrfy.PublicKey)
 		if err != nil {
-			res.Error = err.Error()
+			res.Error = wrapError(StatusUnprocessableEntity, err)
 			return res
 		}
 		res.Payload, _ = marshal(VerifyResponse{OK: true})
 	case "validate":
 		valReq := &ValidateRequest{}
 		if err := json.Unmarshal(req.Payload, valReq); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid payload: %w", err)
 			return res
 		}
 		data := bytes.NewReader(valReq.Data)
-		err := Validate(ctx, data)
-		if err != nil {
-			res.Error = err.Error()
+		if err := Validate(ctx, data); err != nil {
+			res.Error = wrapError(StatusUnprocessableEntity, err)
 			return res
 		}
 		res.Payload, _ = marshal(ValidateResponse{OK: true})
 	case "build":
 		bld := &BuildRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid payload: %w", err)
 			return res
 		}
 		opts := &BuildOptions{
@@ -206,14 +204,14 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		}
 		env, err := Build(ctx, opts)
 		if err != nil {
-			res.Error = err.Error()
+			res.Error = wrapError(StatusUnprocessableEntity, err)
 			return res
 		}
 		res.Payload, _ = marshal(env)
 	case "sign":
 		bld := &SignRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid payload: %w", err)
 			return res
 		}
 		opts := &SignOptions{
@@ -231,14 +229,14 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		}
 		env, err := Sign(ctx, opts)
 		if err != nil {
-			res.Error = err.Error()
+			res.Error = wrapError(StatusUnprocessableEntity, err)
 			return res
 		}
 		res.Payload, _ = marshal(env)
 	case "correct":
 		bld := &CorrectRequest{}
 		if err := json.Unmarshal(req.Payload, bld); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid payload: %w", err)
 			return res
 		}
 		opts := &CorrectOptions{
@@ -250,7 +248,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		}
 		env, err := Correct(ctx, opts)
 		if err != nil {
-			res.Error = err.Error()
+			res.Error = wrapError(StatusUnprocessableEntity, err)
 			return res
 		}
 		res.Payload, _ = marshal(env)
@@ -268,12 +266,12 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 	case "sleep":
 		var delay string
 		if err := json.Unmarshal(req.Payload, &delay); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid payload: %w", err)
 			return res
 		}
 		dur, err := time.ParseDuration(delay)
 		if err != nil {
-			res.Error = err.Error()
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid duration: %w", err)
 			return res
 		}
 		time.Sleep(dur)
@@ -295,7 +293,7 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 	case "schema":
 		sch := new(SchemaRequest)
 		if err := json.Unmarshal(req.Payload, sch); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid payload: %w", err)
 			return res
 		}
 		ext := filepath.Ext(sch.Path)
@@ -305,25 +303,25 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 		sch.Path = path.Join("schemas", sch.Path)
 		data, err := data.Content.ReadFile(sch.Path)
 		if err != nil {
-			res.Error = err.Error()
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid schema: %w", err)
 			return res
 		}
 		res.Payload = data
 	case "regime":
 		reg := new(RegimeRequest)
 		if err := json.Unmarshal(req.Payload, reg); err != nil {
-			res.Error = fmt.Sprintf("invalid payload: %s", err.Error())
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid payload: %w", err)
 			return res
 		}
 		p := path.Join("regimes", strings.ToLower(reg.Code)+".json")
 		data, err := data.Content.ReadFile(p)
 		if err != nil {
-			res.Error = err.Error()
+			res.Error = wrapErrorf(StatusUnprocessableEntity, "invalid regime: %w", err)
 			return res
 		}
 		res.Payload = data
 	default:
-		res.Error = fmt.Sprintf("Unrecognized action '%s'", req.Action)
+		res.Error = wrapErrorf(StatusBadRequest, "unrecognized action: '%s'", req.Action)
 	}
 	return res
 }

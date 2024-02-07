@@ -39,7 +39,7 @@ func TestValidate(t *testing.T) {
 					"look": "like a duck"
 				}
 			}`),
-		err: `code=400, message=unmarshal: unknown-schema`,
+		err: `code=400, message=unknown-schema`,
 	})
 	tests.Add("with signature", func(t *testing.T) interface{} {
 		return tt{

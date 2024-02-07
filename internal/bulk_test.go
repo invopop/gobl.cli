@@ -29,8 +29,11 @@ func TestBulk(t *testing.T) {
 		},
 		want: []*BulkResponse{
 			{
-				SeqID:   1,
-				Error:   "invalid character 'h' in literal true (expecting 'r')",
+				SeqID: 1,
+				Error: &Error{
+					Code:    422,
+					Message: "invalid character 'h' in literal true (expecting 'r')",
+				},
 				IsFinal: true,
 			},
 		},
@@ -143,8 +146,11 @@ func TestBulk(t *testing.T) {
 					IsFinal: false,
 				},
 				{
-					SeqID:   2,
-					Error:   "invalid character 'o' in literal null (expecting 'u')",
+					SeqID: 2,
+					Error: &Error{
+						Code:    422,
+						Message: "invalid character 'o' in literal null (expecting 'u')",
+					},
 					IsFinal: true,
 				},
 			},
@@ -168,7 +174,10 @@ func TestBulk(t *testing.T) {
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   `json: cannot unmarshal string into Go value of type internal.VerifyRequest`,
+					Error: &Error{
+						Code:    422,
+						Message: "json: cannot unmarshal string into Go value of type internal.VerifyRequest",
+					},
 				},
 				{
 					SeqID:   2,
@@ -198,7 +207,10 @@ func TestBulk(t *testing.T) {
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   `code=400, message=error converting YAML to JSON: yaml: invalid leading UTF-8 octet`,
+					Error: &Error{
+						Code:    400,
+						Message: `error converting YAML to JSON: yaml: invalid leading UTF-8 octet`,
+					},
 				},
 				{
 					SeqID:   2,
@@ -229,9 +241,12 @@ func TestBulk(t *testing.T) {
 			},
 			want: []*BulkResponse{
 				{
-					ReqID:   "asdf",
-					SeqID:   1,
-					Error:   `code=409, message=document has already been signed`,
+					ReqID: "asdf",
+					SeqID: 1,
+					Error: &Error{
+						Code:    409,
+						Message: `document has already been signed`,
+					},
 					IsFinal: false,
 				},
 				{
@@ -296,7 +311,10 @@ func TestBulk(t *testing.T) {
 			want: []*BulkResponse{
 				{
 					SeqID: 1,
-					Error: `code=400, message=unrecognized doc type: "chicken"`,
+					Error: &Error{
+						Code:    400,
+						Message: `unrecognized doc type: "chicken"`,
+					},
 				},
 				{
 					SeqID:   2,
@@ -324,7 +342,10 @@ func TestBulk(t *testing.T) {
 			want: []*BulkResponse{
 				{
 					SeqID: 1,
-					Error: "invalid payload: illegal base64 data at input byte 4",
+					Error: &Error{
+						Code:    422,
+						Message: "invalid payload: illegal base64 data at input byte 4",
+					},
 				},
 				{
 					SeqID:   2,
@@ -351,7 +372,10 @@ func TestBulk(t *testing.T) {
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   `invalid payload: json: cannot unmarshal string into Go value of type internal.BuildRequest`,
+					Error: &Error{
+						Code:    422,
+						Message: `invalid payload: json: cannot unmarshal string into Go value of type internal.BuildRequest`,
+					},
 				},
 				{
 					SeqID:   2,
@@ -381,7 +405,10 @@ func TestBulk(t *testing.T) {
 					ReqID:   "asdf",
 					SeqID:   1,
 					IsFinal: false,
-					Error:   "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `oink` into map[string]interface {}",
+					Error: &Error{
+						Code:    400,
+						Message: "yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `oink` into map[string]interface {}",
+					},
 				},
 				{
 					SeqID:   2,
@@ -400,7 +427,7 @@ func TestBulk(t *testing.T) {
 			"req_id": "asdf",
 			"payload": map[string]interface{}{
 				"data":    base64.StdEncoding.EncodeToString(payload),
-				"options": []byte(`{"credit":true,"method":"complete","changes":["line"]}`),
+				"options": []byte(`{"type":"credit-note","ext":{"es-facturae-correction":"01"}}`),
 			},
 		})
 		if err != nil {
@@ -476,9 +503,12 @@ func TestBulk(t *testing.T) {
 			},
 			want: []*BulkResponse{
 				{
-					ReqID:   "asdf",
-					SeqID:   1,
-					Error:   "Unrecognized action 'frobnicate'",
+					ReqID: "asdf",
+					SeqID: 1,
+					Error: &Error{
+						Code:    400,
+						Message: "unrecognized action: 'frobnicate'",
+					},
 					IsFinal: false,
 				},
 				{

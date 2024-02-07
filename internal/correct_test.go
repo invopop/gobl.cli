@@ -47,7 +47,7 @@ func TestCorrect(t *testing.T) {
 					Input: testFileReader(t, "testdata/success.json"),
 				},
 				Date: cal.MakeDate(2023, 4, 17),
-				Data: []byte(`{"credit":true,"method":"complete","changes":["line"]}`),
+				Data: []byte(`{"type":"credit-note","ext":{"es-facturae-correction":"01"}}`),
 			},
 		}
 	})
@@ -57,9 +57,20 @@ func TestCorrect(t *testing.T) {
 				ParseOptions: &ParseOptions{
 					Input: testFileReader(t, "testdata/success.json"),
 				},
-				Data: []byte(`{"issue_date":"2023-04-17","credit":true}`),
+				Data: []byte(`{"issue_date":"2023-04-17"}`),
 			},
-			err: "missing correction method",
+			err: "missing correction type",
+		}
+	})
+	tests.Add("error invalid extension", func(t *testing.T) interface{} {
+		return tt{
+			opts: &CorrectOptions{
+				ParseOptions: &ParseOptions{
+					Input: testFileReader(t, "testdata/success.json"),
+				},
+				Data: []byte(`{"type":"credit-note","issue_date":"2023-04-17","ext":{"es-facturae-correct":"01"}}`),
+			},
+			err: "code=422, message=doc: (preceding: (0: (ext: (es-facturae-correct: undefined.).).).)",
 		}
 	})
 
@@ -70,7 +81,7 @@ func TestCorrect(t *testing.T) {
 					Input: testFileReader(t, "testdata/invoice.json"),
 				},
 				Date: cal.MakeDate(2023, 4, 17),
-				Data: []byte(`{"credit":true,"method":"complete","changes":["line"]}`),
+				Data: []byte(`{"type":"credit-note","ext":{"es-facturae-correction":"01"}}`),
 			},
 		}
 	})
@@ -82,7 +93,7 @@ func TestCorrect(t *testing.T) {
 				},
 				Date: cal.MakeDate(2023, 4, 17),
 			},
-			err: "missing correction method",
+			err: "missing correction type",
 		}
 	})
 
