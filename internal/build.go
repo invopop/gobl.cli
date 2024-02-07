@@ -42,13 +42,13 @@ func Build(ctx context.Context, opts *BuildOptions) (any, error) {
 	if doc, ok := obj.(*schema.Object); ok {
 		if c, ok := doc.Instance().(schema.Calculable); ok {
 			if err := c.Calculate(); err != nil {
-				err = gobl.WrapError(err) // schema object errors need to be wrapped
+				err = gobl.ErrCalculation.WithCause(err)
 				return nil, wrapError(StatusUnprocessableEntity, err)
 			}
 		}
 
 		if err := doc.Validate(); err != nil {
-			err = gobl.WrapError(err) // schema object errors need to be wrapped
+			err = gobl.ErrValidation.WithCause(err)
 			return nil, wrapError(StatusUnprocessableEntity, err)
 		}
 
