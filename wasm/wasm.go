@@ -14,8 +14,6 @@ import (
 )
 
 func main() {
-	js.Global().Get("console").Call("log", "WASM testing 3")
-
 	r, w := io.Pipe()
 	js.Global().Call("addEventListener", "message", js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		jsonEvent := js.Global().Get("JSON").Call("stringify", args[0].Get("data")).String()
