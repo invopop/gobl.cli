@@ -74,6 +74,7 @@ func encode(in any, out io.WriteCloser, indent bool) error {
 
 func printError(err error) {
 	enc := json.NewEncoder(os.Stderr)
+	enc.SetIndent("", "\t") // always indent errors
 	if err = enc.Encode(err); err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
 	}
