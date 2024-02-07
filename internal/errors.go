@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/invopop/gobl"
@@ -51,7 +52,13 @@ func wrapError(code int, err error) *Error {
 	switch e := err.(type) {
 	case *gobl.Error:
 		out.Key = e.Key.String()
-		out.Cause = e.Cause
+		if e.Cause != nil {
+			if _, ok := e.Cause.(json.Marshaler); ok {
+				out.Cause = e.Cause
+			} else {
+				out.Message = e.Cause.Error()
+			}
+		}
 	default:
 		out.Message = e.Error()
 	}
