@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -49,8 +50,12 @@ func postMessage(result *internal.BulkResponse) {
 	if len(result.Payload) > 0 {
 		response.Set("payload", string(result.Payload))
 	}
-	if result.Error != "" {
-		response.Set("error", result.Error)
+	if result.Error != nil {
+		ed, err := json.Marshal(result.Error)
+		if err != nil {
+			response.Set("error", fmt.Sprintf("failed to marshal error: %s", err.Error()))
+		}
+		response.Set("error", string(ed))
 	}
 	if result.IsFinal {
 		response.Set("is_final", true)
