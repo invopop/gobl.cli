@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 	"strings"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
@@ -248,6 +251,46 @@ func TestBulk(t *testing.T) {
 						Message: `document has already been signed`,
 					},
 					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
+	tests.Add("one build, field errors", func(t *testing.T) interface{} {
+		payload := []byte(`{
+			"$schema":"https://gobl.org/draft-0/note/message",
+			"title":"This is a title"
+		}`)
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "build",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data": base64.StdEncoding.EncodeToString(payload),
+				// "privatekey": privateKey,
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			opts: &BulkOptions{
+				In: bytes.NewReader(req),
+			},
+			want: []*BulkResponse{
+				{
+					ReqID:   "asdf",
+					SeqID:   1,
+					IsFinal: false,
+					Error: &Error{
+						Code: 422,
+						Key:  cbc.Key("validation"),
+						Fields: gobl.FieldErrors{
+							"content": errors.New("cannot be blank"),
+						},
+					},
 				},
 				{
 					SeqID:   2,
@@ -726,24 +769,37 @@ func TestBulk(t *testing.T) {
 		for res := range ch {
 			results = append(results, res)
 		}
-		if d := cmp.Diff(tt.want, results, cmpopts.IgnoreFields(BulkResponse{}, "Payload")); d != "" {
+		if d := cmp.Diff(tt.want, results, cmpopts.IgnoreFields(BulkResponse{}, "Payload", "Error")); d != "" {
 			t.Error(d)
 		}
 		for i, row := range results {
-			if tt.want[i].Payload == nil {
-				continue
+			if tt.want[i].Payload != nil {
+				var got map[string]interface{}
+				if err := json.Unmarshal(row.Payload, &got); err != nil {
+					t.Errorf("row %d: %v", i, err)
+					continue
+				}
+				var want map[string]interface{}
+				if err := json.Unmarshal(tt.want[i].Payload, &want); err != nil {
+					t.Errorf("row %d: %v", i, err)
+					continue
+				}
+				assert.Subset(t, got, want)
 			}
-			var got map[string]interface{}
-			if err := json.Unmarshal(row.Payload, &got); err != nil {
-				t.Errorf("row %d: %v", i, err)
-				continue
+			// Errors can get very complicated, so we resort to JSON comparisons
+			if tt.want[i].Error != nil {
+				got, err := json.Marshal(row.Error)
+				if err != nil {
+					t.Errorf("row %d: %v", i, err)
+					continue
+				}
+				want, err := json.Marshal(tt.want[i].Error)
+				if err != nil {
+					t.Errorf("row %d: %v", i, err)
+					continue
+				}
+				assert.JSONEq(t, string(got), string(want))
 			}
-			var want map[string]interface{}
-			if err := json.Unmarshal(tt.want[i].Payload, &want); err != nil {
-				t.Errorf("row %d: %v", i, err)
-				continue
-			}
-			assert.Subset(t, got, want)
 		}
 	})
 }
