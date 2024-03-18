@@ -161,12 +161,12 @@
                     "oneOf": [
                         {
                             "const": "corrective",
-                            "description": "Corrected invoice that completely replaces the preceding document.",
+                            "description": "Corrected invoice that completely *replaces* the preceding document.",
                             "title": "Corrective"
                         },
                         {
                             "const": "credit-note",
-                            "description": "Reflects a refund either partial or complete of the preceding document.",
+                            "description": "Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document.",
                             "title": "Credit Note"
                         },
                         {
