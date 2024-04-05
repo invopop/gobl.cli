@@ -22,11 +22,10 @@ func Build(ctx context.Context, opts *BuildOptions) (any, error) {
 	}
 
 	if env, ok := obj.(*gobl.Envelope); ok {
-		// Signed documents should be regarded as immutable.
-		// Attempting to build an already signed document returns an error.
-		if len(env.Signatures) > 0 {
-			return nil, wrapErrorf(StatusConflict, "document has already been signed")
-		}
+		// 2024-04-05: Remove previous signatures. Assume the user knows what
+		// they are doing and remove previous signatures as they're unlikely
+		// to be useful.
+		env.Signatures = nil
 
 		if err := env.Calculate(); err != nil {
 			return nil, wrapError(StatusUnprocessableEntity, err)

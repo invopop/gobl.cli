@@ -246,10 +246,9 @@ func TestBulk(t *testing.T) {
 				{
 					ReqID: "asdf",
 					SeqID: 1,
-					Error: &Error{
-						Code:    409,
-						Message: `document has already been signed`,
-					},
+					Payload: json.RawMessage(`{
+						"$schema": "https://gobl.org/draft-0/envelope"
+					}`),
 					IsFinal: false,
 				},
 				{

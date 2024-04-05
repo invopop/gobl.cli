@@ -264,7 +264,6 @@ func TestBuild(t *testing.T) {
 					Input:    strings.NewReader("{}"),
 				},
 			},
-			err: `code=409, message=document has already been signed`,
 		}
 	})
 	tests.Add("explicit type", func(t *testing.T) interface{} {
