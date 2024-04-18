@@ -5,8 +5,8 @@ go 1.19
 require (
 	github.com/google/go-cmp v0.5.9
 	github.com/imdario/mergo v0.3.15
-	github.com/invopop/gobl v0.70.1
-	github.com/invopop/yaml v0.2.0
+	github.com/invopop/gobl v0.72.0
+	github.com/invopop/yaml v0.3.1
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/magefile/mage v1.13.0
 	github.com/spf13/cobra v1.7.0
