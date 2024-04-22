@@ -62,7 +62,8 @@
                 "es-facturae-correction": "01"
             },
             "issue_date": "2022-02-01",
-            "type": "standard"
+            "type": "standard",
+            "uuid": "750f4fc0-b2e5-4c6d-9157-d31c6b96ff33"
         }
     ],
     "supplier": {
