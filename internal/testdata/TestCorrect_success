@@ -64,7 +64,8 @@
                     "es-facturae-correction": "01"
                 },
                 "issue_date": "2022-02-01",
-                "type": "standard"
+                "type": "standard",
+                "uuid": "12333437-00b2-11ef-ab54-8e3f6d4fff0a"
             }
         ],
         "supplier": {
@@ -134,14 +135,15 @@
             "total": "1620.00",
             "total_with_tax": "1717.20"
         },
-        "type": "credit-note"
+        "type": "credit-note",
+        "uuid": "7f5b5a10-00b2-11ef-9067-8e3f6d4fff0a"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "b5ef5cfbc315dd7ce5ad1788f694c81e269595cda942192651d34eb689143835"
+            "val": "478cc6e41ea1d8a2582102009fbaf98f570bfd74ee4111681f7f62ed3738d38b"
         },
         "draft": true,
-        "uuid": "7f453f74-c417-11ee-b772-8e3f6d4fff0a"
+        "uuid": "7f5b59ef-00b2-11ef-9067-8e3f6d4fff0a"
     }
 }
