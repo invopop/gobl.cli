@@ -531,6 +531,41 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
+	tests.Add("replicate, success", func(t *testing.T) interface{} {
+		payload, err := os.ReadFile("testdata/success.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		req, err := json.Marshal(map[string]interface{}{
+			"action": "replicate",
+			"req_id": "asdf",
+			"payload": map[string]interface{}{
+				"data": base64.StdEncoding.EncodeToString(payload),
+			},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tt{
+			opts: &BulkOptions{
+				In: bytes.NewReader(req),
+			},
+			want: []*BulkResponse{
+				{
+					ReqID: "asdf",
+					SeqID: 1,
+					Payload: json.RawMessage(`{
+						"$schema": "https://gobl.org/draft-0/envelope"
+					}`),
+					IsFinal: false,
+				},
+				{
+					SeqID:   2,
+					IsFinal: true,
+				},
+			},
+		}
+	})
 	tests.Add("unknown action", func(t *testing.T) interface{} {
 		req, err := json.Marshal(map[string]interface{}{
 			"action": "frobnicate",
