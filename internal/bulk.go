@@ -106,6 +106,11 @@ type CorrectRequest struct {
 	Schema  bool   `json:"schema"`
 }
 
+// ReplicateRequest defines the payload used to generate a replicated document.
+type ReplicateRequest struct {
+	Data []byte `json:"data"`
+}
+
 // SchemaRequest defines a body used to request a specific JSON schema
 type SchemaRequest struct {
 	Path string `json:"path"`
@@ -247,6 +252,23 @@ func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *B
 			Data:          bld.Options,
 		}
 		env, err := Correct(ctx, opts)
+		if err != nil {
+			res.Error = wrapError(StatusUnprocessableEntity, err)
+			return res
+		}
+		res.Payload, _ = marshal(env)
+	case "replicate":
+		rep := &ReplicateRequest{}
+		if err := json.Unmarshal(req.Payload, rep); err != nil {
+			res.Error = wrapError(StatusUnprocessableEntity, err)
+			return res
+		}
+		opts := &ReplicateOptions{
+			ParseOptions: &ParseOptions{
+				Input: bytes.NewReader(rep.Data),
+			},
+		}
+		env, err := Replicate(ctx, opts)
 		if err != nil {
 			res.Error = wrapError(StatusUnprocessableEntity, err)
 			return res
