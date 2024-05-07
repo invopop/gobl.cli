@@ -14,6 +14,7 @@ type BulkRequest =
   | PingRequest
   | SleepRequest
   | CorrectRequest
+  | ReplicateRequest
   | SchemasRequest
   | SchemaRequest
   | RegimeRequest;
@@ -82,6 +83,13 @@ export type SleepRequest = BaseBulkRequest & {
 export type CorrectRequest = BaseBulkRequest & {
   action: "correct";
   payload: CorrectPayload;
+};
+
+export type ReplicateRequest = BaseBulkRequest & {
+  action: "replicate";
+  payload: {
+    data: string;
+  };
 };
 
 export type SchemasRequest = BaseBulkRequest & {
@@ -236,6 +244,17 @@ export async function correct({
   // TODO(?): Parse JSON response before returning.
   return sendMessage({
     action: "correct",
+    payload,
+    indent,
+  });
+}
+
+export async function replicate({
+  payload,
+  indent,
+}: Pick<ReplicateRequest, "payload" | "indent">) {
+  return sendMessage({
+    action: "replicate",
     payload,
     indent,
   });
