@@ -66,6 +66,10 @@ func TestReplicate(t *testing.T) {
 				Regexp:      regexp.MustCompile(`"val":.?"[\w\d]{64}"`),
 				Replacement: `"val":"74ffc799663823235951b43a1324c70555c0ba7e3b545c1f50af34bbcc57033b"`,
 			},
+			{
+				Regexp:      regexp.MustCompile(`"issue_date":.?"[^\"]+"`),
+				Replacement: `"issue_date":"2024-05-06"`,
+			},
 		}
 		if d := testy.DiffAsJSON(testy.Snapshot(t), got, replacements...); d != nil {
 			t.Error(d)
