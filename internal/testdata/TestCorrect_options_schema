@@ -162,17 +162,18 @@
                 },
                 "type": {
                     "$ref": "https://gobl.org/draft-0/cbc/key",
+                    "default": "credit-note",
                     "description": "The type of corrective invoice to produce.",
                     "oneOf": [
-                        {
-                            "const": "corrective",
-                            "description": "Corrected invoice that completely *replaces* the preceding document.",
-                            "title": "Corrective"
-                        },
                         {
                             "const": "credit-note",
                             "description": "Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document.",
                             "title": "Credit Note"
+                        },
+                        {
+                            "const": "corrective",
+                            "description": "Corrected invoice that completely *replaces* the preceding document.",
+                            "title": "Corrective"
                         },
                         {
                             "const": "debit-note",
