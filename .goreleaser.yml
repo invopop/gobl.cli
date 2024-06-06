@@ -1,3 +1,4 @@
+version: 2
 before:
   hooks:
     - go mod download
@@ -49,7 +50,7 @@ blobs:
     ids:
       - wasm
       - wasm-gz
-    folder: "cli"
+    directory: "cli"
 
 checksum:
   name_template: "checksums.txt"
