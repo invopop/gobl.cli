@@ -45,12 +45,12 @@ archives:
 
 blobs:
   # Upload wasm to Google Cloud Storage
-  - provider: gs
-    bucket: cdn.gobl.org
-    directory: "cli"
-    ids:
-      - wasm
-      - wasm-gz
+  #- provider: gs
+  #  bucket: cdn.gobl.org
+  #  directory: "cli"
+  #  ids:
+  #    - wasm
+  #    - wasm-gz
 
   # Upload wasm to Cloudflare R2
   - provider: s3

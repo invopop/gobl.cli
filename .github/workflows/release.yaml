@@ -22,11 +22,11 @@ jobs:
         with:
           fetch-depth: "0" # make sure we get all commits!
 
-      - name: Authorize Google Account
-        id: "auth"
-        uses: "google-github-actions/auth@v0"
-        with:
-          credentials_json: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"
+      #- name: Authorize Google Account
+      #  id: "auth"
+      #  uses: "google-github-actions/auth@v0"
+      #  with:
+      #    credentials_json: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"
 
       - name: Bump version and push tag
         id: bump
