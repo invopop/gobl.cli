@@ -58,6 +58,7 @@ blobs:
     region: auto
     endpoint: "https://1791095f8859b90cf7717568b61e76a5.eu.r2.cloudflarestorage.com"
     directory: "cli"
+    s3_force_path_style: false
     ids:
       - wasm
       - wasm-gz
