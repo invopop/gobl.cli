@@ -43,10 +43,11 @@ archives:
       - none*
     wrap_in_directory: false
 
-# Upload to Google Storage CDN
+# Upload to Cloudflare R2
 blobs:
-  - provider: gs
-    bucket: cdn.gobl.org
+  - provider: s3
+    bucket: cdn-gobl-org
+    endpoint: https://1791095f8859b90cf7717568b61e76a5.eu.r2.cloudflarestorage.com
     ids:
       - wasm
       - wasm-gz
