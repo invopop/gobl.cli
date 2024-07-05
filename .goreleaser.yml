@@ -43,8 +43,16 @@ archives:
       - none*
     wrap_in_directory: false
 
-# Upload to Cloudflare R2
 blobs:
+  # Upload wasm to Google Cloud Storage
+  #- provider: gs
+  #  bucket: cdn.gobl.org
+  #  directory: "cli"
+  #  ids:
+  #    - wasm
+  #    - wasm-gz
+
+  # Upload wasm to Cloudflare R2
   - provider: s3
     bucket: cdn-gobl-org
     region: auto
