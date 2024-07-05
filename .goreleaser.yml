@@ -47,6 +47,7 @@ archives:
 blobs:
   - provider: s3
     bucket: cdn-gobl-org
+    region: auto
     endpoint: https://1791095f8859b90cf7717568b61e76a5.eu.r2.cloudflarestorage.com
     ids:
       - wasm
