@@ -1,5 +1,6 @@
 //go:build js
 
+// Package main provides a WASM interface to GOBL.
 package main
 
 import (

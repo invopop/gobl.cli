@@ -1,5 +1,4 @@
-// The gobl command provides a command-line interface to the GOBL library.
-
+// Package main provides a command-line interface to the GOBL library.
 package main
 
 import (

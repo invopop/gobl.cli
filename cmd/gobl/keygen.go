@@ -63,7 +63,7 @@ func homedir() (string, error) {
 	return user.HomeDir, nil
 }
 
-func defaultKeyfile() (string,error) {
+func defaultKeyfile() (string, error) {
 	return expandHome(defaultKeyFilename)
 }
 

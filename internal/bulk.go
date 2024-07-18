@@ -88,6 +88,7 @@ type SignRequest struct {
 	Envelop    bool             `json:"envelop"`
 }
 
+// ValidateRequest is the payload for a validate request.
 type ValidateRequest struct {
 	Data []byte `json:"data"`
 }
@@ -116,6 +117,7 @@ type SchemaRequest struct {
 	Path string `json:"path"`
 }
 
+// RegimeRequest defines a body used to request the definition of a Tax Regime.
 type RegimeRequest struct {
 	Code string `json:"code"`
 }
@@ -155,7 +157,7 @@ func Bulk(ctx context.Context, opts *BulkOptions) <-chan *BulkResponse {
 	return resCh
 }
 
-func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *BulkOptions) *BulkResponse {
+func processRequest(ctx context.Context, req BulkRequest, seq int64, bulkOpts *BulkOptions) *BulkResponse { //nolint:gocyclo
 	marshal := json.Marshal
 	if req.Indent {
 		marshal = func(i interface{}) ([]byte, error) {

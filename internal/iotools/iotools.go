@@ -1,3 +1,4 @@
+// Package iotools adds some helps for reading data
 package iotools
 
 import (
