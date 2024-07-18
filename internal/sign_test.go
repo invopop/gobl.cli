@@ -43,7 +43,7 @@ func TestSign(t *testing.T) {
 			},
 		}
 	})
-	tests.Add("invalid document", func(t *testing.T) interface{} {
+	tests.Add("invalid document", func(_ *testing.T) interface{} {
 		return tt{
 			opts: &SignOptions{
 				ParseOptions: &ParseOptions{

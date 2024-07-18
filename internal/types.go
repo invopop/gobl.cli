@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
+// FindType can be used to match a partial schema name with a complete schema ID.
 func FindType(term string) schema.ID {
 	return findType(schema.Types(), term)
 }
@@ -32,7 +33,7 @@ func findType(types map[reflect.Type]schema.ID, term string) schema.ID {
 	return ""
 }
 
-var cap = regexp.MustCompile("([A-Z])")
+var singleCap = regexp.MustCompile("([A-Z])")
 var allCaps = regexp.MustCompile("[A-Z]{2,}")
 
 func toSchema(term string) string {
@@ -48,9 +49,9 @@ func toSchema(term string) string {
 	}
 	for _, match := range allCaps.FindAllString(term, -1) {
 		match = match[:len(match)-1]
-		new := strings.ToLower(match)
-		term = strings.Replace(term, match, new, 1)
+		n := strings.ToLower(match)
+		term = strings.Replace(term, match, n, 1)
 	}
-	term = cap.ReplaceAllString(term, "-${1}")
+	term = singleCap.ReplaceAllString(term, "-${1}")
 	return strings.ToLower(term)
 }

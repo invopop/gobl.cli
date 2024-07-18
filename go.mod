@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/google/go-cmp v0.6.0
 	github.com/imdario/mergo v0.3.16 // maintain this version, repo was moved to vanity URL which broke things
-	github.com/invopop/gobl v0.80.1
+	github.com/invopop/gobl v0.81.0
 	github.com/invopop/yaml v0.3.1
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/magefile/mage v1.13.0

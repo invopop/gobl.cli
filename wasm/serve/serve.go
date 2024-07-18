@@ -1,3 +1,4 @@
+// Package main is used to launch a demo site for the wasm.
 package main
 
 import (

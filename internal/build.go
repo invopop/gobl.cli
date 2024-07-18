@@ -1,3 +1,4 @@
+// Package internal contains all the base functionality for the GOBL CLI
 package internal
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
+// BuildOptions are the options used for building and validating GOBL data.
 type BuildOptions struct {
 	*ParseOptions
 }

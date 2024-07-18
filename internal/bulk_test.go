@@ -19,7 +19,7 @@ import (
 	"gitlab.com/flimzy/testy"
 )
 
-func TestBulk(t *testing.T) {
+func TestBulk(t *testing.T) { //nolint:gocyclo
 	type tt struct {
 		opts *BulkOptions
 		want []*BulkResponse
@@ -86,7 +86,7 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
-	tests.Add("two verifications", func(t *testing.T) interface{} {
+	tests.Add("two verifications", func(_ *testing.T) interface{} {
 		req1, _ := json.Marshal(map[string]interface{}{
 			"action":  "sleep",
 			"req_id":  "abc",
@@ -656,7 +656,7 @@ func TestBulk(t *testing.T) {
 			{SeqID: 2, IsFinal: true},
 		},
 	})
-	tests.Add("schema", func(t *testing.T) interface{} {
+	tests.Add("schema", func(_ *testing.T) interface{} {
 		return tt{
 			opts: &BulkOptions{
 				In: strings.NewReader(`{"action":"schema","payload":{"path":"head/stamp"}}`),
@@ -698,7 +698,7 @@ func TestBulk(t *testing.T) {
 			},
 		}
 	})
-	tests.Add("regime", func(t *testing.T) interface{} {
+	tests.Add("regime", func(_ *testing.T) interface{} {
 		return tt{
 			opts: &BulkOptions{
 				In: strings.NewReader(`{"action":"regime","payload":{"code":"es"}}`),
