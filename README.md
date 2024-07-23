@@ -6,6 +6,8 @@ Go Business Language - Command Line Interface
 
 Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/main/LICENSE), Copyright 2021-2023 [Invopop Ltd.](https://invopop.com).
 
+**DEPRECATED**: The CLI has now been moved back to the main [gobl](https://github.com/invopop/gobl) repository.
+
 ## Usage
 
 This repo contains a `gobl` CLI tool which can be used to manipulate GOBL documents from the command line or shell scripts.
